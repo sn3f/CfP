@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-analysis-match-field
+      author: SolDevelo
+      changes:
+        - addColumn:
+            tableName: cfp_analysis
+            columns:
+              - column:
+                  name: match
+                  type: DOUBLE
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            splitStatements: true
+            stripComments: true
+            sql: |
+              UPDATE cfp_analysis
+              SET match = (extracted_data -> 'match' ->> 'value')::DOUBLE PRECISION
+              WHERE jsonb_exists(extracted_data, 'match')
+              AND extracted_data ->> 'match' IS NOT NULL;

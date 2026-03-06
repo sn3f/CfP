@@ -1,0 +1,803 @@
+{
+  "system": {
+    "wip": {
+      "title": "Work in Progress",
+      "description": "This feature is currently under development and may not be fully functional. Please check back later."
+    }
+  },
+  "theme": {
+    "title": "Theme",
+    "toggleAria": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "auth": {
+    "loginForm": {
+      "title": "Welcome Back",
+      "description": "To continue, please log in to your Microsoft account.",
+      "loginButton": "Sign In",
+      "terms": {
+        "part1": "By clicking continue, you agree to our",
+        "termsOfService": "Terms of Service",
+        "privacyPolicy": "Privacy Policy",
+        "and": "and"
+      }
+    },
+    "loadingCard": {
+      "title": "Loading...",
+      "description": "Please wait while we load the application.",
+      "details": "This may take a few seconds. You will be redirected to the login page if you are not authenticated."
+    }
+  },
+  "404": {
+    "title": "404 - Page Not Found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "lost": "Lost?",
+    "goHome": "Navigate Home"
+  },
+  "403": {
+    "title": "403 - Access Denied",
+    "description": "You do not have permission to access this page. If you believe this is an error, please contact support.",
+    "goBack": "Go Back"
+  },
+  "criterionTypes": {
+    "title": "Criterion Types",
+    "subtitle": "Manage your classification criteria and their evaluation logic",
+    "view": "View",
+    "toggleColumns": "Toggle columns",
+    "caution": {
+      "title": "Use {fieldName} and {evaluationLogic} with caution",
+      "description": "These fields have a direct impact on AI results and classification accuracy. Please use clear, descriptive English terms to ensure optimal model understanding."
+    },
+    "filters": {
+      "searchPlaceholder": "Filter by field name or logic description...",
+      "clear": "Clear filter",
+      "filtersLabel": "Filters",
+      "hard": "Hard Criterion",
+      "hardFilterDescription": "Filter by Hard Criterion",
+      "hardYes": "Yes",
+      "hardNo": "No"
+    },
+    "columns": {
+      "selectAll": "Select all",
+      "selectRow": "Select row",
+      "fieldName": "Field Name",
+      "evaluationLogic": "Evaluation Logic",
+      "examples": "Examples",
+      "hard": "Hard Rule",
+      "actions": "Actions"
+    },
+    "hard": {
+      "true": "True",
+      "false": "False"
+    },
+    "actions": {
+      "delete": "Delete",
+      "addCriterion": "Add Criterion Type",
+      "editCriterion": "Edit Criterion Type",
+      "addNewCriterion": "Add New Criterion Type",
+      "updateCriterion": "Update Criterion Type",
+      "confirmDelete": "Delete",
+      "cancel": "Cancel",
+      "saveAdd": "Add Criterion Type"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Are you absolutely sure?",
+        "description": "This action cannot be undone. This will permanently delete {count, plural, one {# selected criterion type} other {# selected criterion types}}."
+      },
+      "form": {
+        "fieldName": "Field Name",
+        "evaluationLogic": "Evaluation Logic",
+        "examples": "Examples (Optional)",
+        "hard": "Hard Criterion",
+        "placeholderFieldName": "Affects AI results — enter a clear, English field name (e.g., Customer Satisfaction).",
+        "placeholderEvaluation": "Affects AI results — describe in English how to evaluate this field.",
+        "placeholderExamples": "Example values or patterns (comma-separated)...",
+        "createDescription": "Add a new classification criterion with its logic and examples.",
+        "editDescription": "Update the criterion's evaluation logic and examples."
+      }
+    },
+    "dropdown": {
+      "view": "View",
+      "toggleColumns": "Toggle columns",
+      "actions": "More actions",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "pagination": {
+      "rowsPerPage": "Rows per page",
+      "info": "{start}-{end} of {total}",
+      "goToFirst": "Go to first page",
+      "goToPrevious": "Go to previous page",
+      "goToNext": "Go to next page",
+      "goToLast": "Go to last page",
+      "selectRows": "Select number of results"
+    },
+    "toasts": {
+      "addSuccess": "Criterion Type added successfully.",
+      "addError": "Error adding Criterion Type. Please try again.",
+      "updateSuccess": "Criterion Type updated successfully.",
+      "updateError": "Error updating Criterion Type. Please try again.",
+      "deleteSuccess": "Criterion Type(s) deleted successfully.",
+      "deleteError": "Error deleting Criterion Type(s). Please try again."
+    }
+  },
+  "workspace": {
+    "sidebar": {
+      "title": "Workspace",
+      "toggle": "Toggle Sidebar",
+      "logout": "Log out",
+      "language": "Language",
+      "tools": "Tools"
+    },
+    "routes": {
+      "dashboard": "Dashboard",
+      "proposals": "Proposals",
+      "sources": "Sources",
+      "profile": "Profile",
+      "criterionTypes": "Criterion Types",
+      "scrapperResults": "Scrapper Results",
+      "feedbackSummaries": "Feedback Summaries"
+    },
+    "table": {
+      "noResults": "No Results Found",
+      "noResultsDetails": "Try adjusting your filters or search terms."
+    },
+    "cfp": {
+      "title": "Call for Proposals",
+      "subtitle": "Manage and track funding opportunities",
+      "searchPlaceholder": "Title or organization...",
+      "regionCountryPlaceholder": "Country or region...",
+      "themePlaceholder": "Thematic areas...",
+      "matchPlaceholder": "Relevance",
+      "notFound": "Call For Proposal not found.",
+      "notFoundDetails": "The Call For Proposal you are looking for does not exist or has been removed.",
+      "navigateBack": "Navigate Back",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "removeItem": "Remove item",
+      "addItem": "Add item",
+      "met": "Criteria Met",
+      "selectDate": "Select Date",
+      "hardCriterion": "Hard Criterion",
+      "common": {
+        "noTitle": "No title",
+        "noData": "No data",
+        "unknown": "Unknown"
+      },
+      "feedback": {
+        "textareaPlaceholder": "Enter your feedback here...",
+        "updateError": "Update Failed. Please try again.",
+        "info": {
+          "title": "Review and validate the Call For Proposal classification. Changes are saved automatically.",
+          "description": "This page lets you review the automatically generated classification for this Call for Proposal. Mark each field as Correct if it’s accurate, and add comments whenever clarification or adjustments are needed. All changes are saved automatically, so you can safely navigate away once your review is complete."
+        },
+        "url": "URL",
+        "title": "Title",
+        "eligible": "Criteria Met",
+        "exclusionReason": "Exclusion Reason",
+        "classificationSummary": "Classification Summary",
+        "theme": "Thematic Areas",
+        "country": "Countries",
+        "regions": "Regions",
+        "funding_max": "Maximum Funding Amount",
+        "funding_min": "Minimum Funding Amount",
+        "organization": "Organization",
+        "deadline_text": "Deadline (Text)",
+        "funding_currency": "Funding Currency",
+        "proposal_summary": "Proposal Summary",
+        "organization_type": "Organization Type",
+        "applicationProcess": "Application Process",
+        "eligibleActivities": "Eligible Activities",
+        "fundingRestrictions": "Funding Restrictions",
+        "implementationPeriod": "Implementation Period",
+        "contact": "Contact",
+        "deadline": "Deadline"
+      },
+      "toggleColumns": "Toggle columns",
+      "view": "View",
+      "selectAll": "Select all",
+      "selectRow": "Select row",
+      "actionsMenu": "More actions",
+      "clearFilter": "Clear filter",
+      "back": "Back",
+      "filters": {
+        "region": "Region",
+        "sector": "Sector",
+        "regionLabel": "Filter by Region",
+        "sectorLabel": "Filter by Thematic Area",
+        "eligibility": "ILO Eligibility",
+        "eligibilityLabel": "Filter by ILO Eligibility",
+        "eligibilityYes": "Likely Eligible",
+        "eligibilityNo": "Not Eligible",
+        "selectDeadline": "Deadline from...",
+        "overallEligibility": "Hard Criteria Eligibility",
+        "overallEligibilityLabel": "Filter by Hard Criteria Eligibility"
+      },
+      "columns": {
+        "organization": "Organization",
+        "title": "Title",
+        "summary": "Summary",
+        "region": "Regions",
+        "country": "Countries",
+        "themes": "Thematic Areas",
+        "deadline": "Deadline",
+        "fundingAmount": "Funding Amount",
+        "actions": "Actions",
+        "eligible": "ILO Eligibility",
+        "type": "Type",
+        "name": "Name",
+        "value": "Value",
+        "evidence": "Evidence",
+        "correct": "Correct",
+        "comment": "Comment",
+        "contact": "Contact",
+        "proposal_summary": "Proposal Summary",
+        "match": "Relevance",
+        "timestamp": "Created At"
+      },
+      "deadline": {
+        "expired": "Expired",
+        "daysLeft": "{count, plural, one {# Day Left} other {# Days Left}}",
+        "unknown": "Unknown"
+      },
+      "actions": {
+        "delete": "Delete",
+        "viewDetails": "View Details",
+        "export": "Export",
+        "exportOptions": "Export Options",
+        "exportExcel": "Export as Excel (.xlsx)",
+        "exportPdf": "Export as PDF",
+        "cancel": "Cancel",
+        "confirmDelete": "Delete",
+        "feedback": "Feedback",
+        "editCfp": "Edit Proposal",
+        "editCfpDescription": "Manually update contents of Proposal Classification. Changes will be lost on reclassification.",
+        "save": "Save",
+        "saving": "Saving...",
+        "edit": "Edit",
+        "editMode": "Edit Mode",
+        "addAnother": "Add another...",
+        "tagsInputPlaceholder": "Type a new entry and press Enter",
+        "selectedDeadline": "Select Deadline",
+        "addProposal": "Add CfP",
+        "reclassify": "Reclassify"
+      },
+      "deleteDialog": {
+        "title": "Are you absolutely sure?",
+        "description": "This action cannot be undone. This will permanently delete {count, plural, one {# selected row} other {# selected rows}}."
+      },
+      "pagination": {
+        "rowsPerPage": "Rows per page",
+        "info": "{start}-{end} of {total} Entries",
+        "of": "of",
+        "goToFirst": "Go to first page",
+        "goToPrevious": "Go to previous page",
+        "goToNext": "Go to next page",
+        "goToLast": "Go to last page",
+        "selectRows": "Select number of results"
+      },
+      "toasts": {
+        "deleteSuccess": "Row(s) deleted successfully.",
+        "deleteError": "An error occurred while deleting the row. Please try again.",
+        "updateSuccess": "Entry updated successfully.",
+        "updateError": "Failed to edit an item.",
+        "addSuccess": "Classification request sent successfully. Refresh the page in few minutes to see the results.",
+        "addError": "Failed to add a new entry.",
+        "reclassifyError": "Failed to reclassify.",
+        "reclassifySuccess": "Reclassification request sent successfully. Check in few minutes for results."
+      },
+      "addCfp": {
+        "title": "Add new Call for Proposal",
+        "description": "Add data to manually classify a Call for Proposal. Either manually paste your content or add attachments.",
+        "url": "URL (Optional)",
+        "content": "Content",
+        "attachments": "Attachments"
+      },
+      "reclassifyCfp": {
+        "title": "Reclassify",
+        "description": "Add new attachments and reclassify the CfP.",
+        "caution": {
+          "title": "Manually entered data will be lost",
+          "description": "All attachments will be sent to be classified again. All changes done manually by editing the proposal will be lost and overwritten."
+        },
+        "attachments": "New Attachments"
+      },
+      "overview": {
+        "tab": "Overview",
+        "regions": "Regions",
+        "countries": "Countries",
+        "themes": "Thematic Areas",
+        "deadline": "Deadline",
+        "duration": "Duration",
+        "months": "{count, plural, one {# Month} other {# Months}}",
+        "fundingAmount": "Funding Amount",
+        "coFinancing": "Co-Financing Required",
+        "implementationPeriod": "Implementation Period",
+        "yes": "Yes",
+        "no": "No",
+        "source": "Source",
+        "feedback": "Feedback",
+        "contact": "Contact",
+        "title": "Title",
+        "summary": "Summary",
+        "organization": "Organization",
+        "eligibility": "ILO Eligibility",
+        "eligible": "Likely Eligible",
+        "notEligible": "Not Eligible",
+        "link": "Link",
+        "shortSummaryTitle": "Compact Summary",
+        "shortSummaryDescription": "Key details about this Call for Proposal.",
+        "additionalInfo": {
+          "title": "Additional Information",
+          "description": "More details about this Call for Proposal.",
+          "empty": "No additional information provided."
+        },
+        "criteria": {
+          "title": "Criteria(s)",
+          "description": "Key criteria(s) for this Call for Proposal.",
+          "empty": "No specific criteria mentioned.",
+          "met": "Criteria Met",
+          "notMet": "Criteria Not Met",
+          "hard": "Hard Criteria"
+        },
+        "fundingRestrictions": {
+          "title": "Funding Restrictions",
+          "description": "Any restrictions on the use of funds for this call for proposals.",
+          "empty": "No specific funding restrictions mentioned."
+        },
+        "eligibleActivities": {
+          "title": "Eligible Activities",
+          "description": "Types of activities funded by this call for proposals.",
+          "empty": "No specific activities mentioned."
+        },
+        "applicationProcess": {
+          "title": "Application Process",
+          "description": "Steps to apply for this call for proposals.",
+          "empty": "No specific application process mentioned."
+        },
+        "eligibleOrganizations": {
+          "title": "Eligible Organizations",
+          "description": "Types of organizations that can apply.",
+          "empty": "No specific organization types mentioned."
+        },
+        "attachments": {
+          "title": "Attachments",
+          "description": "Relevant documents for this call for proposals.",
+          "none": "No attachments available.",
+          "download": "Download {name}",
+          "name": "Name",
+          "type": "Type",
+          "actions": "Actions"
+        },
+        "unknown": "Unknown",
+        "iloEligible": "ILO is eligible to apply",
+        "iloNotEligible": "ILO is not eligible to apply",
+        "focalPerson": {
+          "label": "ILO Partnerships Focal Person",
+          "text": "Before applying, please double-check eligibility with ",
+          "link": "your partnerships focal point."
+        },
+        "developmentCooperationDashboard": {
+          "label": "ILO Development Cooperation Dashboard",
+          "text": "Find out more about the organization and existing collaborations."
+        },
+        "edit": {
+          "title": "Edit",
+          "description": "Manually update contents of Proposal Classification. Changes will be lost on reclassification.",
+          "placeholder": "Edit Content..."
+        }
+      },
+      "chat": {
+        "tab": "Chat",
+        "aiPowered": "AI Powered",
+        "title": "AI Assistant",
+        "description": "I know all about the CfP you are viewing. Ask me anything!",
+        "placeholder": "Type your question here, e.g. 'What is the deadline for the submission?'",
+        "exampleQuestions": "Suggested Questions",
+        "presetQuestions": {
+          "strategic": {
+            "group": "Strategic",
+            "questions": {
+              "q1": "CfPs aligned with the ILO’s mandate and priorities of the region/country in question?",
+              "q2": "What is the objective of the Call for Proposal?"
+            }
+          },
+          "financial": {
+            "group": "Financial",
+            "questions": {
+              "q1": "Relation of funds vis-à-vis geographic scope of implementation?",
+              "q2": "What is the overhead, M&E, equipment, and other direct and indirect costs?",
+              "q3": "Are staff costs and core expenses viable within the criteria of the proposal? (Considering ILO staff costs can sometimes cover up to 50% of the proposal’s costs.)",
+              "q4": "Are co-financing or matching fund requirements feasible?"
+            }
+          },
+          "operational": {
+            "group": "Operational",
+            "questions": {
+              "q1": "How transaction-heavy would the implementation be?",
+              "q2": "What is the role of partners?"
+            }
+          },
+          "procedural": {
+            "group": "Procedural",
+            "questions": {
+              "q1": "What is the process of applying for this call for proposal?",
+              "q2": "Can I submit a project that will take place in several countries?"
+            }
+          }
+        }
+      },
+      "fileUploader": {
+        "uploadLabel": "Upload files",
+        "uploadTitle": "Upload files",
+        "helperText": "Documents only • Up to {maxSize} total",
+        "selectFiles": "Select files",
+        "uploadedFiles": "Uploaded Files ({count})",
+        "removeAll": "Remove all",
+        "addMore": "Add more",
+        "removeFile": "Remove file",
+        "errors": {
+          "totalSizeExceeded": "Total size exceeds {size}"
+        }
+      }
+    }
+  },
+  "sources": {
+    "title": "Sources",
+    "subtitle": "Manage your content sources and their guidelines",
+    "filters": {
+      "searchPlaceholder": "Filter by name or website URL...",
+      "statusDescription": "Filter by source status",
+      "clear": "Clear filter",
+      "status": "Status",
+      "filtersLabel": "Filters"
+    },
+    "processing": {
+      "MANUAL": "Manual Mode",
+      "AUTO": "Automatic Mode"
+    },
+    "columns": {
+      "selectAll": "Select all",
+      "selectRow": "Select row",
+      "name": "Name",
+      "websiteUrl": "Website URL",
+      "status": "Status",
+      "frequency": "Frequency",
+      "guidelines": "Guidelines",
+      "actions": "Actions",
+      "nextExecution": "Next Execution"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "frequency": {
+      "HOURLY": "Every Hour",
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly"
+    },
+    "guidelines": {
+      "none": "No guidelines"
+    },
+    "actions": {
+      "delete": "Delete",
+      "deleteSelected": "Delete selected",
+      "addSource": "Add source",
+      "editSource": "Edit Source",
+      "addNewSource": "Add New Source",
+      "updateSource": "Update Source",
+      "confirmDelete": "Confirm Deletion",
+      "cancel": "Cancel",
+      "saveAdd": "Add Source",
+      "scrapping": "Scrape Now"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Are you absolutely sure?",
+        "description": "This action cannot be undone. This will permanently delete {count, plural, one {# selected source} other {# selected sources}}."
+      },
+      "form": {
+        "name": "Name",
+        "websiteUrl": "Website URL",
+        "status": "Status",
+        "frequency": "Scraping Frequency",
+        "guidelines": "Guidelines (Optional)",
+        "placeholderGuidelines": "Enter content guidelines for this source...",
+        "createDescription": "Add a new content source with its details and guidelines.",
+        "editDescription": "Update the source information and guidelines.",
+        "advancedConfig": "Advanced Configuration",
+        "configJson": "Configuration (JSON)",
+        "invalidJson": "Invalid JSON format. Please correct syntax before saving.",
+        "placeholderConfig": "{\"key\": \"value\"}",
+        "scrapping": "Scrapping Mode",
+        "classification": "Classification Mode",
+        "scrappingTrigger": "Trigger Scrapping",
+        "scrappingTriggerDescription": "Manually trigger scrapping for this source outside of the scheduled frequency.",
+        "noStepsConfigured": "No Steps Configured",
+        "stepSingular": "Step",
+        "stepPlural": "Steps",
+        "advancedConfigDescription": "Build your scraping workflow by adding and configuring steps.",
+        "builder": "Builder",
+        "preview": "Preview",
+        "addFirstStep": "Add First Step",
+        "addStep": "Add Step",
+        "copied": "Copied!",
+        "copyJson": "Copy JSON",
+        "stepsConfigured": "{count, plural, one {Step Configured} other {Steps Configured}}",
+        "saveConfiguration": "Save Configuration",
+        "shrink": "Shrink",
+        "expand": "Expand",
+        "step": "Step",
+        "operation": {
+          "VISIT": "Visit",
+          "SCRAP": "Scrap",
+          "ITERATOR": "Iterator",
+          "CRAWLER": "Crawler"
+        },
+        "operationFields": {
+          "content-selector": {
+            "label": "Content Selector",
+            "placeholder": "CSS selector targeting page content, e.g. div.content, article.main"
+          },
+          "item-selector": {
+            "label": "Item Selector",
+            "placeholder": "CSS selector for items to iterate, e.g. div.item, ul > li"
+          },
+          "next-page-selector": {
+            "label": "Next Page Selector",
+            "placeholder": "CSS selector for the 'Next Page' button or link"
+          },
+          "scrap-attachments": {
+            "label": "Scrape Attachments",
+            "placeholder": "True or false — whether to download linked attachments"
+          },
+          "throttle-ms": {
+            "label": "Throttle (ms)",
+            "placeholder": "Delay between requests in milliseconds, e.g. 10000"
+          },
+          "max-depth": {
+            "label": "Max Depth",
+            "placeholder": "Maximum depth for crawler recursion, e.g. 3"
+          },
+          "page-text-query": {
+            "label": "Page Text Query",
+            "placeholder": "Keyword(s) to match within the page content"
+          },
+          "page-score-threshold": {
+            "label": "Page Score Threshold",
+            "placeholder": "Minimal match score (0.0–1.0) for page matching"
+          },
+          "url-text-query": {
+            "label": "URL Text Query",
+            "placeholder": "Keyword(s) to match within URLs during crawling"
+          },
+          "url-score-threshold": {
+            "label": "URL Score Threshold",
+            "placeholder": "Minimal match score (0.0–1.0) for URL matching"
+          },
+          "follow-links": {
+            "label": "Follow Links",
+            "placeholder": "True or false — whether to follow internal links"
+          }
+        },
+        "toggleDesc": "Toggle depending on whether this option should be enabled.",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "removeStep": "Remove step",
+        "scrapAttachments": "Scrap Attachments",
+        "noConfigRequired": "This operation requires no additional configuration."
+      }
+    },
+    "dropdown": {
+      "view": "View",
+      "toggleColumns": "Toggle columns",
+      "actions": "More actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "scrape": "Scrape"
+    },
+    "toasts": {
+      "addSuccess": "Source added successfully.",
+      "addError": "Failed to add source.",
+      "updateSuccess": "Source updated successfully.",
+      "updateError": "Failed to update source.",
+      "deleteSuccess": "Source deleted successfully.",
+      "deleteError": "Failed to delete source.",
+      "scrappingSuccess": "Scrapping initiated successfully.",
+      "scrappingError": "Failed to initiate scrapping."
+    },
+    "pagination": {
+      "rowsPerPage": "Rows per page",
+      "selectRows": "Select number of rows",
+      "info": "{start}-{end} of {total}",
+      "goToFirst": "Go to first page",
+      "goToPrevious": "Go to previous page",
+      "goToNext": "Go to next page",
+      "goToLast": "Go to last page"
+    },
+    "view": "View",
+    "toggleColumns": "Toggle columns"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "unread": "Unread",
+    "open": "Open notifications"
+  },
+  "scrapperResults": {
+    "title": "Scrapper Results",
+    "subtitle": "Manage and review data collected by the web scrapper",
+    "notFound": "Scrapper Result Not Found",
+    "notFoundDetails": "The Scrapper Result you are looking for does not exist or has been removed.",
+    "navigateBack": "Navigate Back",
+    "back": "Back",
+    "previewTitle": "Scrapper Result Preview",
+    "filters": {
+      "searchPlaceholder": "Filter by title or URL...",
+      "statusDescription": "Filter by result status",
+      "clear": "Clear filter",
+      "status": "Status",
+      "filtersLabel": "Filters"
+    },
+    "columns": {
+      "selectAll": "Select all",
+      "selectRow": "Select row",
+      "title": "Title",
+      "url": "URL",
+      "timestamp": "Timestamp",
+      "content": "Content",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "NEW": "Ready For Classification",
+      "CLASSIFIED_AUTO": "Auto-Classified",
+      "FAILED": "Processing Failed",
+      "CLASSIFIED_MANUALLY": "Manually Classified",
+      "REJECTED": "Rejected"
+    },
+    "actions": {
+      "reject": "Reject",
+      "classify": "Classify",
+      "view": "View",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Are you absolutely sure?",
+        "description": "This action cannot be undone. This will permanently delete {count, plural, one {# selected result} other {# selected results}}."
+      },
+      "classify": {
+        "title": "Classify Selected Results",
+        "description": "Are you sure you want to classify {count, plural, one {# selected result} other {# selected results}}? This action will mark them as \"Manually Classified\"."
+      },
+      "reject": {
+        "title": "Reject Selected Results",
+        "description": "Are you sure you want to reject {count, plural, one {# selected result} other {# selected results}}? This action will mark them as \"Rejected\"."
+      },
+      "form": {
+        "title": "Title",
+        "url": "URL",
+        "status": "Status",
+        "data": "Data (JSON)",
+        "dataJson": "Advanced Data Configuration (JSON)",
+        "placeholderData": "{\"key\": \"value\"}",
+        "invalidJson": "Invalid JSON format. Please fix syntax before saving.",
+        "createDescription": "Add a new scrapper result entry with its URL, status, and data payload.",
+        "editDescription": "Update the selected scrapper result details and data."
+      }
+    },
+    "dropdown": {
+      "view": "View",
+      "toggleColumns": "Toggle columns",
+      "actions": "More actions",
+      "edit": "Edit",
+      "reject": "Reject",
+      "classify": "Classify",
+      "delete": "Delete"
+    },
+    "toasts": {
+      "addSuccess": "Scrapper result added successfully.",
+      "addError": "Error adding scrapper result. Please try again.",
+      "updateSuccess": "Scrapper result updated successfully.",
+      "updateError": "Error updating scrapper result. Please try again.",
+      "deleteSuccess": "Scrapper result(s) deleted successfully.",
+      "deleteError": "Error deleting scrapper result(s). Please try again.",
+      "classifySuccess": "Scrapper result(s) classified successfully.",
+      "classifyError": "Error classifying scrapper result(s). Please try again.",
+      "rejectSuccess": "Scrapper result(s) rejected successfully.",
+      "rejectError": "Error rejecting scrapper result(s). Please try again."
+    },
+    "pagination": {
+      "rowsPerPage": "Rows per page",
+      "selectRows": "Select number of rows",
+      "info": "{start}-{end} of {total}",
+      "goToFirst": "Go to first page",
+      "goToPrevious": "Go to previous page",
+      "goToNext": "Go to next page",
+      "goToLast": "Go to last page"
+    },
+    "view": "View",
+    "toggleColumns": "Toggle columns"
+  },
+  "feedbackSummaries": {
+    "title": "Feedback Summaries",
+    "subtitle": "Review and manage user feedback linked to Calls for Proposals",
+    "noFeedbackItems": "No feedback summaries items found.",
+    "columns": {
+      "selectAll": "Select all",
+      "selectRow": "Select row",
+      "createdAt": "Created At",
+      "status": "Status",
+      "actions": "Actions",
+      "owner": "Owner",
+      "cfpAnalysis": "Call For Proposal",
+      "name": "Names",
+      "correct": "Correct",
+      "comment": "Comment"
+    },
+    "values": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "filters": {
+      "searchPlaceholder": "Filter by Call for Proposal title...",
+      "status": "Status",
+      "statusDescription": "Filter by feedback status",
+      "clear": "Clear filter"
+    },
+    "drawer": {
+      "title": "Feedback Summary Details",
+      "description": "Detailed view of the selected feedback summary."
+    },
+    "status": {
+      "NEW": "New",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "actions": {
+      "delete": "Delete",
+      "viewDetails": "View Details",
+      "cancel": "Cancel",
+      "confirmDelete": "Delete",
+      "close": "Close"
+    },
+    "dropdown": {
+      "open": "View",
+      "delete": "Delete"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Are you absolutely sure?",
+        "description": "This action cannot be undone. This will permanently delete {count, plural, one {# selected feedback summary} other {# selected feedback summaries}}."
+      },
+      "details": {
+        "title": "Feedback Details",
+        "cfpInfo": "Call for Proposal Info",
+        "userInfo": "User",
+        "createdAt": "Created At",
+        "feedback": "Feedback Data"
+      }
+    },
+    "toasts": {
+      "deleteSuccess": "Feedback summary deleted successfully.",
+      "deleteError": "Error deleting feedback summary. Please try again."
+    },
+    "pagination": {
+      "rowsPerPage": "Rows per page",
+      "selectRows": "Select number of results",
+      "info": "{start}-{end} of {total}",
+      "goToFirst": "Go to first page",
+      "goToPrevious": "Go to previous page",
+      "goToNext": "Go to next page",
+      "goToLast": "Go to last page"
+    },
+    "view": "View",
+    "toggleColumns": "Toggle columns"
+  }
+}

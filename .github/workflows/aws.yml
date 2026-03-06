@@ -1,0 +1,114 @@
+name: CI - Build and Push Service Images to AWS ECR
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.override-for-tag.outputs.services || steps.format-services.outputs.services }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed service directories
+        id: changed-services
+        uses: tj-actions/changed-files@v46
+        with:
+          files_yaml: |
+            scraper:
+              - scraper/**
+            docs:
+              - docs/**
+            management:
+              - management/**
+            rabbitmq:
+              - rabbitmq/**
+            redis:
+              - redis/**
+            frontend:
+              - frontend/**
+            classifier:
+              - classifier/**
+            chat-server:
+              - chat-server/**
+
+      - name: Format services as JSON array
+        id: format-services
+        run: |
+          arr=$(echo '${{ steps.changed-services.outputs.changed_keys }}' | xargs -n1 | jq -R . | jq -s -c .)
+          echo "services=$arr" >> $GITHUB_OUTPUT
+
+      - name: Override for Tag Push to Build All Services
+        if: github.ref_type == 'tag'
+        id: override-for-tag
+        run: |
+          echo "services=[\"scraper\",\"docs\",\"management\",\"rabbitmq\",\"redis\",\"frontend\",\"classifier\",\"chat-server\"]" >> $GITHUB_OUTPUT
+
+  build-and-push-to-ecr:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.services != '[""]'
+    runs-on: ubuntu-latest
+    environment: aws
+    strategy:
+      matrix:
+        service: ${{ fromJson(needs.detect-changes.outputs.services) }}
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Prepare Docker build arguments
+        id: docker-build-args
+        if: matrix.service == 'frontend'
+        run: |
+          {
+            echo "args<<EOF"
+            echo "VITE_OIDC_AUTHORITY=${{ secrets.VITE_OIDC_AUTHORITY }}"
+            echo "VITE_OIDC_CLIENT_ID=${{ secrets.VITE_OIDC_CLIENT_ID }}"
+            echo "VITE_OIDC_REDIRECT_URI=${{ secrets.VITE_OIDC_REDIRECT_URI }}"
+            echo "VITE_OIDC_SCOPE=${{ secrets.VITE_OIDC_SCOPE }}"
+            echo "VITE_OIDC_POST_LOGOUT_REDIRECT_URI=${{ secrets.VITE_OIDC_POST_LOGOUT_REDIRECT_URI }}"
+            echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}"
+            echo "VITE_CHATBOT_MODEL=${{ secrets.VITE_CHATBOT_MODEL }}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.service }}
+          push: ${{ github.event_name == 'push' }}
+          build-args: ${{ steps.docker-build-args.outputs.args }}
+          tags: |
+            ${{ secrets.ECR_REGISTRY }}/${{ matrix.service }}:${{ github.sha }}
+            ${{ (github.ref_name == 'main' || github.ref_type == 'tag') && format('{0}/{1}:latest', secrets.ECR_REGISTRY, matrix.service) || '' }}
+            ${{ github.ref_type == 'tag' && format('{0}/{1}:{2}', secrets.ECR_REGISTRY, matrix.service, github.ref_name) || '' }}
+          labels: |
+            org.opencontainers.image.source=${{ github.repositoryUrl }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=registry,ref=${{ secrets.ECR_REGISTRY }}/${{ matrix.service }}:buildcache
+          cache-to: type=registry,ref=${{ secrets.ECR_REGISTRY }}/${{ matrix.service }}:buildcache,mode=max

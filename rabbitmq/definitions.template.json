@@ -1,0 +1,190 @@
+{
+  "users": [
+    {
+      "name": "rabbitmq",
+      "password_hash": "${RABBITMQ_DEFAULT_PASS_HASH}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/",
+      "description": "Default virtual host",
+      "metadata": {
+        "description": "Default virtual host",
+        "tags": [],
+        "default_queue_type": "classic"
+      },
+      "tags": []
+    }
+  ],
+  "permissions": [
+    {
+      "user": "rabbitmq",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "queues": [
+    {
+      "name": "scraper_target_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "scraper_target_dlq_exchange",
+        "x-dead-letter-routing-key": "scraper_target_dlq_routing_key"
+      }
+    },
+    {
+      "name": "scraper_result_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "scraper_target_dlq_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "classification_target_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "classification_result_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "dlq_classification_result_exchange",
+        "x-dead-letter-routing-key": "dlq_classification_result_routing_key"
+      }
+    },
+    {
+      "name": "dlq_classification_result_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "scraper_target_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "scraper_target_dlq_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "scraper_result_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "classification_target_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "classification_result_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "dlq_classification_result_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "scraper_target_exchange",
+      "vhost": "/",
+      "destination": "scraper_target_queue",
+      "destination_type": "queue",
+      "routing_key": "scraper_target_routing_key",
+      "arguments": {}
+    },
+    {
+      "source": "scraper_target_dlq_exchange",
+      "vhost": "/",
+      "destination": "scraper_target_dlq_queue",
+      "destination_type": "queue",
+      "routing_key": "scraper_target_dlq_routing_key",
+      "arguments": {}
+    },
+    {
+      "source": "scraper_result_exchange",
+      "vhost": "/",
+      "destination": "scraper_result_queue",
+      "destination_type": "queue",
+      "routing_key": "scraper_result_routing_key",
+      "arguments": {}
+    },
+    {
+      "source": "classification_target_exchange",
+      "vhost": "/",
+      "destination": "classification_target_queue",
+      "destination_type": "queue",
+      "routing_key": "classification_target_routing_key",
+      "arguments": {}
+    },
+    {
+      "source": "classification_result_exchange",
+      "vhost": "/",
+      "destination": "classification_result_queue",
+      "destination_type": "queue",
+      "routing_key": "classification_result_routing_key",
+      "arguments": {}
+    },
+    {
+      "source": "dlq_classification_result_exchange",
+      "vhost": "/",
+      "destination": "dlq_classification_result_queue",
+      "destination_type": "queue",
+      "routing_key": "dlq_classification_result_routing_key",
+      "arguments": {}
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+# =========================================
+# JetBrains / IntelliJ IDEA
+# =========================================
+# Covers user-specific settings, caches, and run configurations.
+# It's a safe default to ignore the entire directory.
+.idea/
+
+# Module files, which can contain user-specific paths.
+*.iml
+*.ipr
+*.iws
+
+# Rider - specific
+*.sln.DotSettings.user
+
+# =========================================
+# Other IDEs
+# =========================================
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# =========================================
+# Docker & Containerization
+# =========================================
+# Ignore local environment variables. A .env.example file should be
+# committed instead to show which variables are needed.
+.env
+.env.local
+.env.*.local
+
+# Ignore docker-compose override files that are for local development.
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# Ignore local data volumes mounted during development.
+# For example, if you have a database persisting data locally:
+# .db-data/
+# data/
+
+# =========================================
+# Build Output & Logs
+# =========================================
+# Compiled code and build artifacts for various languages.
+build/
+out/
+dist/
+target/
+
+# Log files and archives.
+*.log
+logs/
+*.log.*.gz
+
+# =========================================
+# Gradle
+# =========================================
+.gradle/
+.gradletasknamecache
+
+# Ignore Gradle build reports.
+/build/reports/
+
+# Ignore Gradle's build directory (covered globally above, but good practice).
+/build/
+
+# =========================================
+# Java
+# =========================================
+# Compiled class files.
+*.class
+
+# JVM crash logs.
+hs_err_pid*
+replay_pid*
+
+# Packaged archives.
+# These are typically generated into build/ or target/ but are good to ignore explicitly.
+*.jar
+!gradle-wrapper.jar
+*.war
+*.ear
+
+# =========================================
+# Python
+# =========================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# =========================================
+# Dependency Directories
+# =========================================
+# These are managed by package managers and should be installed, not versioned.
+node_modules/
+vendor/
+venv/
+.venv/
+
+# =========================================
+# Operating System Files
+# =========================================
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux (Vim swap files, etc.)
+*~
+.*.swp

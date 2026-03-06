@@ -1,0 +1,78 @@
+server:
+  port: 8080
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH2_ISSUER_URI}
+          jwk-set-uri: ${OAUTH2_JWK_URI}
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_DEFAULT_USER}
+    password:  ${RABBITMQ_DEFAULT_PASS}
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+amqp:
+  scraper-target:
+    exchange: ${SCRAPER_TARGET_EXCHANGE:scraper_target_exchange}
+    queue: ${SCRAPER_TARGET_QUEUE:scraper_target_queue}
+    routing-key: ${SCRAPER_TARGET_ROUTING_KEY:scraper_target_routing_key}
+  scraper-result:
+    exchange: ${SCRAPER_RESULT_EXCHANGE:scraper_result_exchange}
+    queue: ${SCRAPER_RESULT_QUEUE:scraper_result_queue}
+    routing-key: ${SCRAPER_RESULT_ROUTING_KEY:scraper_result_routing_key}
+  classification-target:
+    exchange: ${CLASSIFICATION_TARGET_EXCHANGE:classification_target_exchange}
+    queue: ${CLASSIFICATION_TARGET_QUEUE:classification_target_queue}
+    routing-key: ${CLASSIFICATION_TARGET_ROUTING_KEY:classification_target_routing_key}
+  classification-result:
+    exchange: ${CLASSIFICATION_RESULT_EXCHANGE:classification_result_exchange}
+    queue: ${CLASSIFICATION_RESULT_QUEUE:classification_result_queue}
+    routing-key: ${CLASSIFICATION_RESULT_ROUTING_KEY:classification_result_routing_key}
+    dlq:
+      exchange: ${DLQ_CLASSIFICATION_RESULT_EXCHANGE:dlq_classification_result_exchange}
+      queue: ${DLQ_CLASSIFICATION_RESULT_QUEUE:dlq_classification_result_queue}
+      routing-key: ${DLQ_CLASSIFICATION_RESULT_ROUTING_KEY:dlq_classification_result_routing_key}
+  retry:
+    max-attempts: 3
+    initial-interval: 500
+    max-interval: 60
+    multiplier: 2

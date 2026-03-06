@@ -1,0 +1,26 @@
+# Ignore dependencies, as they are installed within the Docker container
+node_modules
+
+# Ignore build output, as it's generated during the Docker build process
+dist
+build
+
+# Ignore Vite specific cache files
+.vite
+
+# Ignore environment files that might contain secrets
+.env
+.env.local
+.env.*.local
+
+# Ignore logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Ignore OS-specific files
+.DS_Store
+
+# Ignore test coverage reports
+coverage

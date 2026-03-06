@@ -1,0 +1,19 @@
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        # From .env
+        - VITE_OIDC_AUTHORITY=${VITE_OIDC_AUTHORITY}
+        - VITE_OIDC_CLIENT_ID=${VITE_OIDC_CLIENT_ID}
+        - VITE_OIDC_REDIRECT_URI=${VITE_OIDC_REDIRECT_URI}
+        - VITE_OIDC_SCOPE=${VITE_OIDC_SCOPE}
+        - VITE_OIDC_POST_LOGOUT_REDIRECT_URI=${VITE_OIDC_POST_LOGOUT_REDIRECT_URI}
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    ports:
+      - '3000:3000'
+
+networks:
+  local-cfp-net:
+    name: local-cfp-net
+    driver: bridge

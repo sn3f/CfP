@@ -1,0 +1,805 @@
+{
+  "system": {
+    "wip": {
+      "title": "En cours de développement",
+      "description": "Cette fonctionnalité est actuellement en cours de développement et peut ne pas être entièrement fonctionnelle. Veuillez revenir plus tard."
+    }
+  },
+  "theme": {
+    "title": "Thème",
+    "toggleAria": "Changer le thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "auth": {
+    "loginForm": {
+      "title": "Bon retour",
+      "description": "Pour continuer, veuillez vous connecter avec votre compte Microsoft.",
+      "loginButton": "Se connecter",
+      "terms": {
+        "part1": "En cliquant sur continuer, vous acceptez nos",
+        "termsOfService": "Conditions d’utilisation",
+        "privacyPolicy": "Politique de confidentialité",
+        "and": "et"
+      }
+    },
+    "loadingCard": {
+      "title": "Chargement...",
+      "description": "Veuillez patienter pendant que nous chargeons l’application.",
+      "details": "Cela peut prendre quelques secondes. Vous serez redirigé vers la page de connexion si vous n’êtes pas authentifié."
+    }
+  },
+  "404": {
+    "title": "404 - Page non trouvée",
+    "description": "La page que vous recherchez n’existe pas ou a été déplacée.",
+    "lost": "Perdu ?",
+    "goHome": "Aller à l’accueil"
+  },
+  "403": {
+    "title": "403 - Accès refusé",
+    "description": "Vous n’avez pas la permission d’accéder à cette page. Si vous pensez qu’il s’agit d’une erreur, veuillez contacter le support.",
+    "goBack": "Retourner en arrière"
+  },
+  "criterionTypes": {
+    "title": "Types de critères",
+    "subtitle": "Gérez vos critères de classification et leur logique d’évaluation",
+    "view": "Voir",
+    "toggleColumns": "Afficher/masquer les colonnes",
+    "caution": {
+      "title": "Utilisez {fieldName} et {evaluationLogic} avec précaution",
+      "description": "Ces champs ont un impact direct sur les résultats de l’IA et la précision de la classification. Utilisez des termes descriptifs et clairs en anglais afin d’assurer une compréhension optimale par le modèle."
+    },
+    "filters": {
+      "searchPlaceholder": "Filtrer par nom de champ ou description de la logique...",
+      "clear": "Effacer le filtre",
+      "filtersLabel": "Filtres",
+      "hard": "Critère strict",
+      "hardFilterDescription": "Filtrer par critère strict",
+      "hardYes": "Oui",
+      "hardNo": "Non"
+    },
+    "columns": {
+      "selectAll": "Tout sélectionner",
+      "selectRow": "Sélectionner la ligne",
+      "fieldName": "Nom du champ",
+      "evaluationLogic": "Logique d’évaluation",
+      "examples": "Exemples",
+      "hard": "Règle stricte",
+      "actions": "Actions"
+    },
+    "hard": {
+      "true": "Vrai",
+      "false": "Faux"
+    },
+    "actions": {
+      "delete": "Supprimer",
+      "addCriterion": "Ajouter un type de critère",
+      "editCriterion": "Modifier le type de critère",
+      "addNewCriterion": "Ajouter un nouveau type de critère",
+      "updateCriterion": "Mettre à jour le type de critère",
+      "confirmDelete": "Supprimer",
+      "cancel": "Annuler",
+      "saveAdd": "Ajouter le type de critère"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Êtes-vous absolument sûr ?",
+        "description": "Cette action est irréversible. Elle supprimera définitivement {count, plural, one {# type de critère sélectionné} other {# types de critères sélectionnés}}."
+      },
+      "form": {
+        "fieldName": "Nom du champ",
+        "evaluationLogic": "Logique d’évaluation",
+        "examples": "Exemples (optionnel)",
+        "hard": "Critère strict",
+        "placeholderFieldName": "Affecte les résultats IA — entrez un nom de champ clair en anglais (ex. : Customer Satisfaction).",
+        "placeholderEvaluation": "Affecte les résultats IA — décrivez en anglais la logique d’évaluation de ce champ.",
+        "placeholderExamples": "Valeurs ou modèles d’exemple (séparés par des virgules)...",
+        "createDescription": "Ajoutez un nouveau critère de classification avec sa logique et ses exemples.",
+        "editDescription": "Mettez à jour la logique d’évaluation et les exemples du critère."
+      }
+    },
+    "dropdown": {
+      "view": "Voir",
+      "toggleColumns": "Afficher/masquer les colonnes",
+      "actions": "Plus d’actions",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "table": {
+      "noResults": "Aucun type de critère trouvé.",
+      "noResultsDetails": "Essayez d’ajuster vos filtres ou vos termes de recherche."
+    },
+    "pagination": {
+      "rowsPerPage": "Lignes par page",
+      "info": "{start}-{end} sur {total}",
+      "goToFirst": "Aller à la première page",
+      "goToPrevious": "Aller à la page précédente",
+      "goToNext": "Aller à la page suivante",
+      "goToLast": "Aller à la dernière page",
+      "selectRows": "Sélectionner le nombre de résultats"
+    },
+    "toasts": {
+      "addSuccess": "Type de critère ajouté avec succès.",
+      "addError": "Erreur lors de l’ajout du type de critère. Veuillez réessayer.",
+      "updateSuccess": "Type de critère mis à jour avec succès.",
+      "updateError": "Erreur lors de la mise à jour du type de critère. Veuillez réessayer.",
+      "deleteSuccess": "Type(s) de critère supprimé(s) avec succès.",
+      "deleteError": "Erreur lors de la suppression du type de critère. Veuillez réessayer."
+    }
+  },
+  "workspace": {
+    "sidebar": {
+      "title": "Espace de travail",
+      "toggle": "Basculer la barre latérale",
+      "logout": "Se déconnecter",
+      "language": "Langue",
+      "tools": "Outils"
+    },
+    "routes": {
+      "dashboard": "Tableau de bord",
+      "proposals": "Appels à propositions",
+      "sources": "Sources",
+      "profile": "Profil",
+      "criterionTypes": "Types de critères",
+      "scrapperResults": "Résultats du scrapper",
+      "feedbackSummaries": "Synthèses de commentaires"
+    },
+    "table": {
+      "noResults": "Aucun résultat trouvé",
+      "noResultsDetails": "Essayez d’ajuster vos filtres ou vos termes de recherche."
+    },
+    "cfp": {
+      "title": "Appels à propositions",
+      "subtitle": "Gérer et suivre les opportunités de financement",
+      "searchPlaceholder": "Rechercher par titre ou organisation...",
+      "regionCountryPlaceholder": "Filtrer par pays ou région...",
+      "themePlaceholder": "Filtrer par domaines thématiques...",
+      "matchPlaceholder": "Pertinence",
+      "notFound": "Aucun appel à propositions trouvé.",
+      "notFoundDetails": "L’appel à propositions que vous recherchez n’existe pas ou a été supprimé.",
+      "common": {
+        "noTitle": "Sans titre",
+        "noData": "Pas de données",
+        "unknown": "Inconnu"
+      },
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "removeItem": "Supprimer l’élément",
+      "addItem": "Ajouter un élément",
+      "met": "Critères remplis",
+      "selectDate": "Sélectionner une date",
+      "navigateBack": "Retourner en arrière",
+      "hardCriterion": "Critère strict",
+      "feedback": {
+        "textareaPlaceholder": "Entrez vos commentaires ici...",
+        "updateError": "Échec de la mise à jour. Veuillez réessayer.",
+        "info": {
+          "title": "Examiner et valider la classification de l’appel à propositions. Les modifications sont enregistrées automatiquement.",
+          "description": "Cette page vous permet de revoir la classification générée automatiquement pour cet appel à propositions. Marquez chaque champ comme correct s’il est exact et laissez des commentaires si nécessaire. Toutes les modifications sont enregistrées automatiquement, vous pouvez donc quitter la page en toute sécurité."
+        },
+        "url": "URL",
+        "title": "Titre",
+        "eligible": "Critères remplis",
+        "exclusionReason": "Raison de l'exclusion",
+        "classificationSummary": "Résumé de la classification",
+        "theme": "Thèmes",
+        "country": "Pays",
+        "regions": "égions",
+        "funding_max": "Montant maximum du financement",
+        "funding_min": "Montant minimum du financement",
+        "organization": "Organisation",
+        "deadline_text": "Date limite (Texte)",
+        "funding_currency": "Monnaie de financement",
+        "proposal_summary": "Résumé de la proposition",
+        "organization_type": "Type d'organisation",
+        "applicationProcess": "Processus de candidature",
+        "eligibleActivities": "Activités éligibles",
+        "fundingRestrictions": "Restrictions de financement",
+        "implementationPeriod": "Période de mise en œuvre",
+        "contact": "Contact",
+        "deadline": "Date limite"
+      },
+      "toggleColumns": "Afficher/masquer les colonnes",
+      "view": "Voir",
+      "selectAll": "Tout sélectionner",
+      "selectRow": "Sélectionner la ligne",
+      "actionsMenu": "Plus d’actions",
+      "clearFilter": "Effacer le filtre",
+      "back": "Retour",
+      "filters": {
+        "region": "Région",
+        "sector": "Secteur",
+        "regionLabel": "Filtrer par région",
+        "sectorLabel": "Filtrer par domaine thématique",
+        "eligibility": "Éligibilité OIT",
+        "eligibilityLabel": "Filtrer par éligibilité OIT",
+        "eligibilityYes": "Probablement éligible",
+        "eligibilityNo": "Non éligible",
+        "selectDeadline": "Date limite à partir du...",
+        "overallEligibility": "Éligibilité (Critères impératifs)",
+        "overallEligibilityLabel": "Filtrer par éligibilité (critères impératifs)"
+      },
+      "columns": {
+        "organization": "Organisation",
+        "title": "Titre",
+        "summary": "Résumé",
+        "region": "Régions",
+        "country": "Pays",
+        "themes": "Thématiques",
+        "deadline": "Date limite",
+        "fundingAmount": "Montant du financement",
+        "actions": "Actions",
+        "eligible": "Éligibilité OIT",
+        "type": "Type",
+        "name": "Nom",
+        "value": "Valeur",
+        "evidence": "Preuve",
+        "correct": "Correct",
+        "comment": "Commentaire",
+        "contact": "Contact",
+        "proposal_summary": "Résumé de la proposition",
+        "match": "Pertinence",
+        "timestamp": "Créé le"
+      },
+      "deadline": {
+        "expired": "Expiré",
+        "daysLeft": "{count, plural, one {# jour restant} other {# jours restants}}",
+        "unknown": "Inconnu"
+      },
+      "actions": {
+        "delete": "Supprimer",
+        "viewDetails": "Voir les détails",
+        "export": "Exporter",
+        "exportOptions": "Options d’exportation",
+        "exportExcel": "Exporter en Excel (.xlsx)",
+        "exportPdf": "Exporter en PDF",
+        "cancel": "Annuler",
+        "confirmDelete": "Supprimer",
+        "feedback": "Commentaires",
+        "editCfp": "Modifier la proposition",
+        "editCfpDescription": "Mettre à jour manuellement le contenu de la classification de la proposition. Les modifications seront perdues en cas de reclassification.",
+        "save": "Enregistrer",
+        "saving": "Enregistrement...",
+        "edit": "Modifier",
+        "addAnother": "Ajouter un autre...",
+        "tagsInputPlaceholder": "Saisissez une nouvelle entrée et appuyez sur Entrée",
+        "selectedDeadline": "Sélectionner la date limite",
+        "addProposal": "Ajouter un appel",
+        "reclassify": "Reclasser"
+      },
+      "deleteDialog": {
+        "title": "Êtes-vous absolument sûr ?",
+        "description": "Cette action est irréversible. Elle supprimera définitivement {count, plural, one {# ligne sélectionnée} other {# lignes sélectionnées}}."
+      },
+      "pagination": {
+        "rowsPerPage": "Lignes par page",
+        "info": "{start}-{end} sur {total} entrées",
+        "goToFirst": "Aller à la première page",
+        "goToPrevious": "Aller à la page précédente",
+        "goToNext": "Aller à la page suivante",
+        "goToLast": "Aller à la dernière page",
+        "selectRows": "Sélectionner le nombre de résultats"
+      },
+      "toasts": {
+        "deleteSuccess": "Ligne(s) supprimée(s) avec succès.",
+        "deleteError": "Une erreur est survenue lors de la suppression de la ligne. Veuillez réessayer.",
+        "updateSuccess": "Entrée mise à jour avec succès.",
+        "updateError": "Échec de la modification d'une entrée.",
+        "addSuccess": "Demande de classification envoyée avec succès. Actualisez la page dans quelques minutes pour voir les résultats.",
+        "addError": "Échec de l'ajout d'une nouvelle entrée.",
+        "reclassifyError": "Échec du reclassement.",
+        "reclassifySuccess": "Demande de reclassement envoyée avec succès. Vérifiez les résultats dans quelques minutes."
+      },
+      "addCfp": {
+        "title": "Ajouter un nouvel appel à propositions",
+        "description": "Ajoutez des données pour classifier manuellement un appel à propositions. Collez votre contenu ou ajoutez des pièces jointes.",
+        "url": "URL (Facultatif)",
+        "content": "Contenu",
+        "attachments": "Pièces jointes"
+      },
+      "reclassifyCfp": {
+        "title": "Reclasser",
+        "description": "Ajouter de nouvelles pièces jointes et reclasser le CfP.",
+        "caution": {
+          "title": "Les données saisies manuellement seront perdues",
+          "description": "Toutes les pièces jointes seront renvoyées pour classification. Toutes les modifications apportées manuellement à la proposition seront perdues et écrasées."
+        },
+        "attachments": "Nouvelles pièces jointes"
+      },
+      "overview": {
+        "tab": "Aperçu",
+        "regions": "Régions",
+        "countries": "Pays",
+        "themes": "Thématiques",
+        "deadline": "Date limite",
+        "duration": "Durée",
+        "months": "{count, plural, one {# mois} other {# mois}}",
+        "fundingAmount": "Montant du financement",
+        "coFinancing": "Cofinancement requis",
+        "implementationPeriod": "Période de mise en œuvre",
+        "yes": "Oui",
+        "no": "Non",
+        "source": "Source",
+        "feedback": "Commentaires",
+        "contact": "Contact",
+        "title": "Titre",
+        "summary": "Résumé",
+        "organization": "Organisation",
+        "eligibility": "Éligibilité",
+        "eligible": "Probablement éligible",
+        "notEligible": "Non éligible",
+        "link": "Lien",
+        "shortSummaryTitle": "Résumé court",
+        "shortSummaryDescription": "Détails clés concernant cet appel à propositions.",
+        "additionalInfo": {
+          "title": "Informations supplémentaires",
+          "description": "Plus de détails sur cet appel à propositions.",
+          "empty": "Aucune information supplémentaire fournie."
+        },
+        "criteria": {
+          "title": "Critères",
+          "description": "Critères clés pour cet appel à propositions.",
+          "empty": "Aucun critère spécifique mentionné.",
+          "met": "Critère respecté",
+          "notMet": "Critère non respecté",
+          "hard": "Critère strict"
+        },
+        "fundingRestrictions": {
+          "title": "Restrictions de financement",
+          "description": "Toute restriction sur l'utilisation des fonds pour cet appel à propositions.",
+          "empty": "Aucune restriction de financement spécifique mentionnée."
+        },
+        "eligibleActivities": {
+          "title": "Activités éligibles",
+          "description": "Types d'activités financées par cet appel à propositions.",
+          "empty": "Aucune activité spécifique mentionnée."
+        },
+        "applicationProcess": {
+          "title": "Processus de candidature",
+          "description": "Étapes pour postuler à cet appel à propositions.",
+          "empty": "Aucun processus de candidature spécifique mentionné."
+        },
+        "eligibleOrganizations": {
+          "title": "Organisations éligibles",
+          "description": "Types d’organisations pouvant postuler.",
+          "empty": "Aucun type d’organisation spécifique mentionné."
+        },
+        "attachments": {
+          "title": "Pièces jointes",
+          "description": "Documents pertinents pour cet appel à propositions.",
+          "none": "Aucune pièce jointe disponible.",
+          "download": "Télécharger {name}",
+          "name": "Nom",
+          "type": "Type",
+          "actions": "Actions"
+        },
+        "unknown": "Inconnu",
+        "iloEligible": "ILO est éligible pour postuler",
+        "iloNotEligible": "ILO n'est pas éligible pour postuler",
+        "focalPerson": {
+          "label": "Point focal des partenariats de l'OIT",
+          "text": "Avant de postuler, veuillez vérifier votre éligibilité auprès de ",
+          "link": "votre point focal pour les partenariats."
+        },
+        "developmentCooperationDashboard": {
+          "label": "Tableau de bord de la coopération au développement de l'OIT",
+          "text": "En savoir plus sur l'organisation et les collaborations existantes."
+        },
+        "edit": {
+          "title": "Modifier",
+          "description": "Mettre à jour manuellement le contenu de la classification de la proposition. Les modifications seront perdues en cas de reclassification.",
+          "placeholder": "Modifier le contenu..."
+        }
+      },
+      "chat": {
+        "tab": "Chat",
+        "aiPowered": "Propulsé par l’IA",
+        "title": "Assistant IA",
+        "description": "Je connais tous les détails de l’appel à propositions que vous consultez. Posez-moi vos questions !",
+        "placeholder": "Tapez votre question ici, ex. : « Quelle est la date limite de soumission ? »",
+        "exampleQuestions": "Questions suggérées",
+        "presetQuestions": {
+          "strategic": {
+            "group": "Stratégique",
+            "questions": {
+              "q1": "L'appel à propositions est-il aligné avec le mandat de l'OIT et les priorités de la région ou du pays concerné ?",
+              "q2": "Quel est l'objectif de l'appel à propositions ?"
+            }
+          },
+          "financial": {
+            "group": "Financier",
+            "questions": {
+              "q1": "Quel est le rapport entre les fonds et la portée géographique de la mise en œuvre ?",
+              "q2": "Quels sont les frais généraux, le S&E, l'équipement et les autres coûts directs et indirects ?",
+              "q3": "Les frais de personnel et les dépenses de fonctionnement sont-ils viables selon les critères de la proposition ? (Considérant que les frais de personnel de l'OIT peuvent parfois couvrir jusqu'à 50 % des coûts de la proposition.)",
+              "q4": "Les exigences en matière de cofinancement ou de fonds de contrepartie sont-elles réalisables ?"
+            }
+          },
+          "operational": {
+            "group": "Opérationnel",
+            "questions": {
+              "q1": "Quelle serait la lourdeur transactionnelle de la mise en œuvre ?",
+              "q2": "Quel est le rôle des partenaires ?"
+            }
+          },
+          "procedural": {
+            "group": "Procédural",
+            "questions": {
+              "q1": "Quel est le processus de candidature pour cet appel à propositions ?",
+              "q2": "Puis-je soumettre un projet qui se déroulera dans plusieurs pays ?"
+            }
+          }
+        }
+      },
+      "fileUploader": {
+        "uploadLabel": "Téléverser des fichiers",
+        "uploadTitle": "Téléverser des fichiers",
+        "helperText": "Documents uniquement • Jusqu'à {maxSize} au total",
+        "selectFiles": "Sélectionner des fichiers",
+        "uploadedFiles": "Fichiers téléversés ({count})",
+        "removeAll": "Tout supprimer",
+        "addMore": "Ajouter plus",
+        "removeFile": "Supprimer le fichier",
+        "errors": {
+          "totalSizeExceeded": "La taille totale dépasse {size}"
+        }
+      }
+    }
+  },
+  "sources": {
+    "title": "Sources",
+    "subtitle": "Gérez vos sources de contenu et leurs directives",
+    "filters": {
+      "searchPlaceholder": "Filtrer par nom ou URL de site Web...",
+      "statusDescription": "Filtrer par statut de la source",
+      "clear": "Effacer le filtre",
+      "status": "Statut",
+      "filtersLabel": "Filtres"
+    },
+    "processing": {
+      "MANUAL": "Mode manuel",
+      "AUTO": "Mode automatique"
+    },
+    "columns": {
+      "selectAll": "Tout sélectionner",
+      "selectRow": "Sélectionner la ligne",
+      "name": "Nom",
+      "websiteUrl": "URL du site Web",
+      "status": "Statut",
+      "frequency": "Fréquence",
+      "guidelines": "Directives",
+      "actions": "Actions",
+      "nextExecution": "Prochaine Exécution"
+    },
+    "status": {
+      "ACTIVE": "Actif",
+      "INACTIVE": "Inactif"
+    },
+    "frequency": {
+      "HOURLY": "Chaque heure",
+      "DAILY": "Quotidien",
+      "WEEKLY": "Hebdomadaire",
+      "MONTHLY": "Mensuel"
+    },
+    "guidelines": {
+      "none": "Aucune directive"
+    },
+    "actions": {
+      "delete": "Supprimer",
+      "deleteSelected": "Supprimer la sélection",
+      "addSource": "Ajouter une source",
+      "editSource": "Modifier la source",
+      "addNewSource": "Ajouter une nouvelle source",
+      "updateSource": "Mettre à jour la source",
+      "confirmDelete": "Confirmer la suppression",
+      "cancel": "Annuler",
+      "saveAdd": "Ajouter une source",
+      "scrapping": "Extraire maintenant"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Êtes-vous absolument sûr ?",
+        "description": "Cette action est irréversible. Cela supprimera définitivement {count, plural, one {# source sélectionnée} other {# sources sélectionnées}}."
+      },
+      "form": {
+        "name": "Nom",
+        "websiteUrl": "URL du site Web",
+        "status": "Statut",
+        "frequency": "Fréquence d'extraction",
+        "guidelines": "Directives (optionnel)",
+        "placeholderGuidelines": "Saisissez les directives de contenu pour cette source...",
+        "createDescription": "Ajoutez une nouvelle source de contenu avec ses détails et directives.",
+        "editDescription": "Mettez à jour les informations et directives de la source.",
+        "advancedConfig": "Configuration avancée",
+        "configJson": "Configuration (JSON)",
+        "invalidJson": "Format JSON invalide. Corrigez la syntaxe avant d'enregistrer.",
+        "placeholderConfig": "{\"clé\": \"valeur\"}",
+        "scrapping": "Mode d'extraction",
+        "classification": "Mode de classification",
+        "scrappingTrigger": "Déclencher l'extraction",
+        "scrappingTriggerDescription": "Déclenchez manuellement l'extraction pour cette source en dehors de la fréquence planifiée.",
+        "noStepsConfigured": "Aucune étape configurée",
+        "stepSingular": "Étape",
+        "stepPlural": "Étapes",
+        "advancedConfigDescription": "Créez votre flux de travail d'extraction en ajoutant et en configurant des étapes.",
+        "builder": "Constructeur",
+        "preview": "Aperçu",
+        "addFirstStep": "Ajouter la première étape",
+        "addStep": "Ajouter une étape",
+        "copied": "Copié !",
+        "copyJson": "Copier JSON",
+        "stepsConfigured": "{count, plural, one {Étape configurée} other {Étapes configurées}}",
+        "saveConfiguration": "Enregistrer la configuration",
+        "shrink": "Réduire",
+        "expand": "Agrandir",
+        "step": "Étape",
+        "operation": {
+          "VISIT": "Visiter",
+          "SCRAP": "Extraire",
+          "ITERATOR": "Itérateur",
+          "CRAWLER": "Explorateur"
+        },
+        "operationFields": {
+          "content-selector": {
+            "label": "Sélecteur de contenu",
+            "placeholder": "Sélecteur CSS ciblant le contenu de la page, ex. div.content, article.main"
+          },
+          "item-selector": {
+            "label": "Sélecteur d'élément",
+            "placeholder": "Sélecteur CSS pour les éléments à itérer, ex. div.item, ul > li"
+          },
+          "next-page-selector": {
+            "label": "Sélecteur de page suivante",
+            "placeholder": "Sélecteur CSS pour le bouton ou le lien « Page suivante »"
+          },
+          "scrap-attachments": {
+            "label": "Extraire les pièces jointes",
+            "placeholder": "Vrai ou faux — indique s’il faut télécharger les pièces jointes liées"
+          },
+          "throttle-ms": {
+            "label": "Délai (ms)",
+            "placeholder": "Délai entre les requêtes en millisecondes, ex. 10000"
+          },
+          "max-depth": {
+            "label": "Profondeur maximale",
+            "placeholder": "Profondeur maximale de récursion pour l'explorateur, ex. 3"
+          },
+          "page-text-query": {
+            "label": "Recherche de texte sur la page",
+            "placeholder": "Mot(s)-clé(s) à rechercher dans le contenu de la page"
+          },
+          "page-score-threshold": {
+            "label": "Seuil de score de page",
+            "placeholder": "Score minimal de correspondance (0.0–1.0) pour la page"
+          },
+          "url-text-query": {
+            "label": "Recherche de texte d'URL",
+            "placeholder": "Mot(s)-clé(s) à rechercher dans les URL lors de l'exploration"
+          },
+          "url-score-threshold": {
+            "label": "Seuil de score d'URL",
+            "placeholder": "Score minimal de correspondance (0.0–1.0) pour l'URL"
+          },
+          "follow-links": {
+            "label": "Suivre les liens",
+            "placeholder": "Vrai ou faux — indique s’il faut suivre les liens internes"
+          }
+        },
+        "toggleDesc": "Basculer pour activer ou désactiver cette option.",
+        "moveUp": "Déplacer vers le haut",
+        "moveDown": "Déplacer vers le bas",
+        "removeStep": "Supprimer l'étape",
+        "scrapAttachments": "Extraire les pièces jointes",
+        "noConfigRequired": "Cette opération ne nécessite aucune configuration supplémentaire."
+      }
+    },
+    "dropdown": {
+      "view": "Voir",
+      "toggleColumns": "Afficher/masquer les colonnes",
+      "actions": "Plus d'actions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "scrape": "Extraire"
+    },
+    "toasts": {
+      "addSuccess": "Source ajoutée avec succès.",
+      "addError": "Échec de l'ajout de la source.",
+      "updateSuccess": "Source mise à jour avec succès.",
+      "updateError": "Échec de la mise à jour de la source.",
+      "deleteSuccess": "Source supprimée avec succès.",
+      "deleteError": "Échec de la suppression de la source.",
+      "scrappingSuccess": "Extraction démarrée avec succès.",
+      "scrappingError": "Échec du démarrage de l'extraction."
+    },
+    "pagination": {
+      "rowsPerPage": "Lignes par page",
+      "selectRows": "Sélectionner le nombre de lignes",
+      "info": "{start}-{end} sur {total}",
+      "goToFirst": "Aller à la première page",
+      "goToPrevious": "Page précédente",
+      "goToNext": "Page suivante",
+      "goToLast": "Aller à la dernière page"
+    },
+    "view": "Voir",
+    "toggleColumns": "Afficher/masquer les colonnes"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Tout marquer comme lu",
+    "unread": "Non lu",
+    "open": "Ouvrir les notifications"
+  },
+  "scrapperResults": {
+    "title": "Résultats du Scraper",
+    "subtitle": "Gérez et examinez les données collectées par le scraper web",
+    "notFound": "Résultat du scraper introuvable",
+    "notFoundDetails": "Le résultat du scraper que vous recherchez n'existe pas ou a été supprimé.",
+    "navigateBack": "Revenir en arrière",
+    "back": "Retour",
+    "previewTitle": "Aperçu du résultat du scraper",
+    "filters": {
+      "searchPlaceholder": "Filtrer par titre ou URL...",
+      "statusDescription": "Filtrer par statut du résultat",
+      "clear": "Effacer le filtre",
+      "status": "Statut",
+      "filtersLabel": "Filtres"
+    },
+    "columns": {
+      "selectAll": "Tout sélectionner",
+      "selectRow": "Sélectionner la ligne",
+      "title": "Titre",
+      "url": "URL",
+      "status": "Statut",
+      "actions": "Actions",
+      "timestamp": "Horodatage",
+      "content": "Contenu"
+    },
+    "status": {
+      "NEW": "Prêt pour la classification",
+      "CLASSIFIED_AUTO": "Classé automatiquement",
+      "FAILED": "Échec du traitement",
+      "CLASSIFIED_MANUALLY": "Classé manuellement",
+      "REJECTED": "Rejeté"
+    },
+    "actions": {
+      "reject": "Rejeter",
+      "classify": "Classifier",
+      "view": "Voir",
+      "cancel": "Annuler",
+      "delete": "Supprimer"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Êtes-vous absolument sûr ?",
+        "description": "Cette action est irréversible. Elle supprimera définitivement {count, plural, one {# résultat sélectionné} other {# résultats sélectionnés}}."
+      },
+      "classify": {
+        "title": "Classifier les résultats sélectionnés",
+        "description": "Voulez-vous vraiment classifier {count, plural, one {# résultat sélectionné} other {# résultats sélectionnés}} ? Cette action les marquera comme « Classés manuellement »."
+      },
+      "reject": {
+        "title": "Rejeter les résultats sélectionnés",
+        "description": "Voulez-vous vraiment rejeter {count, plural, one {# résultat sélectionné} other {# résultats sélectionnés}} ? Cette action les marquera comme « Rejetés »."
+      },
+      "form": {
+        "title": "Titre",
+        "url": "URL",
+        "status": "Statut",
+        "data": "Données (JSON)",
+        "dataJson": "Configuration avancée des données (JSON)",
+        "placeholderData": "{\"clé\": \"valeur\"}",
+        "invalidJson": "Format JSON invalide. Corrigez la syntaxe avant d'enregistrer.",
+        "createDescription": "Ajoutez une nouvelle entrée de résultat de scraper avec son URL, son statut et ses données.",
+        "editDescription": "Mettez à jour les détails et les données du résultat sélectionné."
+      }
+    },
+    "dropdown": {
+      "view": "Voir",
+      "toggleColumns": "Afficher/Masquer des colonnes",
+      "actions": "Plus d'actions",
+      "edit": "Modifier",
+      "reject": "Rejeter",
+      "classify": "Classifier",
+      "delete": "Supprimer"
+    },
+    "toasts": {
+      "addSuccess": "Résultat du scraper ajouté avec succès.",
+      "addError": "Erreur lors de l'ajout du résultat du scraper. Veuillez réessayer.",
+      "updateSuccess": "Résultat du scraper mis à jour avec succès.",
+      "updateError": "Erreur lors de la mise à jour du résultat du scraper. Veuillez réessayer.",
+      "deleteSuccess": "Résultat(s) du scraper supprimé(s) avec succès.",
+      "deleteError": "Erreur lors de la suppression du/des résultat(s) du scraper. Veuillez réessayer.",
+      "classifySuccess": "Résultat(s) du scraper classé(s) avec succès.",
+      "classifyError": "Erreur lors de la classification du/des résultat(s) du scraper. Veuillez réessayer.",
+      "rejectSuccess": "Résultat(s) du scraper rejeté(s) avec succès.",
+      "rejectError": "Erreur lors du rejet du/des résultat(s) du scraper. Veuillez réessayer."
+    },
+    "pagination": {
+      "rowsPerPage": "Lignes par page",
+      "selectRows": "Sélectionner le nombre de lignes",
+      "info": "{start}-{end} sur {total}",
+      "goToFirst": "Aller à la première page",
+      "goToPrevious": "Page précédente",
+      "goToNext": "Page suivante",
+      "goToLast": "Aller à la dernière page"
+    },
+    "view": "Voir",
+    "toggleColumns": "Afficher/Masquer des colonnes"
+  },
+  "feedbackSummaries": {
+    "title": "Synthèses de commentaires",
+    "subtitle": "Examiner et gérer les retours des utilisateurs liés aux appels à propositions",
+    "noFeedbackItems": "Aucune synthèse de commentaires trouvée.",
+    "columns": {
+      "selectAll": "Tout sélectionner",
+      "selectRow": "Sélectionner la ligne",
+      "createdAt": "Créé le",
+      "status": "Statut",
+      "actions": "Actions",
+      "owner": "Propriétaire",
+      "cfpAnalysis": "Appel à propositions",
+      "name": "Nom",
+      "correct": "Correct",
+      "comment": "Commentaire"
+    },
+    "values": {
+      "yes": "Oui",
+      "no": "Non"
+    },
+    "filters": {
+      "searchPlaceholder": "Filtrer par titre d’appel à propositions...",
+      "status": "Statut",
+      "statusDescription": "Filtrer par statut du commentaire",
+      "clear": "Effacer le filtre"
+    },
+    "drawer": {
+      "title": "Détails du commentaire",
+      "description": "Vue détaillée de la synthèse de commentaire sélectionnée."
+    },
+    "status": {
+      "NEW": "Nouveau",
+      "APPROVED": "Approuvé",
+      "REJECTED": "Rejeté"
+    },
+    "actions": {
+      "delete": "Supprimer",
+      "viewDetails": "Voir les détails",
+      "cancel": "Annuler",
+      "confirmDelete": "Supprimer",
+      "close": "Fermer"
+    },
+    "dropdown": {
+      "open": "Voir",
+      "delete": "Supprimer"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Êtes-vous absolument sûr ?",
+        "description": "Cette action est irréversible. Elle supprimera définitivement {count, plural, one {# synthèse de commentaire sélectionnée} other {# synthèses de commentaires sélectionnées}}."
+      },
+      "details": {
+        "title": "Détails du commentaire",
+        "cfpInfo": "Informations sur l’appel à propositions",
+        "userInfo": "Utilisateur",
+        "createdAt": "Créé le",
+        "feedback": "Données du commentaire"
+      }
+    },
+    "toasts": {
+      "deleteSuccess": "Synthèse de commentaire supprimée avec succès.",
+      "deleteError": "Erreur lors de la suppression de la synthèse de commentaire."
+    },
+    "pagination": {
+      "rowsPerPage": "Lignes par page",
+      "selectRows": "Sélectionner le nombre de résultats",
+      "info": "{start}-{end} sur {total}",
+      "goToFirst": "Aller à la première page",
+      "goToPrevious": "Aller à la page précédente",
+      "goToNext": "Aller à la page suivante",
+      "goToLast": "Aller à la dernière page"
+    },
+    "view": "Voir",
+    "toggleColumns": "Afficher/masquer les colonnes"
+  }
+}

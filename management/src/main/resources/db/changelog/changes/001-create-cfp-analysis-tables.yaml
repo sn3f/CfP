@@ -1,0 +1,545 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-criterion-type
+      author: SolDevelo
+      comment: "Create the criterion_type table to store definitions of criteria."
+      changes:
+        - createTable:
+            tableName: criterion_type
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: field_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: evaluation_logic
+                  type: TEXT
+              - column:
+                  name: examples
+                  type: TEXT
+              - column:
+                  name: hard
+                  type: BOOLEAN
+
+  - changeSet:
+      id: 2-create-cfp-analysis
+      author: SolDevelo
+      comment: "Create the cfp_analysis table to store analysis results."
+      changes:
+        - createTable:
+            tableName: cfp_analysis
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: VARCHAR(2048)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timestamp
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: eligible
+                  type: BOOLEAN
+              - column:
+                  name: exclusion_reason
+                  type: VARCHAR(255)
+              - column:
+                  name: classification_summary
+                  type: TEXT
+              - column:
+                  name: confidence_score
+                  type: DOUBLE
+              - column:
+                  name: extracted_data
+                  type: jsonb
+
+  - changeSet:
+      id: 3-create-criterion
+      author: SolDevelo
+      comment: "Create the criterion table to link analysis with criterion types and store results."
+      changes:
+        - createTable:
+            tableName: criterion
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: evidence
+                  type: TEXT
+              - column:
+                  name: cfp_analysis_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_criterion_on_cfpanalysis
+                    references: cfp_analysis(id)
+              - column:
+                  name: criterion_type_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_criterion_on_criteriontype
+                    references: criterion_type(id)
+
+  - changeSet:
+      id: 4-create-cfp-source
+      author: SolDevelo
+      comment: "Create the cfp_source table to store CfP sources."
+      changes:
+        - createTable:
+            tableName: cfp_source
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: website_url
+                  type: VARCHAR(2048)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: frequency
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: guidelines
+                  type: TEXT
+
+  - changeSet:
+      id: 5-add-config-column-to-cfp-source
+      author: SolDevelo
+      comment: "Add JSONB config column to cfp_source table."
+      changes:
+        - addColumn:
+            tableName: cfp_source
+            columns:
+              - column:
+                  name: config
+                  type: jsonb
+
+  - changeSet:
+      id: 6-modify-cfp-analysis-columns
+      author: SolDevelo
+      comment: "Change title and exclusion_reason columns to TEXT type."
+      changes:
+        - modifyDataType:
+            tableName: cfp_analysis
+            columnName: title
+            newDataType: TEXT
+        - modifyDataType:
+            tableName: cfp_analysis
+            columnName: exclusion_reason
+            newDataType: TEXT
+
+  - changeSet:
+      id: add-app-user-table
+      author: SolDevelo
+      changes:
+        - createTable:
+            tableName: app_user
+            columns:
+              - column:
+                  name: sub
+                  type: VARCHAR(255)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_synced_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+
+  - changeSet:
+      id: add-cfp-analysis-feedback-table
+      author: SolDevelo
+      changes:
+        - createTable:
+            tableName: cfp_analysis_feedback
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cfp_analysis_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_by_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: cfp_analysis_id
+            baseTableName: cfp_analysis_feedback
+            constraintName: fk_cfp_analysis_feedback_cfp_analysis
+            referencedColumnNames: id
+            referencedTableName: cfp_analysis
+
+  - changeSet:
+      id: add-app-user-analysis-feedback-foreign-key
+      author: SolDevelo
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: created_by_id
+            baseTableName: cfp_analysis_feedback
+            constraintName: fk_cfp_analysis_feedback_created_by
+            referencedColumnNames: sub
+            referencedTableName: app_user
+        - addForeignKeyConstraint:
+            baseColumnNames: updated_by_id
+            baseTableName: cfp_analysis_feedback
+            constraintName: fk_cfp_analysis_feedback_updated_by
+            referencedColumnNames: sub
+            referencedTableName: app_user
+
+  - changeSet:
+      id: add-cfp-analysis-feedback-item-table
+      author: SolDevelo
+      changes:
+        - createTable:
+            tableName: cfp_analysis_feedback_item
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cfp_analysis_feedback_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: key
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: correct
+                  type: BOOLEAN
+              - column:
+                  name: comment
+                  type: TEXT
+
+  - changeSet:
+      id: add-feedback-item-feedback-foreign-key
+      author: SolDevelo
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: cfp_analysis_feedback_id
+            baseTableName: cfp_analysis_feedback_item
+            constraintName: fk_item_to_feedback
+            referencedColumnNames: id
+            referencedTableName: cfp_analysis_feedback
+
+  - changeSet:
+      id: drop-creator-column
+      author: SolDevelo
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: cfp_analysis_feedback
+            constraintName: fk_cfp_analysis_feedback_created_by
+        - dropColumn:
+            tableName: cfp_analysis_feedback
+            columnName: created_by_id
+        - dropForeignKeyConstraint:
+            baseTableName: cfp_analysis_feedback
+            constraintName: fk_cfp_analysis_feedback_updated_by
+        - dropColumn:
+            tableName: cfp_analysis_feedback
+            columnName: updated_by_id
+
+  - changeSet:
+      id: add-owner-column
+      author: SolDevelo
+      changes:
+        - addColumn:
+            tableName: cfp_analysis_feedback
+            columns:
+              - column:
+                  name: owner_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: owner_id
+            baseTableName: cfp_analysis_feedback
+            constraintName: fk_cfp_analysis_feedback_owner
+            referencedColumnNames: sub
+            referencedTableName: app_user
+
+  - changeSet:
+      id: feedback_item-description-nullable
+      author: SolDevelo
+      changes:
+        - dropNotNullConstraint:
+            tableName: cfp_analysis_feedback_item
+            columnName: description
+            columnDataType: VARCHAR(255)
+
+  - changeSet:
+      id: feedback_item-description-split-into-value-evidence
+      author: SolDevelo
+      changes:
+        - addColumn:
+            tableName: cfp_analysis_feedback_item
+            columns:
+              - column:
+                  name: evidence
+                  type: TEXT
+              - column:
+                  name: value
+                  type: TEXT
+        - dropColumn:
+            tableName: cfp_analysis_feedback_item
+            columnName: description
+
+  - changeSet:
+      id: create-scrap-result-table
+      author: SolDevelo
+      comment: "Create table for storing results of the scraping process."
+      changes:
+        - createTable:
+            tableName: scrap_result
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: VARCHAR(2048)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+              - column:
+                  name: title
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timestamp
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sub_id
+                  type: VARCHAR(255)
+              - column:
+                  name: scrap_execution_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-scrap-attachment-table
+      author: SolDevelo
+      comment: "Create table for storing attachments related to scrap results."
+      changes:
+        - createTable:
+            tableName: scrap_attachment
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: VARCHAR(2048)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: BYTEA
+                  constraints:
+                    nullable: true
+              - column:
+                  name: content_type
+                  type: VARCHAR(255)
+              - column:
+                  name: label
+                  type: VARCHAR(255)
+              - column:
+                  name: sub_id
+                  type: VARCHAR(255)
+              - column:
+                  name: scrap_result_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: scrap_result_id
+            baseTableName: scrap_attachment
+            constraintName: fk_scrap_attachment_scrap_result
+            referencedColumnNames: id
+            referencedTableName: scrap_result
+
+  - changeSet:
+      id: remove-title-from-scrap-result
+      author: SolDevelo
+      comment: "Remove the 'title' column from the 'scrap_result' table."
+      changes:
+        - dropColumn:
+            tableName: scrap_result
+            columnName: title
+
+  - changeSet:
+      id: remove-title-from-cfp-analysis
+      author: SolDevelo
+      comment: "Remove the 'title' column from the 'cfp_analysis' table."
+      changes:
+        - dropColumn:
+            tableName: cfp_analysis
+            columnName: title
+
+  - changeSet:
+      id: modify-scrap-attachment-content-to-text
+      author: SolDevelo
+      comment: "Change 'content' column type from BYTEA to TEXT in 'scrap_attachment' table."
+      changes:
+        - modifyDataType:
+            tableName: scrap_attachment
+            columnName: content
+            newDataType: TEXT
+
+  - changeSet:
+      id: modify-scrap-attachment-label-to-text
+      author: SolDevelo
+      comment: "Change 'label' column type from VAR(255) to TEXT in 'scrap_attachment' table."
+      changes:
+        - modifyDataType:
+            tableName: scrap_attachment
+            columnName: label
+            newDataType: TEXT
+
+  - changeSet:
+      id: add-prompt-context-to-scrap-attachment
+      author: SolDevelo
+      comment: "Add 'prompt_context' to 'scrap_attachment' table."
+      changes:
+        - addColumn:
+            tableName: scrap_attachment
+            columns:
+              - column:
+                  name: prompt_context
+                  type: TEXT
+
+  - changeSet:
+      id: add-prompt-context-to-scrap-attachment-2
+      author: SolDevelo
+      comment: "Add 'prompt_context' to 'scrap_attachment' table - fix."
+      changes:
+        - addColumn:
+            tableName: scrap_result
+            columns:
+              - column:
+                  name: prompt_context
+                  type: TEXT
+        - dropColumn:
+            tableName: scrap_attachment
+            columnName: prompt_context

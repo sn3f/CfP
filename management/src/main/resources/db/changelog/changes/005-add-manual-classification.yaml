@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: make-scrap-result-fields-nullable
+      author: SolDevelo
+      changes:
+        - dropNotNullConstraint:
+            columnName: scrap_job_id
+            tableName: scrap_result
+            columnDataType: VARCHAR(255)
+        - dropNotNullConstraint:
+            columnName: url
+            tableName: scrap_result
+            columnDataType: VARCHAR(2048)
+  - changeSet:
+      id: make-cfp-analysis-url-nullable
+      author: SolDevelo
+      changes:
+        - dropNotNullConstraint:
+            columnName: url
+            tableName: cfp_analysis
+            columnDataType: VARCHAR(2048)

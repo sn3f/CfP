@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-analysis-deadline-field
+      author: SolDevelo
+      changes:
+        - addColumn:
+            tableName: cfp_analysis
+            columns:
+              - column:
+                  name: deadline
+                  type: DATE
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            splitStatements: true
+            stripComments: true
+            sql: |
+              UPDATE cfp_analysis
+              SET deadline = (extracted_data ->> 'deadline')::DATE
+              WHERE jsonb_exists(extracted_data, 'deadline')
+                AND extracted_data ->> 'deadline' IS NOT NULL;

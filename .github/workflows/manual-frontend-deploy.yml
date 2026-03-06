@@ -1,0 +1,64 @@
+name: Manual - Build and Push Frontend to AWS ECR
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'The branch, tag, or SHA to build from'
+        required: true
+        default: 'main'
+
+jobs:
+  build-and-push-frontend:
+    runs-on: ubuntu-latest
+    environment: aws
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Prepare Docker build arguments for Frontend
+        id: docker-build-args
+        run: |
+          {
+            echo "args<<EOF"
+            echo "VITE_OIDC_AUTHORITY=${{ secrets.VITE_OIDC_AUTHORITY }}"
+            echo "VITE_OIDC_CLIENT_ID=${{ secrets.VITE_OIDC_CLIENT_ID }}"
+            echo "VITE_OIDC_REDIRECT_URI=${{ secrets.VITE_OIDC_REDIRECT_URI }}"
+            echo "VITE_OIDC_SCOPE=${{ secrets.VITE_OIDC_SCOPE }}"
+            echo "VITE_OIDC_POST_LOGOUT_REDIRECT_URI=${{ secrets.VITE_OIDC_POST_LOGOUT_REDIRECT_URI }}"
+            echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}"
+            echo "VITE_CHATBOT_MODEL=${{ secrets.VITE_CHATBOT_MODEL }}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          build-args: ${{ steps.docker-build-args.outputs.args }}
+          tags: |
+            ${{ secrets.ECR_REGISTRY }}/frontend:${{ github.sha }}
+            ${{ secrets.ECR_REGISTRY }}/frontend:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.repositoryUrl }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=registry,ref=${{ secrets.ECR_REGISTRY }}/frontend:buildcache
+          cache-to: type=registry,ref=${{ secrets.ECR_REGISTRY }}/frontend:buildcache,mode=max

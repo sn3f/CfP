@@ -1,0 +1,18 @@
+# Handle line endings automatically for files detected as text
+# and leave all files detected as binary untouched.
+* text=auto
+
+# Enforce LF for all common text-based files
+*.java      text eol=lf
+*.kt        text eol=lf
+*.xml       text eol=lf
+*.properties text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.md        text eol=lf
+
+# Force shell scripts to have LF line endings
+*.sh        text eol=lf
+
+# Force batch scripts to have CRLF line endings
+*.bat       text eol=crlf

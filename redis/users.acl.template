@@ -1,0 +1,1 @@
+user ${REDIS_CRAWLER_USER} on ~* +@all >${REDIS_CRAWLER_PASSWORD}

@@ -1,0 +1,50 @@
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_DEFAULT_USER:}
+    password: ${RABBITMQ_DEFAULT_PASS:}
+    listener:
+      simple:
+        concurrency: 1
+        prefetch: 1
+        shutdown-timeout: 60000
+
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+    deserialization:
+      fail-on-unknown-properties: false
+
+scraper:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+amqp:
+  # Source of target URLs to scrape
+  target:
+    exchange: ${SCRAPER_TARGET_EXCHANGE:scraper_target_exchange}
+    queue: ${SCRAPER_TARGET_QUEUE:scraper_target_queue}
+    routing-key: ${SCRAPER_TARGET_ROUTING_KEY:scraper_target_routing_key}
+  # Destination of failed target URLs - auto
+  target-dlq:
+    exchange: ${DLQ_SCRAPER_TARGET_EXCHANGE:scraper_target_dlq_exchange}
+    queue: ${DLQ_SCRAPER_TARGET_QUEUE:scraper_target_dlq_queue}
+    routing-key: ${DLQ_SCRAPER_TARGET_ROUTING_KEY:scraper_target_dlq_routing_key}
+  # Destination of scraped pages
+  result:
+    exchange: ${SCRAPER_RESULT_EXCHANGE:scraper_result_exchange}
+    queue: ${SCRAPER_RESULT_QUEUE:scraper_result_queue}
+    routing-key: ${SCRAPER_RESULT_ROUTING_KEY:scraper_result_routing_key}
+  # Destination of 'failed to scrape' pages
+  result-errors:
+    exchange: ${SCRAPER_RESULT_ERRORS_EXCHANGE:scraper_errors_exchange}
+    queue: ${SCRAPER_RESULT_ERRORS_QUEUE:scraper_errors_queue}
+    routing-key: ${SCRAPER_RESULT_ERRORS_ROUTING_KEY:scraper_errors_routing_key}
