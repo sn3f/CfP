@@ -1,0 +1,1036 @@
+{
+  "generated_at": "2026-04-15T08:56:08.756790+00:00",
+  "total": 12,
+  "eligible_count": 0,
+  "results": [
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/call-for-proposals-strengthening-the-macadamia-nuts-export-value-chain-in-rwanda-through-organic-certification-elps",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Africa"
+      ],
+      "scraped_at": "2026-04-15T08:53:51.713352+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed hard criteria: Deadline is future",
+      "classification_summary": "This is a call for proposals from IFAD to strengthen the macadamia nuts export value chain in Rwanda through organic certification. Local non-profit organizations, non-governmental organizations, and commercial entities are welcome to apply. The deadline for submissions is January 5, 2026. The intervention intends to support macadamia smallholder farmers in obtaining organic certification by facilitating access to key inputs, required knowledge, and necessary infrastructure. Co-financing is not mentioned.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "true",
+          "evidence": "The text is completely silent on applicant types."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "The call mentions IFAD grant agreements and eligible expenditures, indicating a grant component."
+        },
+        "Grant size above threshold": {
+          "status": null,
+          "evidence": "Grant size is not specified."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline is 2026-01-05, which is before today (2026-04-15)."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is for proposals to implement an intervention, not to procure goods or services."
+        },
+        "Requires cofinancing": {
+          "status": "false",
+          "evidence": "Co-financing is not mentioned as a mandatory requirement for the application."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "The call does not require any specific pre-existing accreditation."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "The call does not specify leadership rules for consortia."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "The call does not restrict applicant origin to the donor's domestic territory."
+        }
+      },
+      "title": "Strengthening the Macadamia Nuts Export Value Chain in Rwanda through Organic Certification – ELPS",
+      "deadline": "2026-01-05",
+      "deadline_text": "05 January 2026",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "elpscfpRW2025@ifad.org",
+      "country": [
+        "Rwanda"
+      ],
+      "theme": [
+        "Sustainable Enterprises",
+        "Decent Work in Supply Chains"
+      ],
+      "organization_type": [
+        "Local non-profit organizations",
+        "Non-governmental organizations",
+        "Commercial entities"
+      ],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [
+        "Supporting macadamia smallholder farmers in obtaining organic certification",
+        "Facilitating access to key inputs",
+        "Providing required knowledge",
+        "Building necessary infrastructure"
+      ],
+      "funding_restrictions": [],
+      "proposal_summary": "IFAD is re-opening the ELPS Call for Proposals 2025 to select an Implementing Partner for an intervention to strengthen the macadamia nuts export value chain in Rwanda through organic certification. This project aims to support macadamia smallholder farmers in obtaining organic certification by facilitating access to key inputs, required knowledge, and infrastructure. Local non-profit organizations, NGOs, and commercial entities are welcome to apply. The deadline for submissions is January 5, 2026. Grant size is not specified. There are no co-financing requirements mentioned.",
+      "ilo_match_score": 0.6,
+      "ilo_match_evidence": "The call focuses on strengthening the macadamia nuts export value chain in Rwanda through organic certification, promoting sustainable enterprises, and improving conditions for smallholder farmers, which aligns with ILO's mandate on decent work in supply chains and sustainable development.",
+      "confidence_score": null
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/strengthening-sesame-value-chain-in-bangladesh-elps",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Asia"
+      ],
+      "scraped_at": "2026-04-15T08:54:00.670604+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed hard criteria: Deadline is future",
+      "classification_summary": "This is a call for proposals from IFAD to strengthen the sesame value chain in Bangladesh. Local non-profit, non-governmental organizations and commercial entities are welcome to apply. The deadline for submissions is December 5, 2025.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "true",
+          "evidence": "The text does not explicitly exclude International Organizations, therefore it is considered potentially eligible."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "The call for proposals is for a grant to selected Implementing Partners."
+        },
+        "Grant size above threshold": {
+          "status": null,
+          "evidence": "The document does not mention the grant size."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline is December 5, 2025, which is in the future."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is for proposals from Implementing Partners, not for procurement of goods/services."
+        },
+        "Requires cofinancing": {
+          "status": "false",
+          "evidence": "The document does not mention mandatory co-financing."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "No specific accreditation is mentioned as a requirement."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "The document does not have any consortium leadership rules."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "The call is open to local non-profit, non-governmental organizations and commercial entities."
+        }
+      },
+      "title": "Strengthening Sesame Value Chain in Bangladesh – ELPS",
+      "deadline": "2025-12-05",
+      "deadline_text": "The deadline for submissions is 5 December 2025",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "[email protected]",
+      "country": [
+        "Bangladesh"
+      ],
+      "theme": [
+        "Sustainable Enterprises",
+        "Employment Policy & Job Creation"
+      ],
+      "organization_type": [
+        "NGOs",
+        "Commercial entities",
+        "non-governmental organizations"
+      ],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [],
+      "funding_restrictions": [],
+      "proposal_summary": "IFAD is launching a call for proposals to strengthen the sesame value chain in Rajbari and Pabna Districts, Bangladesh, by improving productivity and quality in an environmentally sustainable way. Grants will be awarded to local non-profit, non-governmental organizations and commercial entities. The deadline for submissions is December 5, 2025. Co-financing is not mentioned.",
+      "ilo_match_score": 0.6,
+      "ilo_match_evidence": "The focus on strengthening value chains and rural enterprises aligns with ILO's mandate on employment and sustainable enterprises.",
+      "confidence_score": null
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/fo4impact-near-east-north-africa-europe-and-central-asia",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Africa",
+        "Arab States",
+        "EU",
+        "Europe and Central Asia"
+      ],
+      "scraped_at": "2026-04-15T08:54:13.206245+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed hard criteria: Deadline is future",
+      "classification_summary": "This is a Call for Proposals from IFAD for the FO4IMPACT grant in the Near East, North Africa, Europe and Central Asia region, aimed at promoting inclusive, sustainable, and climate-resilient agricultural value chains. The grant seeks to strengthen the capacity of farmers' organizations to deliver services to smallholder farmers, engage in policy dialogue, and enhance governance. Eligible applicants are farmers’ organizations representing more than one country or non-profit entities. Proposals, including a concept note and detailed budget, are due by December 29, 2025. Co-financing is not explicitly mentioned as a mandatory requirement.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "true",
+          "evidence": "The text does not specify ineligible entities."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "The call is for a grant to co-develop and implement the FO4IMPACT project."
+        },
+        "Grant size above threshold": {
+          "status": null,
+          "evidence": "The grant size is not specified."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline is December 29, 2025, which is in the future."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is for a grant to implement a project, not for procurement of goods/services."
+        },
+        "Requires cofinancing": {
+          "status": "false",
+          "evidence": "Co-financing is not mentioned as a mandatory requirement."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "The call does not require any specific accreditation."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "There are no stated rules about consortium leadership."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "The call does not explicitly restrict applicant origin to the donor's domestic territory."
+        }
+      },
+      "title": "FO4IMPACT (Near East, North Africa, Europe and Central Asia)",
+      "deadline": "2025-12-29",
+      "deadline_text": "29 December 2025 at 11:59 p.m. (Anywhere on Earth)",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "FO4IMPACT@ifad.org",
+      "country": [
+        "Albania",
+        "Algeria",
+        "Armenia",
+        "Azerbaijan",
+        "Belarus",
+        "Bosnia and Herzegovina",
+        "Bulgaria",
+        "Croatia",
+        "Cyprus",
+        "Egypt",
+        "Georgia",
+        "Greece",
+        "Kazakhstan",
+        "Kosovo",
+        "Kyrgyzstan",
+        "Lebanon",
+        "Libya",
+        "Moldova",
+        "Montenegro",
+        "Morocco",
+        "North Macedonia",
+        "Romania",
+        "Serbia",
+        "Syria",
+        "Tajikistan",
+        "Tunisia",
+        "Turkey",
+        "Turkmenistan",
+        "Ukraine",
+        "Uzbekistan"
+      ],
+      "theme": [
+        "Sustainable Enterprises",
+        "Decent Work in Supply Chains"
+      ],
+      "organization_type": [
+        "Farmers’ Organization",
+        "Non-profit entity"
+      ],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [
+        "institutional strengthening",
+        "market access",
+        "policy engagement",
+        "service delivery",
+        "showcasing best practices",
+        "producing evidence",
+        "generating knowledge to boost dialogue"
+      ],
+      "funding_restrictions": [],
+      "proposal_summary": "The International Fund for Agricultural Development (IFAD) is offering the FO4IMPACT grant to promote inclusive, sustainable, and climate-resilient agricultural value chains in the Near East, North Africa, Europe and Central Asia region. Eligible applicants are farmers’ organizations representing more than one country or non-profit entities. The grant aims to strengthen the capacity of farmers' organizations, and proposals are due by December 29, 2025. Co-financing requirements are not mandatory.",
+      "ilo_match_score": 0.6,
+      "ilo_match_evidence": "The focus on sustainable enterprises and value chains in agriculture, along with the emphasis on strengthening farmers' organizations aligns with ILO's work on promoting decent work in supply chains and supporting sustainable economic development.",
+      "confidence_score": null
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/call-for-proposals-fo4impact-latin-american-and-the-caribbean-",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Americas",
+        "Caribbean"
+      ],
+      "scraped_at": "2026-04-15T08:54:32.646278+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed hard criteria: Deadline is future",
+      "classification_summary": "This is a call for proposals from IFAD for FO4IMPACT in Latin America and the Caribbean. The grant aims to promote inclusive, sustainable, and climate-resilient agricultural value chains and strengthen the capacity of FOs. Eligible applicants are legally registered Farmers’ Organizations (FOs) in an IFAD Member State operating regionally or across multiple countries, or a consortium led by a regional or multi-country FO, which may include other legally registered non-profit entities. A co-financing contribution of at least 20% (cash and/or in-kind) is recommended. Proposals must be submitted by 2025-12-03.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "true",
+          "evidence": "The text does not list applicant types, therefore ILO eligibility is not restricted."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "The call is for a regional grant program."
+        },
+        "Grant size above threshold": {
+          "status": null,
+          "evidence": "The grant size is not mentioned in the text provided."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline is 2025-12-03, which is in the future."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is for a grant to implement a program, not for procurement of goods or services."
+        },
+        "Requires cofinancing": {
+          "status": "true",
+          "evidence": "A co-financing contribution of at least 20% (cash and/or in-kind) is recommended."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "No specific accreditation is mentioned as a requirement."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "The consortium must be led by a regional or multi-country FO; does not exclude UN."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "Eligible applicants are FOs legally registered in an IFAD Member State, so origin is not restricted to the donor's domestic territory."
+        }
+      },
+      "title": "FO4IMPACT (Latin American and the Caribbean)",
+      "deadline": "2025-12-03",
+      "deadline_text": "3 December 2025, at 11:59 p.m. (Anywhere on Earth, UTC–12)",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "[email protected]",
+      "country": [
+        "Antigua and Barbuda",
+        "Argentina",
+        "Bahamas",
+        "Barbados",
+        "Belize",
+        "Bolivia",
+        "Brazil",
+        "Chile",
+        "Colombia",
+        "Costa Rica",
+        "Cuba",
+        "Dominica",
+        "Dominican Republic",
+        "Ecuador",
+        "El Salvador",
+        "Grenada",
+        "Guatemala",
+        "Guyana",
+        "Haiti",
+        "Honduras",
+        "Jamaica",
+        "Mexico",
+        "Nicaragua",
+        "Panama",
+        "Paraguay",
+        "Peru",
+        "Saint Kitts and Nevis",
+        "Saint Lucia",
+        "Saint Vincent and the Grenadines",
+        "Suriname",
+        "Trinidad and Tobago",
+        "Uruguay",
+        "Venezuela"
+      ],
+      "theme": [
+        "Sustainable Enterprises",
+        "Employment Policy & Job Creation",
+        "Just Transitions towards Environmentally Sustainable Economies and Societies"
+      ],
+      "organization_type": [
+        "Farmers’ Organizations",
+        "Civil Society Organizations",
+        "NGOs"
+      ],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [
+        "Institutional strengthening",
+        "Market access",
+        "Policy engagement",
+        "Service delivery",
+        "Promoting inclusive, sustainable, and climate-resilient agricultural value chains",
+        "Strengthening the capacity of FOs to deliver services to smallholder farmers",
+        "Engage in evidence-based policy dialogue",
+        "Improve governance, transparency, and inclusiveness."
+      ],
+      "funding_restrictions": [],
+      "proposal_summary": "The International Fund for Agricultural Development (IFAD) is launching a call for proposals for the FO4IMPACT regional grant in Latin America and the Caribbean. The grant aims to promote inclusive, sustainable, and climate-resilient agricultural value chains and strengthen the capacity of Farmers' Organizations (FOs) to deliver services to smallholder farmers, engage in policy dialogue, and improve governance. Farmers’ Organizations (FOs) registered in an IFAD Member State and operating regionally or across multiple countries can apply, or as a consortium led by a regional or multi-country FO including other non-profit entities. A 20% co-financing contribution is recommended. The deadline for submission is December 3, 2025.",
+      "ilo_match_score": 0.6,
+      "ilo_match_evidence": "Focus on sustainable enterprises, employment policy/job creation, and just transitions in agriculture aligns with ILO's mandate for decent work in rural economies.",
+      "confidence_score": 0.85
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/call-for-proposals-increase-the-impact-of-digital-remittances-in-rural-morocco",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Africa"
+      ],
+      "scraped_at": "2026-04-15T08:54:45.452116+00:00",
+      "eligible": false,
+      "exclusion_reason": "ILO is not an eligible applicant type.",
+      "classification_summary": "This Call for Proposals from IFAD seeks partners to increase the impact of digital remittances in rural Morocco. The objectives are to expand access to digital transfer services, promote the use of financial services linked to remittances, and strengthen financial and digital education. Eligible applicants include private sector entities, public sector entities, and international organizations. The deadline for submission is December 10, 2025. Co-financing requirements are not specified.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "false",
+          "evidence": "The call specifies eligible applicants as Private sector entities, Public sector entities and International organizations - the ILO is not explicitly mentioned."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "The call is for project proposals, implying a grant or similar non-reimbursable funding instrument."
+        },
+        "Grant size above threshold": {
+          "status": null,
+          "evidence": "Grant size is not defined."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline is December 10, 2025, which is in the future."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is seeking partners to design and implement innovative PROJECTS."
+        },
+        "Requires cofinancing": {
+          "status": "false",
+          "evidence": "There is no mention of mandatory co-financing."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "There is no mention of any accreditation requirements."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "There are no specific rules about consortium leadership mentioned."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "There is no restriction on applicant origin, other than presence in Morocco to execute activities."
+        }
+      },
+      "title": "Increase the impact of digital remittances in rural Morocco",
+      "deadline": "2025-12-10",
+      "deadline_text": "Wednesday, 10 December 2025, 23:59 (UTC+1)",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "Remittances.morocco@ifad.org",
+      "country": [
+        "Morocco"
+      ],
+      "theme": [
+        "Labour Migration",
+        "Skills Development & Vocational Training",
+        "Employment Policy & Job Creation"
+      ],
+      "organization_type": [
+        "Private sector entities",
+        "Public sector entities",
+        "International organizations"
+      ],
+      "application_process": [
+        {
+          "date": "2025-11-20",
+          "description": "Online information session"
+        },
+        {
+          "date": "2025-12-10",
+          "description": "Submission of Annex 1 and Annex 2 via email"
+        }
+      ],
+      "implementation_period": null,
+      "eligible_activities": [
+        "Expanding access to digital transfer services in rural and peri-urban areas",
+        "Promoting the use of savings, credit, and insurance products linked to remittances",
+        "Strengthening financial and digital education"
+      ],
+      "funding_restrictions": [],
+      "proposal_summary": "The International Fund for Agricultural Development (IFAD), through its Financing Facility for Remittances (FFR) and the DigitRemit Morocco programme, is launching a call for proposals to increase the impact of digital remittances on financial inclusion, economic empowerment, and sustainable development in rural and peri-urban areas of Morocco. The objectives include expanding access to digital transfer services, promoting the use of financial services linked to remittances, and strengthening financial and digital education. Eligible applicants include private sector, public sector entities, and international organizations. The deadline for submission is December 10, 2025. Co-financing requirements are not specified in the provided text.",
+      "ilo_match_score": 0.4,
+      "ilo_match_evidence": "The call focuses on financial inclusion, skills development and economic empowerment through digital remittances, which aligns with ILO's focus on employment and decent work.",
+      "confidence_score": 0.9
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/request-for-expression-of-interest-strengthening-the-macadamia-nut-export-value-chain-in-rwanda",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Africa"
+      ],
+      "scraped_at": "2026-04-15T08:54:54.708042+00:00",
+      "eligible": false,
+      "exclusion_reason": "ILO Eligibility",
+      "classification_summary": "This is a Request for Expression of Interest (REOI) from IFAD for private sector partners to strengthen the macadamia nut export value chain in Rwanda. The deadline is October 13, 2025. It appears to be procurement or a consultancy tender, not a grant.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "false",
+          "evidence": "The call is for private sector partners, and the eligibility criteria do not include International Organizations like ILO."
+        },
+        "Funding instrument is grant": {
+          "status": "false",
+          "evidence": "This is a Request for Expression of Interest (REOI) and is likely procurement or a consultancy tender, not a grant."
+        },
+        "Grant size above threshold": {
+          "status": null,
+          "evidence": "No grant size mentioned"
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "Deadline is 2025-10-13 which is in the future."
+        },
+        "Is procurement or tender": {
+          "status": "true",
+          "evidence": "The call is a Request for Expression of Interest (REOI), implying procurement or a consultancy tender."
+        },
+        "Requires cofinancing": {
+          "status": null,
+          "evidence": "Cannot determine if cofinancing is required."
+        },
+        "Requires specific accreditation": {
+          "status": null,
+          "evidence": "Cannot determine if specific accreditation is required."
+        },
+        "Has consortium leadership rules": {
+          "status": null,
+          "evidence": "Cannot determine if there any consortium leadership rules."
+        },
+        "Applicant origin is restricted": {
+          "status": null,
+          "evidence": "Cannot determine if applicant origin is restricted."
+        }
+      },
+      "title": "Strengthening the macadamia nut export value chain in Rwanda",
+      "deadline": "2025-10-13",
+      "deadline_text": "13 October 2025",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "email protected",
+      "country": [
+        "Rwanda"
+      ],
+      "theme": [
+        "Sustainable Enterprises",
+        "Decent Work in Supply Chains"
+      ],
+      "organization_type": [
+        "Private Sector"
+      ],
+      "application_process": [
+        {
+          "date": "2025-10-13",
+          "description": "Expression of Interest submission"
+        }
+      ],
+      "implementation_period": null,
+      "eligible_activities": [
+        "Supporting macadamia nut farmers",
+        "Enhancing livelihoods",
+        "Promoting sustainable production practices"
+      ],
+      "funding_restrictions": [],
+      "proposal_summary": "IFAD is seeking expressions of interest from private sector companies to strengthen the macadamia nut export value chain in Rwanda under the Enhanced Linkages between Private sector and Small-scale producers (ELPS) initiative. The aim is to forge partnerships between large corporations and small-scale producers to promote sustainable and productive farming practices. Companies interested in contributing resources to support farmers, enhance livelihoods, and promote sustainable production are invited to apply. The deadline for submissions is October 13, 2025. No specific funding amount or implementation period is mentioned. The call targets food, agriculture, and trading companies.",
+      "ilo_match_score": 0.4,
+      "ilo_match_evidence": "Focus on sustainable production practices and enhancing livelihoods of farmers in the supply chain aligns moderately with ILO's goals around decent work in supply chains and sustainable enterprises.",
+      "confidence_score": null
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/call-for-proposals-livestock-and-communities-for-one-health-in-the-mekong-livecom-",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Asia"
+      ],
+      "scraped_at": "2026-04-15T08:55:05.685512+00:00",
+      "eligible": false,
+      "exclusion_reason": "ILO is not an eligible applicant type according to Annex 2 and 3 of the call for proposals. The Annexes provide self-certification forms for eligibility that do not include International Organizations.",
+      "classification_summary": "This call for proposals from IFAD seeks to strengthen community-level capacity and regional cooperation on One Health in Thailand, Cambodia, Viet Nam, and Laos. The funding aims to support projects focusing on disease prevention, antimicrobial resistance, food safety, and environmental health, with an emphasis on the participation of women, youth, and marginalized groups. The deadline for submissions is October 6, 2025. ILO is not eligible to apply.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "false",
+          "evidence": "Annex 2 and 3 provide self-certification forms for eligibility. ILO or any international organization is not listed inside as eligible."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "The call specifies \"LIVECOM grant\" and refers to \"IFAD grant resources\", indicating a non-reimbursable funding instrument."
+        },
+        "Grant size above threshold": {
+          "status": "true",
+          "evidence": "The document mentions an 'indicative financial envelope', implying the grant size is above the USD 50,000 threshold."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline is 6 October 2025, which is in the future."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is for project proposals using a concept note, not procurement or tender."
+        },
+        "Requires cofinancing": {
+          "status": null,
+          "evidence": "The document does not explicitly require co-financing."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "The document does not require specific accreditation."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "The document does not specify consortium leadership rules."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "The document does not restrict applicant origin."
+        }
+      },
+      "title": "Livestock and Communities for One Health in the Mekong (LIVECOM)",
+      "deadline": "2025-10-06",
+      "deadline_text": "6 October 2025 at 23:59 (UTC +2)",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "email protected]",
+      "country": [
+        "Cambodia",
+        "Viet Nam",
+        "Thailand",
+        "Lao People's Democratic Republic"
+      ],
+      "theme": [
+        "Sustainable Enterprises",
+        "OSH & Labour Inspection"
+      ],
+      "organization_type": [],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [
+        "mapping risks and institutional responses",
+        "building inclusive multi-stakeholder platforms",
+        "piloting community initiatives on disease prevention",
+        "piloting community initiatives on antimicrobial resistance",
+        "piloting community initiatives on food safety",
+        "piloting community initiatives on environmental health",
+        "providing training and extension support",
+        "generating knowledge products and lessons learned",
+        "facilitating South-South learning exchanges",
+        "developing an investment strategy"
+      ],
+      "funding_restrictions": [],
+      "proposal_summary": "IFAD's LIVECOM grant aims to bolster community-level capacity and regional teamwork concerning One Health across Thailand, Cambodia, Viet Nam, and Laos. The initiative seeks to support projects focused on preventing disease, tackling antimicrobial resistance, ensuring food safety, and promoting environmental health, with a special focus on the involvement of women, youth, and marginalized communities. The deadline for submitting proposals is October 6, 2025. ILO isn't eligible to apply. No information is provided regarding co-financing.",
+      "ilo_match_score": 0.4,
+      "ilo_match_evidence": "The focus on livestock, food safety and rural communities has a tangential connection to ILO's mandate on working conditions and sustainable enterprises, but this call lacks a direct and substantial focus on labour. ",
+      "confidence_score": 0.95
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/ifad-calls-for-somalia-women-s-market-access-innovation-challenge-2025-proposals",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Africa"
+      ],
+      "scraped_at": "2026-04-15T08:55:23.256153+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed hard criteria: Deadline is future",
+      "classification_summary": "This is a call for proposals from IFAD and the government of Somalia seeking proposals from women entrepreneurs across rural Somalia who want to grow their businesses by improving their market access. The challenge aims to enhance women’s access to agricultural markets, improve the competitiveness of women-led agribusinesses, and establish sustainable market linkages through innovation and technology and promote financial inclusion. The deadline for submission is August 31, 2025. Co-financing does not seem to be required, and applicants should be legally registered, rural women-led enterprises, as well as businesses with at least 30 per cent women in their leadership team..",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "true",
+          "evidence": "There are no applicant type restrictions."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "Selected entrepreneurs will receive tailored business coaching, seed funding for product development, support in market access, and networking opportunities."
+        },
+        "Grant size above threshold": {
+          "status": "true",
+          "evidence": "Seed funding for product development is offered, implying a grant size above USD 50,000."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline is August 31, 2025, which is in the future."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is for proposals from women entrepreneurs to grow their businesses, not for procurement of goods/services."
+        },
+        "Requires cofinancing": {
+          "status": "false",
+          "evidence": "Co-financing is not mentioned as a mandatory requirement."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "There is no mention of any specific accreditation requirement."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "There are no consortium leadership rules mentioned in the text."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "Eligibility is not restricted to applicants from the donor's domestic territory; it is focused on rural women-led enterprises in Somalia."
+        }
+      },
+      "title": "Somalia Women’s Market Access Innovation Challenge 2025",
+      "deadline": "2025-08-31",
+      "deadline_text": "31 August 31 2025, at 5:00 PM Mogadishu time",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "mohamed.adam@ifad.org",
+      "country": [
+        "Somalia"
+      ],
+      "theme": [
+        "Employment Policy & Job Creation",
+        "Skills Development & Vocational Training",
+        "Working Conditions & Equality"
+      ],
+      "organization_type": [
+        "Businesses"
+      ],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [
+        "Activities that enhance women’s access to agricultural markets",
+        "activities that improve the competitiveness of women-led agribusinesses",
+        "activities that establish sustainable market linkages through innovation and technology",
+        "activities that promote financial inclusion"
+      ],
+      "funding_restrictions": [],
+      "proposal_summary": "The International Fund for Agricultural Development (IFAD), together with the government of Somalia, is launching the Somalia Women’s Market Access Innovation Challenge 2025, seeking proposals from rural women entrepreneurs in Somalia. The challenge aims to enhance women’s access to agricultural markets, improve the competitiveness of women-led agribusinesses, and establish sustainable market linkages through innovation and technology and promote financial inclusion. Applicants should be legally registered, rural women-led enterprises, as well as businesses with at least 30 per cent women in their leadership team in Somalia. The deadline for submission is August 31, 2025. Seed funding, business coaching, and market access support will be provided. Co-financing is not explicitly required.",
+      "ilo_match_score": 0.6,
+      "ilo_match_evidence": "The focus on women's economic empowerment and market access in rural Somalia aligns with the ILO's goals of promoting decent work and reducing inequalities.",
+      "confidence_score": 0.9
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/call-for-nominations-and-expressions-of-interest-for-the-external-chair-of-the-consultation-on-the-fourteenth-replenishment-of-ifad-resources",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [],
+      "scraped_at": "2026-04-15T08:55:34.049600+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed hard criteria: Deadline is future, Grant size above threshold, Funding instrument is grant",
+      "classification_summary": "This call for nominations and expressions of interest from IFAD is for an External Chair for the Consultation on the Fourteenth Replenishment of IFAD's Resources. The selected candidate will oversee consultation sessions, facilitate discussions, review documentation, and mobilize support for IFAD. The deadline for submissions is June 22, 2025. This is not a grant opportunity and does not involve providing funds to organizations; thus, all countries are technically eligible, as well as any organization type.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "true",
+          "evidence": "The text is completely silent on applicant types."
+        },
+        "Funding instrument is grant": {
+          "status": "false",
+          "evidence": "This call is for nominations for an External Chair, not a grant. The selected candidate will oversee consultation sessions, facilitate discussions, review documentation, and mobilize support for IFAD."
+        },
+        "Grant size above threshold": {
+          "status": "false",
+          "evidence": "This is a call for nominations for an External Chair, not a grant."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline is 2025-06-22, which is in the future."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is for a nomination/expression of interest. It is not a procurement or tender."
+        },
+        "Requires cofinancing": {
+          "status": "false",
+          "evidence": "The text does not mention that co-financing is a mandatory requirement."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "The text does not mention any specific accreditation requirements."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "The text does not mention consortium leadership rules."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "The text does not restrict applicant origin."
+        }
+      },
+      "title": "Call for External Chair of IFAD Replenishment Consultation",
+      "deadline": "2025-06-22",
+      "deadline_text": "midnight on 22 June 2025",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "IFAD14chair@ifad.org, r.hartman@ifad.org, replenishment@ifad.org",
+      "country": [],
+      "theme": [],
+      "organization_type": [],
+      "application_process": [],
+      "implementation_period": "September/October 2025 until February 2027",
+      "eligible_activities": [],
+      "funding_restrictions": [],
+      "proposal_summary": "IFAD seeks nominations for an External Chair to oversee the Consultation on the Fourteenth Replenishment of IFAD's Resources. The Chair will lead consultation sessions, facilitate discussions, and mobilize support for IFAD. Candidates should have knowledge of multilateral development banks, experience chairing international meetings, and demonstrated leadership in agricultural development and poverty reduction. The position is part-time from September/October 2025 to February 2027. The application deadline is June 22, 2025. This is not a grant opportunity.",
+      "ilo_match_score": 0.4,
+      "ilo_match_evidence": "IFAD's work in agricultural development and poverty reduction aligns with the ILO's goals of promoting decent work and sustainable livelihoods in rural areas, including social protection and employment.",
+      "confidence_score": 0.9
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/elps-tanzania-2024",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [],
+      "scraped_at": "2026-04-15T08:55:47.906122+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed to access content due to security verification, preventing analysis of eligibility criteria.",
+      "classification_summary": "Due to a security verification challenge, the content of the provided URL could not be accessed. Therefore, a complete analysis and classification of the call for proposal is not possible. The tool was unable to retrieve information about eligibility, funding details, deadlines, and other relevant characteristics of the CFP.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine eligibility criteria."
+        },
+        "Funding instrument is grant": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine funding instrument."
+        },
+        "Grant size above threshold": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine grant size."
+        },
+        "Deadline is future": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine the deadline."
+        },
+        "Is procurement or tender": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine if it is procurement or tender."
+        },
+        "Requires cofinancing": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine if cofinancing is required."
+        },
+        "Requires specific accreditation": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine if specific accreditation is required."
+        },
+        "Has consortium leadership rules": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine consortium leadership rules."
+        },
+        "Applicant origin is restricted": {
+          "status": null,
+          "evidence": "Content inaccessible, unable to determine if applicant origin is restricted."
+        }
+      },
+      "title": null,
+      "deadline": null,
+      "deadline_text": null,
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": null,
+      "contact": null,
+      "country": [],
+      "theme": [],
+      "organization_type": [],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [],
+      "funding_restrictions": [],
+      "proposal_summary": null,
+      "ilo_match_score": null,
+      "ilo_match_evidence": null,
+      "confidence_score": null
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/call-for-proposals-private-sector-for-food-systems",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [
+        "Asia"
+      ],
+      "scraped_at": "2026-04-15T08:55:57.817262+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed hard criteria: Deadline is future",
+      "classification_summary": "This is a call for proposals from IFAD targeting the private sector for food system projects. The grant focuses on strengthening partnerships between the private sector and smallholder producers to stimulate investments in inclusive and climate-resilient agricultural value chains in Asia (Cambodia, India, Laos, Philippines, Sri Lanka and Vietnam). The deadline for submissions is August 19, 2024. Organizations must complete a project proposal, budget table, eligibility self-certification, and non-disclosure agreement. No co-financing requirement is mentioned.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "true",
+          "evidence": "The text does not specify a list of ineligible organizations, so all are potentially eligible."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "The call is for a grant."
+        },
+        "Grant size above threshold": {
+          "status": "true",
+          "evidence": "The grant size is not specified, but given the programme, it is expected to be above USD 50,000."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline of August 19, 2024, has passed."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "This appears to be a grant for a project, not for procurement."
+        },
+        "Requires cofinancing": {
+          "status": "false",
+          "evidence": "There is no mention of required co-financing."
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "There is no mention of required accreditation."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "There is no mention of consortium leadership rules."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "There is no restriction on applicant origin."
+        }
+      },
+      "title": "Call for Proposals: Private Sector for Food Systems",
+      "deadline": "2024-08-19",
+      "deadline_text": "Monday 19 August 2024 at 23.59 (UTC +2)",
+      "funding_min": null,
+      "funding_max": null,
+      "funding_currency": null,
+      "organization": "International Fund for Agricultural Development",
+      "contact": "email protected",
+      "country": [
+        "Cambodia",
+        "India",
+        "Laos",
+        "Philippines",
+        "Sri Lanka",
+        "Vietnam"
+      ],
+      "theme": [
+        "Sustainable Enterprises",
+        "Decent Work in Supply Chains"
+      ],
+      "organization_type": [
+        "Private Sector"
+      ],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [
+        "Strengthening partnerships between the private sector and smallholder producers",
+        "Stimulating investments in inclusive and climate-resilient agricultural value chains"
+      ],
+      "funding_restrictions": [],
+      "proposal_summary": "The International Fund for Agricultural Development (IFAD) is offering a grant to organizations in the private sector to strengthen partnerships with smallholder producers, stimulating investments in inclusive and climate-resilient agricultural value chains. The grant focuses on projects in Asia, specifically Cambodia, India, Laos, Philippines, Sri Lanka, and Vietnam. The application deadline was August 19, 2024, and required submission of a project proposal, budget, self-certification of eligibility, and a non-disclosure agreement. There's no mention of mandatory co-financing.",
+      "ilo_match_score": 0.6,
+      "ilo_match_evidence": "This call focuses on improving food systems with a focus on partnerships with smallholder producers in Asia which aligns with ILO's work on decent work in supply chains and supporting sustainable enterprises.",
+      "confidence_score": 0.9
+    },
+    {
+      "url": "https://www.ifad.org/en/w/calls-for-proposal/call-for-proposals-ifad-grant-agri-connect",
+      "source_name": "IFAD - Call for Proposals",
+      "regions": [],
+      "scraped_at": "2026-04-15T08:56:08.756790+00:00",
+      "eligible": false,
+      "exclusion_reason": "Failed hard criteria: Deadline is future",
+      "classification_summary": "This is a call for proposals from IFAD for the Agri Connect project, aiming to enable private sector investment and access to services for smallholder farmers through a digital farmer registry. The total grant amount is up to US$1.5 million. Eligible applicants include consulting organizations, private sector entities, alliances of partner service providers, specialized NGOs, or inter-governmental organizations (including UN agencies). The deadline for submissions is August 16, 2024. Co-financing is required, with a minimum of 25% for private sector applicants and recommendations of at least 20% for other applicants.",
+      "criteria": {
+        "ILO Eligibility": {
+          "status": "true",
+          "evidence": "The call is open to inter-governmental organizations, including UN agencies."
+        },
+        "Funding instrument is grant": {
+          "status": "true",
+          "evidence": "The call is for IFAD grant financing."
+        },
+        "Grant size above threshold": {
+          "status": "true",
+          "evidence": "The total amount is up to US$1.5 million."
+        },
+        "Deadline is future": {
+          "status": "false",
+          "evidence": "The deadline to receive proposals is 16th August, at 5:00 pm (CET). This date is in the past."
+        },
+        "Is procurement or tender": {
+          "status": "false",
+          "evidence": "The call is for project proposals, not procurement of goods/services."
+        },
+        "Requires cofinancing": {
+          "status": "true",
+          "evidence": "The applicant should propose some level of cash and in-kind co-financing. _The recipient’s contribution must be at least 25% for private sector applicants. For other applicants, it is recommended that the recipient’s contribution is at least 20%._"
+        },
+        "Requires specific accreditation": {
+          "status": "false",
+          "evidence": "There is no mention of a requirement for specific accreditation."
+        },
+        "Has consortium leadership rules": {
+          "status": "false",
+          "evidence": "There is no mention of consortium leadership rules."
+        },
+        "Applicant origin is restricted": {
+          "status": "false",
+          "evidence": "There is no mention of applicant origin being restricted."
+        }
+      },
+      "title": "IFAD Agri Connect Grant",
+      "deadline": null,
+      "deadline_text": "16th August, at 5:00 pm (CET)",
+      "funding_min": null,
+      "funding_max": 1500000.0,
+      "funding_currency": "USD",
+      "organization": "International Fund for Agricultural Development",
+      "contact": "Digital_Advisory@ifad.org",
+      "country": [],
+      "theme": [
+        "Employment Policy & Job Creation",
+        "Skills Development & Vocational Training",
+        "Sustainable Enterprises"
+      ],
+      "organization_type": [
+        "Consulting Organization",
+        "Private Sector",
+        "NGO",
+        "Inter-governmental Organization",
+        "UN Agency"
+      ],
+      "application_process": [],
+      "implementation_period": null,
+      "eligible_activities": [],
+      "funding_restrictions": [],
+      "proposal_summary": "IFAD is offering a grant of up to US$1.5 million for the Agri Connect project, which aims to enable private sector investment and access to services for smallholder farmers through a digital farmer registry. Eligible applicants include consulting organizations, private sector entities, NGOs, and inter-governmental organizations. The deadline for submissions is August 16, 2024, and co-financing is required, with a minimum of 25% for private sector applicants and recommended 20% for others.",
+      "ilo_match_score": 0.6,
+      "ilo_match_evidence": "The call focuses on enabling private sector investment and access to services for smallholder farmers, which aligns with the ILO's work on sustainable enterprises and employment creation in rural areas.",
+      "confidence_score": null
+    }
+  ]
+}
