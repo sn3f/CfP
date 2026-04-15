@@ -1,0 +1,68 @@
+criteria:
+  - id: 1
+    fieldName: "ILO Eligibility"
+    hard: true
+    evaluationLogic: >
+      Check for a section defining eligible applicants. If such a section exists, treat the list
+      of eligible entities as STRICT and EXHAUSTIVE. If the ILO (an International Organization)
+      does not clearly fit into one of the listed categories, EXCLUDE it. Do not require an
+      explicit ban. Only assume eligibility if the text is completely silent on applicant types.
+
+  - id: 2
+    fieldName: "Funding instrument is grant"
+    hard: true
+    evaluationLogic: >
+      Exclude if the funding creates a financial liability (debt, equity, or repayment obligation)
+      for the applicant. Include ONLY if there is a non-reimbursable component (e.g., grant,
+      non-repayable contribution, cooperative agreement) available. If the opportunity is purely
+      for loans, guarantees, or investment capital without a separate grant window, EXCLUDE.
+
+  - id: 3
+    fieldName: "Grant size above threshold"
+    hard: true
+    evaluationLogic: >
+      Exclude if the maximum stated grant size is below USD 50,000.
+
+  - id: 4
+    fieldName: "Deadline is future"
+    hard: true
+    evaluationLogic: >
+      Exclude if any mandatory submission deadline has passed. Pay close attention to multi-stage
+      processes (e.g., Expression of Interest, Concept Note) and exclude if the deadline for the
+      first required step is in the past, even if the final deadline is in the future.
+
+  - id: 5
+    fieldName: "Is procurement or tender"
+    hard: false
+    evaluationLogic: >
+      Flag if the call appears to be for procurement of goods/services or a consultancy tender
+      rather than a project grant. Look for terms like Request for Proposal (RFP), Invitation
+      to Bid (ITB), consultant, services.
+
+  - id: 6
+    fieldName: "Requires cofinancing"
+    hard: false
+    evaluationLogic: >
+      Flag only if co-financing or cost-sharing is a mandatory, required condition for the
+      application. Do not flag if it is merely mentioned as optional, encouraged, an asset,
+      or a positive factor.
+
+  - id: 7
+    fieldName: "Requires specific accreditation"
+    hard: false
+    evaluationLogic: >
+      Flag if the applicant must have a specific pre-existing accreditation with another body
+      (e.g., GEF, CIF, Green Climate Fund).
+
+  - id: 8
+    fieldName: "Has consortium leadership rules"
+    hard: false
+    evaluationLogic: >
+      Flag if the rules state that any consortium or partnership must be led by a non-UN entity.
+
+  - id: 9
+    fieldName: "Applicant origin is restricted"
+    hard: false
+    evaluationLogic: >
+      Flag if eligibility is restricted to applicants legally registered or based in the
+      donor domestic territory only.

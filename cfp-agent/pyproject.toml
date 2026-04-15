@@ -1,0 +1,16 @@
+[project]
+name = "cfp-agent"
+version = "0.1.0"
+description = "ILO CfP eligibility scanner - weekly agent"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.70.0",
+    "instructor>=1.7.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+    "pyyaml>=6.0.1",
+    "python-dotenv>=1.0.1",
+]
+
+[dependency-groups]
+dev = []

@@ -1,0 +1,140 @@
+sources:
+  - name: "UNDP MPTF - Call for Proposals"
+    url: "https://mptf.undp.org/page/funding-call-proposals"
+
+  - name: "EU Funding & Tenders Portal"
+    url: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/calls-for-proposals?isExactMatch=true&status=31094501,31094502,31094503&order=DESC&pageNumber=1&pageSize=50&sortBy=startDate"
+    api_url: "https://api.tech.ec.europa.eu/search-api/prod/rest/search"
+    api_type: "eu_tenders"
+
+  - name: "EU External Action Service - Grants"
+    url: "https://www.eeas.europa.eu/eeas/grants_en"
+
+  - name: "African Development Bank - Initiatives"
+    url: "https://www.afdb.org/en/topics-and-sectors/initiatives-partnerships"
+
+  - name: "World Bank - Procurement"
+    url: "https://www.worldbank.org/en/projects-operations/procurement"
+    api_url: "https://search.worldbank.org/api/v2/procnotices"
+    api_type: "world_bank"
+
+  - name: "UK FCDO - International Development Funding"
+    url: "https://www.gov.uk/international-development-funding"
+
+  - name: "UK PACT"
+    url: "https://www.ukpact.co.uk/apply-now"
+
+  - name: "Canada - CFLI"
+    url: "https://www.international.gc.ca/world-monde/funding-financement/cfli-fcil/index.aspx?lang=eng"
+
+  - name: "RISE Challenge - Gender & Environment"
+    url: "https://genderandenvironment.org/rise-challenge/call/"
+
+  - name: "Women Entrepreneurs Finance Initiative"
+    url: "https://we-fi.org/sixth-funding-call/"
+
+  - name: "International Climate Initiative"
+    url: "https://www.international-climate-initiative.com/en/find-funding/"
+
+  - name: "Norway MFA - Open Calls"
+    url: "https://grants.mfa.no/"
+
+  - name: "Norad - Calls for Proposals"
+    url: "https://www.norad.no/en/for-partners/guides-and-tools/calls-for-proposals2/?tab=active&page=1"
+
+  - name: "US Grants.gov"
+    url: "https://www.grants.gov/"
+    api_url: "https://grantsapi.grants.gov/v1/api/search"
+    api_type: "grants_gov"
+
+  - name: "Canada - Open Calls"
+    url: "https://www.international.gc.ca/world-monde/funding-financement/open_calls-appels_ouverts.aspx?lang=eng"
+
+  - name: "Sweden Sida - Calls"
+    url: "https://www.sida.se/en/for-partners/calls-and-announcements"
+
+  - name: "Denmark Danida - NGO Rounds"
+    url: "https://um.dk/danida/samarbejspartnere/civ-org/stoetteform/tematiske-ngo-runder"
+
+  - name: "IFAD - Call for Proposals"
+    url: "https://www.ifad.org/en/call-for-proposals"
+
+  - name: "Australia DFAT - Tenders"
+    url: "https://www.tenders.gov.au/atm?filter=published&orderBy=&Number=&Keyword=DFAT"
+    api_url: "https://www.tenders.gov.au/api/atm"
+    api_type: "austender"
+
+  - name: "Finland - Grants"
+    url: "https://www.haeavustuksia.fi/en/"
+
+  - name: "UN Road Safety Fund"
+    url: "https://roadsafetyfund.un.org/call-proposals"
+
+  - name: "CAF Development Bank - Calls"
+    url: "https://www.caf.com/es/trabaja-con-nosotros/convocatorias/"
+
+  - name: "Italy AICS - Tenders"
+    url: "https://aics.portaleamministrazionetrasparente.it/pagina952_bandi.html"
+
+  - name: "Global Disability Fund"
+    url: "https://globaldisabilityfund.org/funding-calls/"
+
+  - name: "Joint SDG Fund"
+    url: "https://invest.jointsdgfund.org/"
+
+  - name: "Ibero-American Triangular Cooperation Fund"
+    url: "https://fondo-cooperacion-triangular.net/"
+
+  - name: "Funds for NGOs"
+    url: "https://www2.fundsforngos.org/"
+
+  - name: "US State Dept - Grants"
+    url: "https://www.state.gov/policy-issues/grants-and-funding-opportunities"
+
+  - name: "ADB - Tenders (Goods)"
+    url: "https://www.adb.org/projects/tenders/group/goods"
+
+  - name: "ADB - Self Service Portal"
+    url: "https://selfservice.adb.org/OA_HTML/OA.jsp?page=/adb/oracle/apps/xxcrs/csrn/webui/CsrnHomePG&OAPB=ADBPOS_CMS_ISP_BRAND"
+
+  - name: "ADB - Procurement Notices"
+    url: "https://www.adb.org/business/institutional-procurement/notices"
+
+  - name: "AfDB - Procurement"
+    url: "https://www.afdb.org/en/projects-and-operations/procurement"
+
+  - name: "IDB - Regional Public Goods"
+    url: "https://www.iadb.org/en/who-we-are/how-we-are-organized/departments-offices-and-sectors/vice-presidency-countries/regional-public-goods-initiative"
+
+  - name: "EIB - Procurement"
+    url: "https://www.eib.org/en/about/procurement/all/index.htm"
+
+  - name: "EBRD - Procurement Notices"
+    url: "https://www.ebrd.com/home/work-with-us/project-procurement/procurement-notices.html"
+
+  - name: "IsDB - Tenders EOI"
+    url: "https://www.isdb.org/project-procurement/tenders?tender_type=EOI"
+
+  - name: "AFD - Appels a Projets (FR)"
+    url: "https://www.afd.fr/fr/appels-a-projets/liste?status%5Bongoing%5D=ongoing&status%5Bsoon%5D=soon"
+
+  - name: "AFD - Calls for Projects (EN)"
+    url: "https://www.afd.fr/en/calls-projects"
+
+  - name: "Switzerland SECO"
+    url: "https://www.seco.admin.ch/"
+
+  - name: "Global Environment Facility"
+    url: "https://www.thegef.org/"
+
+  - name: "Adaptation Fund"
+    url: "https://www.adaptation-fund.org/"
+
+  - name: "MCC - Cooperative Agreements"
+    url: "https://www.mcc.gov/work-with-us/partnerships/cooperative-agreements/"
+
+  - name: "UN Migration Network MPTF"
+    url: "https://migrationnetwork.un.org/mptf"
+
+  - name: "Expertise France - POPS"
+    url: "https://pops.expertisefrance.fr/sdm/ent2/gen/accueil.action?tp=1761184818439"
