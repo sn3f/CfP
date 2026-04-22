@@ -4,10 +4,10 @@
 			"path": "."
 		},
 		{
-			"path": "../ILO-CMS"
+			"path": "../ILO-CMS/trunk/gimi"
 		}
 	],
 	"settings": {
-		"java.configuration.updateBuildConfiguration": "disabled"
+		"java.configuration.updateBuildConfiguration": "automatic"
 	}
 }
