@@ -28,15 +28,77 @@ jobs:
         working-directory: cfp-agent
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          CLASSIFIER_MODEL: "google/gemini-2.0-flash-001"
+          CLASSIFIER_MODEL: "anthropic/claude-sonnet-4.6"
           MAX_CFPS_PER_SOURCE: "20"
           REQUEST_DELAY_SECONDS: "2"
         run: uv run python main.py
+
+      - name: Archive dated results
+        working-directory: cfp-agent
+        run: |
+          mkdir -p results/history
+          cp results/latest.json "results/history/$(date -u '+%Y-%m-%d').json"
+
+      - name: Summarize scan
+        working-directory: cfp-agent
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          data = json.loads(Path("results/latest.json").read_text(encoding="utf-8"))
+          total = data.get("total", 0)
+          eligible = data.get("eligible_count", 0)
+          sources = sorted(
+              {
+                  item.get("source_name")
+                  for item in data.get("results", [])
+                  if item.get("source_name")
+              }
+          )
+          top_matches = sorted(
+              (
+                  item
+                  for item in data.get("results", [])
+                  if item.get("eligible")
+              ),
+              key=lambda item: item.get("ilo_match_score")
+              if item.get("ilo_match_score") is not None
+              else -1,
+              reverse=True,
+          )[:10]
+
+          lines = [
+              "## CfP Weekly Scan",
+              "",
+              f"- Generated at: `{data.get('generated_at', 'unknown')}`",
+              f"- Total opportunities: `{total}`",
+              f"- Eligible opportunities: `{eligible}`",
+              f"- Sources with results: `{len(sources)}`",
+          ]
+
+          if top_matches:
+              lines.extend(["", "### Top eligible opportunities"])
+              for item in top_matches:
+                  score = item.get("ilo_match_score")
+                  score_text = "n/a" if score is None else f"{score:.2f}"
+                  title = item.get("title") or item.get("url") or "Untitled"
+                  lines.append(f"- `{score_text}` - {title}")
+
+          Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text(
+              "\n".join(lines),
+              encoding="utf-8",
+          )
+
+          if eligible == 0:
+              print("::warning::CfP scan completed with zero eligible opportunities.")
+          PY
 
       - name: Commit results
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add cfp-agent/results/latest.json
+          git add cfp-agent/results/latest.json cfp-agent/results/history/
           git diff --staged --quiet || git commit -m "chore: weekly CfP scan $(date -u '+%Y-%m-%d')"
           git push

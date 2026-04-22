@@ -14,6 +14,7 @@ import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
 
 import yaml
 from dotenv import load_dotenv
@@ -40,10 +41,50 @@ def load_sources() -> list[dict]:
         return yaml.safe_load(f)["sources"]
 
 
+def normalize_cfp_url(url: str) -> str:
+    cleaned = (url or "").strip()
+    if not cleaned:
+        return ""
+
+    try:
+        parts = urlsplit(cleaned)
+    except ValueError:
+        return cleaned.split("#", 1)[0].rstrip("/")
+
+    return urlunsplit(
+        (
+            parts.scheme.lower(),
+            parts.netloc.lower(),
+            parts.path.rstrip("/"),
+            parts.query,
+            "",
+        )
+    )
+
+
+def dedupe_urls(urls: list[str]) -> tuple[list[str], int]:
+    seen: set[str] = set()
+    unique_urls: list[str] = []
+    duplicate_count = 0
+
+    for url in urls:
+        normalized_url = normalize_cfp_url(url)
+        if not normalized_url:
+            continue
+        if normalized_url in seen:
+            duplicate_count += 1
+            continue
+        seen.add(normalized_url)
+        unique_urls.append(url)
+
+    return unique_urls, duplicate_count
+
+
 def process_source(
     source: dict,
     classifier: CfpClassifier,
     max_cfps: int,
+    seen_urls: set[str],
 ) -> list[dict]:
     name = source["name"]
     url = source["url"]
@@ -56,7 +97,7 @@ def process_source(
         logger.info(f"  Fetching via API ({source['api_type']})")
         items = fetch_via_api(source)
         if items:
-            cfp_urls = [it["url"] for it in items[:max_cfps] if it.get("url")]
+            cfp_urls = [it["url"] for it in items if it.get("url")]
             logger.info(f"  API returned {len(cfp_urls)} items")
         else:
             logger.warning("  API returned 0 items, falling back to Jina scraping")
@@ -69,39 +110,54 @@ def process_source(
             return []
         cfp_urls = classifier.extract_cfp_links(listing_md, url)
         logger.info(f"  LLM extracted {len(cfp_urls)} CfP links")
-        cfp_urls = cfp_urls[:max_cfps]
 
     if not cfp_urls:
         logger.warning(f"  No CfP links found for source '{name}'")
         return []
 
+    cfp_urls, duplicate_count = dedupe_urls(cfp_urls)
+    cfp_urls = cfp_urls[:max_cfps]
+    if duplicate_count:
+        logger.info(f"  Deduplicated {duplicate_count} repeated URLs within source")
+
     # Step 2 - classify each CfP
     results = []
+    skipped_existing = 0
     for cfp_url in cfp_urls:
-        logger.info(f"  Classifying: {cfp_url}")
-        content = scrape_url(cfp_url)
-        if not content:
-            logger.warning(f"  Empty content, skipping {cfp_url}")
+        normalized_url = normalize_cfp_url(cfp_url)
+        if normalized_url in seen_urls:
+            skipped_existing += 1
+            logger.info(f"  Skipping duplicate URL already processed: {normalized_url}")
             continue
 
-        classification = classifier.classify(content, cfp_url)
+        logger.info(f"  Classifying: {normalized_url}")
+        content = scrape_url(normalized_url)
+        if not content:
+            logger.warning(f"  Empty content, skipping {normalized_url}")
+            continue
+
+        classification = classifier.classify(content, normalized_url)
         if not classification:
             continue
 
         regions = get_regions_for_countries(classification.country)
         result = {
-            "url": cfp_url,
+            "url": normalized_url,
             "source_name": name,
             "regions": regions,
             "scraped_at": datetime.now(timezone.utc).isoformat(),
             **classification.model_dump(),
         }
         results.append(result)
+        seen_urls.add(normalized_url)
         logger.info(
             f"  -> eligible={classification.eligible}  "
             f"match={classification.ilo_match_score}  "
             f"title={classification.title!r}"
         )
+
+    if skipped_existing:
+        logger.info(f"  Skipped {skipped_existing} URLs already classified from another source")
 
     return results
 
@@ -138,9 +194,10 @@ def main() -> None:
     classifier = CfpClassifier(criteria=criteria, request_delay=request_delay)
 
     all_results: list[dict] = []
+    seen_urls: set[str] = set()
     for source in sources:
         try:
-            results = process_source(source, classifier, max_cfps)
+            results = process_source(source, classifier, max_cfps, seen_urls)
             all_results.extend(results)
             logger.info(f"Source '{source['name']}': {len(results)} CfPs classified")
         except Exception as exc:
