@@ -17,6 +17,7 @@ sources:
     url: "https://www.worldbank.org/en/projects-operations/procurement"
     api_url: "https://search.worldbank.org/api/v2/procnotices"
     api_type: "world_bank"
+    source_type: "procurement"
 
   - name: "UK FCDO - International Development Funding"
     url: "https://www.gov.uk/international-development-funding"
@@ -93,27 +94,34 @@ sources:
 
   - name: "ADB - Tenders (Goods)"
     url: "https://www.adb.org/projects/tenders/group/goods"
+    source_type: "procurement"
 
   - name: "ADB - Self Service Portal"
     url: "https://selfservice.adb.org/OA_HTML/OA.jsp?page=/adb/oracle/apps/xxcrs/csrn/webui/CsrnHomePG&OAPB=ADBPOS_CMS_ISP_BRAND"
+    source_type: "procurement"
 
   - name: "ADB - Procurement Notices"
     url: "https://www.adb.org/business/institutional-procurement/notices"
+    source_type: "procurement"
 
   - name: "AfDB - Procurement"
     url: "https://www.afdb.org/en/projects-and-operations/procurement"
+    source_type: "procurement"
 
   - name: "IDB - Regional Public Goods"
     url: "https://www.iadb.org/en/who-we-are/how-we-are-organized/departments-offices-and-sectors/vice-presidency-countries/regional-public-goods-initiative"
 
   - name: "EIB - Procurement"
     url: "https://www.eib.org/en/about/procurement/all/index.htm"
+    source_type: "procurement"
 
   - name: "EBRD - Procurement Notices"
     url: "https://www.ebrd.com/home/work-with-us/project-procurement/procurement-notices.html"
+    source_type: "procurement"
 
   - name: "IsDB - Tenders EOI"
     url: "https://www.isdb.org/project-procurement/tenders?tender_type=EOI"
+    source_type: "procurement"
 
   - name: "AFD - Appels a Projets (FR)"
     url: "https://www.afd.fr/fr/appels-a-projets/liste?status%5Bongoing%5D=ongoing&status%5Bsoon%5D=soon"

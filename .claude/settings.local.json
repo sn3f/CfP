@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import ast; ast.parse\\(open\\('main.py', encoding='utf-8'\\).read\\(\\)\\); print\\('OK'\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('main.py', encoding='utf-8'\\).read\\(\\)\\); print\\('main.py OK'\\)\")",
+      "Bash(python -c \"import yaml; data = yaml.safe_load\\(open\\('sources.yaml', encoding='utf-8'\\)\\); print\\(f'sources.yaml OK: {len\\(data[\\\\\"sources\\\\\"]\\)} sources, {sum\\(1 for s in data[\\\\\"sources\\\\\"] if s.get\\(\\\\\"source_type\\\\\"\\) == \\\\\"procurement\\\\\"\\)} procurement'\\)\")",
+      "Bash(uv run *)"
+    ]
+  }
+}

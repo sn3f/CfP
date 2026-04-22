@@ -169,33 +169,113 @@ python main.py
 
 Le prochain scan complet doit servir de nouveau baseline. Les anciens resultats ne sont plus une reference fiable pour arbitrer les sources, car le moteur a change sur plusieurs dimensions a la fois.
 
-## Prochaine phase recommandee
+### Baseline mesure - run du 2026-04-22
 
-1. Lancer un scan complet frais avec le moteur actuel.
-2. Analyser les resultats par source:
-   - volume
-   - taux d'eligibilite
-   - bruit
-   - doublons
-   - erreurs reseau
-   - pieces jointes utiles ou non
-3. Seulement ensuite, revoir la gouvernance des sources:
-   - `enabled`
-   - `source_type`
-   - `priority`
-   - `link_allow_patterns`
-   - separation entre sources `grant` et sources `procurement`
+| Metrique | Valeur |
+|---|---|
+| Duree totale | 4h17 |
+| Cout OpenRouter | ~$32 |
+| CfPs classifies | 318 |
+| CfPs eligibles | 5 (1.6%) |
 
-## Backlog
+Observations cles:
+- Cout par classification ~$0.10 (Sonnet 4.6, ~30k tokens input + 2k output en moyenne)
+- Les 8 sources procurement (World Bank, ADB x3, AfDB, EIB, EBRD, IsDB) representent ~160 classifications qui echouent systematiquement le critere "Funding instrument is grant" => ~$16 de cout direct sans valeur
+- Taux d'eligibilite 1.6% confirme que la classification fonctionne mais que le bruit des sources domine
+- Plusieurs defauts qualite observes dans `latest.json`: chain-of-thought LLM qui fuit dans `classification_summary`, enforcement hard-criteria cote Python limite a la deadline
+- 115 des 318 URLs (36%) ont deja une deadline passee au moment du scan -> gaspillage direct, corrige par C6 (drop)
 
-| Priorite | Quoi | Fichier |
+## Phase 2 - reduction du cout et amelioration qualite
+
+Objectif: ramener le cout par run hebdomadaire de ~$32 a moins de $10, et corriger les defauts de classification identifies a la lecture du baseline.
+
+### Progression
+
+| Item | Etat | Notes |
 |---|---|---|
-| haute | Produire un reporting par source dans le JSON final | `main.py` |
-| haute | Ajouter `enabled`, `source_type`, `priority` dans `sources.yaml` | `sources.yaml`, `main.py` |
-| haute | Sortir les sources `procurement` du run principal | `sources.yaml`, workflow |
-| moyenne | Ajouter `link_allow_patterns` / `link_block_patterns` par source | `sources.yaml`, `main.py` |
-| moyenne | Activer et exploiter `confidence_score` de bout en bout | `agent.py` |
-| basse | Ajouter des themes prioritaires ILO 2026-2031 au prompt | `agent.py` |
+| G3 - reporting par source | fait | Champ `by_source` dans `latest.json` avec ~14 metriques par source |
+| C1 + G1 - filtrage grant/procurement | fait | 8 sources taguees `source_type: procurement`, exclues par defaut, flag `--include-procurement` |
+| C6 - diff scanning | fait | Reuse si `<30j` + deadline future, drop si expire, reclassify si stale. Flag `--no-diff` + env `DIFF_MAX_AGE_DAYS` |
+| C3 - reduire troncatures | todo | |
+| Q1 + Q2 - qualite classification | todo | |
+| C4 - prompt caching | todo | |
+| C2 + C5 - Haiku pre-screen + extraction | todo | |
+| Q3 - echecs silencieux | todo | |
+| R4 - tests | todo | |
+
+### Leviers cout (par ordre d'impact)
+
+| # | Levier | Gain estime | Effort | Fichier |
+|---|---|---|---|---|
+| C6 | Diff scanning: ne classifier que les URLs jamais vues, re-verifier cheap la deadline des URLs connues | ~-80% en steady state (~$3-5/run) | moyen | `main.py`, nouveau `results/seen.json` |
+| C1 | Separer sources `grant` et `procurement`, n'inclure que `grant` par defaut | ~$16 | faible | `sources.yaml`, `main.py` |
+| C2 | Pre-screen Haiku 4.5 sur la page principale avant classification Sonnet full | ~$8-12 | moyen | `agent.py` |
+| C3 | Reduire troncature: page 100k -> 40k chars, 4 docs -> 2 docs de 12k | ~$10 | faible | `agent.py`, `tools.py` |
+| C4 | Prompt caching via OpenRouter (cache_control sur content blocks du system) | ~$2-3 | moyen | `agent.py` |
+| C5 | Haiku 4.5 pour l'extraction de liens depuis les listings | ~$1 | faible | `agent.py` |
+
+Note: Batch API Anthropic (-50%) non disponible via OpenRouter. A evaluer seulement si le cout reste inacceptable apres C6+C1+C3.
+
+### Qualite classification (bugs identifies a l'audit)
+
+| # | Probleme | Fichier | Correction |
+|---|---|---|---|
+| Q1 | `classification_summary` laisse fuir le chain-of-thought ("wait, X is BEFORE today...") | `agent.py` prompt | Separer un champ `reasoning` ou interdire les auto-corrections dans le prompt |
+| Q2 | Un seul critere dur sur quatre est verifie cote Python (deadline uniquement) | `agent.py::_enforce_hard_criteria` | Ajouter check `funding_max >= 50k USD` et validation "grant vs loan" |
+| Q3 | Echec de classification silencieux (returns None, CfP perdu) | `agent.py::classify` | Compter les echecs dans le reporting, escalader si > seuil |
+| Q4 | Dedup ignore les variations de query string (utm, etc.) | `main.py::normalize_cfp_url` | Strip les parametres de tracking connus |
+| Q5 | Normalisation themes trop agressive (substring "sector" match tout) | `models.py::normalize_theme` | Correspondance sur theme entier ou prefixe |
+| Q6 | Fallback API silencieux masque les pannes (API vide == API cassee) | `main.py::process_source` | Distinguer dans les logs et le reporting |
+| Q7 | `LinkList` non validee (URL concatenees, relatives non resolues) | `models.py::LinkList` | Validator qui filtre sur http/https et resout les relatifs |
+
+### Robustesse
+
+| # | Item | Fichier |
+|---|---|---|
+| R1 | Aucun rate-limit par domaine HTTP (Jina Reader gratuit ~20 RPM) | `tools.py::_request_with_retries` |
+| R2 | `_RESPONSE_CACHE` non borne | `tools.py:64` |
+| R3 | Risque SSRF dans le crawl d'annexes (URLs arbitraires depuis contenu scrape) | `tools.py::fetch_supporting_documents` |
+| R4 | Aucun test automatise sur les fonctions pures (dedup, enforce, normalize) | nouveau `tests/` |
+| R5 | Pas de lint/format configure | `pyproject.toml` (ruff) |
+| R6 | Budget tokens par run non borne (garde-fou cout max) | `main.py`, `agent.py` |
+
+### Gouvernance sources
+
+| # | Item | Fichier |
+|---|---|---|
+| G1 | Ajouter `enabled`, `source_type`, `priority` dans les sources | `sources.yaml`, `main.py` |
+| G2 | Ajouter `link_allow_patterns` / `link_block_patterns` par source | `sources.yaml`, `main.py` |
+| G3 | Produire un reporting par source dans le JSON final (volume, taux, erreurs) | `main.py` |
+| G4 | Activer et exploiter `confidence_score` de bout en bout | `agent.py`, `models.py` |
+
+### Dette technique
+
+| # | Item | Fichier |
+|---|---|---|
+| D1 | Code mort `_proxies()` jamais appele | `tools.py:67-72` |
+| D2 | `confidence_score` dans le schema mais jamais demande au LLM | `models.py`, `agent.py` |
+| D3 | Constante `"Deadline is future"` hardcodee, couplage fort avec YAML | `agent.py`, `criteria.yaml` |
+| D4 | `datetime.now().date()` local au lieu de UTC | `agent.py::_enforce_hard_criteria` |
+| D5 | Themes prioritaires ILO 2026-2031 non refletes dans le prompt | `agent.py` |
+| D6 | `--source` match exact sensible a la casse et aux espaces | `main.py:185` |
+
+### Ordre d'execution recommande
+
+1. **G3** - reporting par source d'abord. Sans observabilite on ne peut mesurer l'impact des changements suivants.
+2. **C1 + G1** - separation grant/procurement, champ `source_type` dans sources.yaml. Safe win mesurable grace a G3.
+3. **C6** - diff scanning. Le plus gros levier en steady state, provider-agnostic.
+4. **C3 + Q1 + Q2** - troncatures + nettoyage prompt + enforcement Python etendu, avec mesure qualite via G3.
+5. **C4** - prompt caching OpenRouter.
+6. **C2 + C5 + Q3** - pre-screen Haiku + Haiku extraction + fiabilite.
+7. **R4 (tests)** - avant toute Phase 3.
+
+### Resultat attendu de la Phase 2
+
+- Cout hebdomadaire < $10
+- Duree reduite proportionnellement (moins d'appels + pre-screen rapide)
+- `classification_summary` propre et exploitable dans gimi sans post-traitement
+- `reporting.by_source` dans `latest.json` permettant d'arbitrer les sources a desactiver
+- Socle de tests sur les fonctions pures
 
 ## Scope exclu
 
