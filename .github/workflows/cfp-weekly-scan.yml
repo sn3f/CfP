@@ -69,6 +69,8 @@ jobs:
               reverse=True,
           )[:10]
 
+          issues = data.get("source_issues", [])
+
           lines = [
               "## CfP Weekly Scan",
               "",
@@ -76,6 +78,7 @@ jobs:
               f"- Total opportunities: `{total}`",
               f"- Eligible opportunities: `{eligible}`",
               f"- Sources with results: `{len(sources)}`",
+              f"- Source issues: `{len(issues)}`",
           ]
 
           if top_matches:
@@ -86,6 +89,13 @@ jobs:
                   title = item.get("title") or item.get("url") or "Untitled"
                   lines.append(f"- `{score_text}` - {title}")
 
+          if issues:
+              lines.extend(["", "### Source issues"])
+              for issue in issues:
+                  lines.append(
+                      f"- `{issue.get('kind')}` - **{issue.get('source_name')}**: {issue.get('detail')}"
+                  )
+
           Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text(
               "\n".join(lines),
               encoding="utf-8",
@@ -93,6 +103,8 @@ jobs:
 
           if eligible == 0:
               print("::warning::CfP scan completed with zero eligible opportunities.")
+          if issues:
+              print(f"::warning::CfP scan detected {len(issues)} source issue(s); see summary.")
           PY
 
       - name: Commit results

@@ -10,7 +10,7 @@ One LLM call per CfP page consolidates:
 import logging
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 import instructor
@@ -24,6 +24,43 @@ from tools import fetch_supporting_documents
 logger = logging.getLogger(__name__)
 
 PREDEFINED_THEMES = " | ".join(ILO_THEMES)
+
+MAX_PRIMARY_CONTENT_CHARS = int(os.getenv("MAX_PRIMARY_CONTENT_CHARS", "40000"))
+MAX_LISTING_CONTENT_CHARS = int(os.getenv("MAX_LISTING_CONTENT_CHARS", "40000"))
+
+GRANT_SIZE_THRESHOLD_USD = 50_000.0
+
+# Rough FX rates for grant-size screening; approximate is fine (we just need to reject
+# obviously too-small grants, not do accounting).
+FX_TO_USD: dict[str, float] = {
+    "USD": 1.0,
+    "EUR": 1.05,
+    "GBP": 1.25,
+    "CHF": 1.10,
+    "CAD": 0.73,
+    "AUD": 0.65,
+    "NZD": 0.60,
+    "JPY": 0.0065,
+    "SEK": 0.095,
+    "NOK": 0.090,
+    "DKK": 0.140,
+    "ZAR": 0.055,
+    "INR": 0.012,
+    "BRL": 0.20,
+    "MXN": 0.055,
+}
+
+LOAN_KEYWORDS = (
+    "loan",
+    "repayable",
+    "repayment",
+    "debt instrument",
+    "guarantee facility",
+    "equity investment",
+    "equity stake",
+    "credit line",
+    "credit facility",
+)
 
 
 def _build_system_prompt(criteria: list[dict]) -> str:
@@ -63,6 +100,13 @@ CRITICAL RULES for criteria evaluation:
 
 For each criterion, set status to "true" (passes/applies), "false" (fails/does not apply), or "unknown" (truly cannot determine).
 The criteria dict keys MUST be exactly: {criteria_keys}
+
+classification_summary: 2 to 4 short sentences stating the eligibility verdict and the decisive reasons. Declarative only. State findings as conclusions, never as verification steps. Forbidden content:
+  - No inline arithmetic, currency conversion walkthroughs, or date comparisons. Report the conclusion ("grant max is below the USD 50,000 threshold"), not the calculation.
+  - No self-correction, hedging narration, or wait/actually/however-I-realize patterns.
+  - No admissions about missing content or what was not captured - if evidence is absent, state the criterion as unknown and move on.
+  - No first-person reasoning ("I note that...", "let me check...").
+Keep the tone factual and final, as if reporting a decision already made.
 
 === TASK 2: DATA EXTRACTION ===
 
@@ -123,8 +167,8 @@ class CfpClassifier:
         sections = [
             f"Source URL: {url}",
             "",
-            "Primary CfP page content (truncated to 100k chars):",
-            content[:100_000],
+            f"Primary CfP page content (truncated to {MAX_PRIMARY_CONTENT_CHARS} chars):",
+            content[:MAX_PRIMARY_CONTENT_CHARS],
         ]
 
         if supporting_documents:
@@ -151,7 +195,7 @@ class CfpClassifier:
 
     def _enforce_hard_criteria(self, result: "CfpClassification") -> "CfpClassification":
         """Post-process: enforce hard-criteria logic in Python (don't trust LLM for dates/logic)."""
-        today = datetime.now().date()
+        today = datetime.now(timezone.utc).date()
         hard_names = {c["fieldName"] for c in self.criteria if c["hard"]}
 
         # 1. Override "Deadline is future" using Python date comparison
@@ -166,13 +210,17 @@ class CfpClassifier:
                         f"(deadline {result.deadline} < today {today})"
                     )
                     cr.status = "false"
-                    cr.evidence = (
-                        cr.evidence or f"Deadline {result.deadline} is before today ({today})."
-                    )
+                    cr.evidence = f"Deadline {result.deadline} is before today ({today})."
             except ValueError:
                 pass
 
-        # 2. If any hard criterion is false, set eligible=false
+        # 2. Override "Grant size above threshold" using funding_max + currency
+        self._check_grant_size(result)
+
+        # 3. Warn (don't override) on loan-like phrasing inconsistent with grant=true
+        self._check_funding_instrument(result)
+
+        # 4. If any hard criterion is false, set eligible=false
         failed = [
             name
             for name in hard_names
@@ -185,6 +233,52 @@ class CfpClassifier:
                 result.exclusion_reason = f"Failed hard criteria: {', '.join(failed)}"
 
         return result
+
+    def _check_grant_size(self, result: "CfpClassification") -> None:
+        criterion_name = "Grant size above threshold"
+        cr = (result.criteria or {}).get(criterion_name)
+        if cr is None or result.funding_max is None:
+            return
+
+        currency = (result.funding_currency or "").strip().upper() or "USD"
+        rate = FX_TO_USD.get(currency)
+        if rate is None:
+            return  # Unknown currency - leave LLM judgement alone
+
+        amount_usd = result.funding_max * rate
+        if amount_usd < GRANT_SIZE_THRESHOLD_USD and cr.status != "false":
+            logger.info(
+                f"Overriding '{criterion_name}' from {cr.status!r} to 'false' "
+                f"(funding_max={result.funding_max} {currency} = ~{amount_usd:.0f} USD "
+                f"< {GRANT_SIZE_THRESHOLD_USD:.0f} USD)"
+            )
+            cr.status = "false"
+            cr.evidence = (
+                f"Maximum grant ~{amount_usd:.0f} USD "
+                f"({result.funding_max} {currency}) is below "
+                f"{GRANT_SIZE_THRESHOLD_USD:.0f} USD threshold."
+            )
+
+    def _check_funding_instrument(self, result: "CfpClassification") -> None:
+        criterion_name = "Funding instrument is grant"
+        cr = (result.criteria or {}).get(criterion_name)
+        if cr is None or cr.status != "true":
+            return
+
+        haystack_parts = [
+            result.classification_summary or "",
+            result.exclusion_reason or "",
+            result.proposal_summary or "",
+            " ".join(result.funding_restrictions or []),
+        ]
+        haystack = " ".join(haystack_parts).lower()
+        hits = [kw for kw in LOAN_KEYWORDS if kw in haystack]
+        if hits:
+            logger.warning(
+                f"'{criterion_name}' marked true but loan-related terms detected "
+                f"({', '.join(hits)}); review manually: "
+                f"url={getattr(result, 'url', None)} title={result.title!r}"
+            )
 
     def classify(self, content: str, url: str) -> Optional["CfpClassification"]:
         """Classify a single CfP page. Returns None on error."""
@@ -226,7 +320,7 @@ class CfpClassifier:
                         "role": "user",
                         "content": (
                             f"Base URL: {base_url}\n\n"
-                            f"Page content:\n{listing_markdown[:50_000]}"
+                            f"Page content:\n{listing_markdown[:MAX_LISTING_CONTENT_CHARS]}"
                         ),
                     },
                 ],

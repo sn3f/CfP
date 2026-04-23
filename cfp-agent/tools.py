@@ -54,9 +54,9 @@ DISCOVERY_KEYWORDS = (
     "attachments",
     "download",
 )
-MAX_SUPPORTING_DOCUMENTS = 4
-MAX_SUPPORTING_DOC_HOPS = 3
-MAX_SUPPORTING_DOC_CHARS = 25_000
+MAX_SUPPORTING_DOCUMENTS = int(os.getenv("MAX_SUPPORTING_DOCUMENTS", "2"))
+MAX_SUPPORTING_DOC_HOPS = int(os.getenv("MAX_SUPPORTING_DOC_HOPS", "2"))
+MAX_SUPPORTING_DOC_CHARS = int(os.getenv("MAX_SUPPORTING_DOC_CHARS", "12000"))
 WORD_NAMESPACE = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 RETRIABLE_STATUS_CODES = {408, 425, 429, 500, 502, 503, 504}
 
@@ -324,7 +324,11 @@ def extract_candidate_document_links(markdown: str, base_url: str, limit: int = 
 
         context = _clean_candidate_context(line)
         for raw_url in urls:
-            resolved_url = _normalize_url(urljoin(base_url, raw_url.rstrip(".,;:")))
+            try:
+                joined = urljoin(base_url, raw_url.rstrip(".,;:"))
+            except ValueError:
+                continue
+            resolved_url = _normalize_url(joined)
             if not resolved_url or resolved_url == base_normalized:
                 continue
 

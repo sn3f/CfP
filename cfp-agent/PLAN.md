@@ -196,11 +196,12 @@ Objectif: ramener le cout par run hebdomadaire de ~$32 a moins de $10, et corrig
 | G3 - reporting par source | fait | Champ `by_source` dans `latest.json` avec ~14 metriques par source |
 | C1 + G1 - filtrage grant/procurement | fait | 8 sources taguees `source_type: procurement`, exclues par defaut, flag `--include-procurement` |
 | C6 - diff scanning | fait | Reuse si `<30j` + deadline future, drop si expire, reclassify si stale. Flag `--no-diff` + env `DIFF_MAX_AGE_DAYS` |
-| C3 - reduire troncatures | todo | |
-| Q1 + Q2 - qualite classification | todo | |
+| Bug IPv6 URL | fait | `urljoin` protege dans `extract_candidate_document_links` contre les liens malformes du type `https://[...` |
+| Q3 - echecs silencieux | fait | Nouveaux champs `listing_chars`, `listing_loading_warning`, `api_items_returned` + `source_issues` dans `latest.json` + warnings dans GitHub Actions summary |
+| C3 - reduire troncatures | fait | Primary page 100k -> 40k, supporting docs 4 x 25k -> 2 x 12k, hops 3 -> 2. Tous configurables via env vars |
+| Q1 + Q2 - qualite classification | fait | Q1: `classification_summary` definie explicitement dans le prompt (verdict declaratif, pas de CoT/arithmetic). Q2: Python enforcement etendu a `Grant size above threshold` (conversion FX 15 devises, seuil 50k USD) + warning sur loan-keywords quand `Funding instrument is grant` = true. Evidence reecrite lors des overrides pour rester coherente avec le status. Bonus D4: deadline check utilise maintenant UTC |
 | C4 - prompt caching | todo | |
 | C2 + C5 - Haiku pre-screen + extraction | todo | |
-| Q3 - echecs silencieux | todo | |
 | R4 - tests | todo | |
 
 ### Leviers cout (par ordre d'impact)

@@ -80,12 +80,62 @@ def dedupe_urls(urls: list[str]) -> tuple[list[str], int]:
     return unique_urls, duplicate_count
 
 
+LISTING_CHARS_TOO_SMALL = 500
+CLASSIFICATION_FAILURE_RATIO = 0.5
+
+
+def _diagnose_source_issues(by_source: list[dict]) -> list[dict]:
+    """Categorise per-source anomalies for triage (silent failures, loading issues, crashes)."""
+    issues: list[dict] = []
+    for s in by_source:
+        name = s["source_name"]
+        if s.get("error"):
+            issues.append({"source_name": name, "kind": "error", "detail": s["error"]})
+            continue
+
+        produced_anything = (
+            s.get("cfps_processed", 0)
+            or s.get("cfps_reused", 0)
+            or s.get("cfps_dropped_expired", 0)
+            or s.get("links_found", 0)
+        )
+        if not produced_anything:
+            via_api = s.get("via_api")
+            api_items = s.get("api_items_returned")
+            listing_chars = s.get("listing_chars")
+            if via_api and api_items == 0 and (listing_chars or 0) == 0:
+                detail = "API returned 0 items and Jina fallback returned empty"
+            elif s.get("listing_loading_warning"):
+                detail = f"Jina flagged page as not fully loaded (listing_chars={listing_chars}) - likely JS-rendered"
+            elif listing_chars is not None and listing_chars < LISTING_CHARS_TOO_SMALL:
+                detail = f"Listing page returned only {listing_chars} chars - scraper likely broken"
+            elif listing_chars is None and not via_api:
+                detail = "Scraping not attempted and no API configured"
+            else:
+                detail = f"No links extracted from {listing_chars or 0}-char listing - URL may not be a listing page"
+            issues.append({"source_name": name, "kind": "silent_zero", "detail": detail})
+            continue
+
+        processed = s.get("cfps_processed", 0)
+        failures = s.get("classification_failures", 0)
+        if processed and failures / processed > CLASSIFICATION_FAILURE_RATIO:
+            issues.append({
+                "source_name": name,
+                "kind": "classification_failures",
+                "detail": f"{failures}/{processed} CfPs failed classification",
+            })
+    return issues
+
+
 def _new_source_stats(source: dict) -> dict:
     return {
         "source_name": source["name"],
         "url": source["url"],
         "via_api": False,
+        "api_items_returned": None,
         "api_fallback_to_scraping": False,
+        "listing_chars": None,
+        "listing_loading_warning": False,
         "links_found": 0,
         "duplicates_within_source": 0,
         "duplicates_across_sources": 0,
@@ -185,6 +235,7 @@ def process_source(
         logger.info(f"  Fetching via API ({source['api_type']})")
         stats["via_api"] = True
         items = fetch_via_api(source)
+        stats["api_items_returned"] = len(items) if items else 0
         if items:
             cfp_urls = [it["url"] for it in items if it.get("url")]
             logger.info(f"  API returned {len(cfp_urls)} items")
@@ -195,6 +246,10 @@ def process_source(
     if not cfp_urls:
         logger.info(f"  Scraping listing page via Jina: {url}")
         listing_md = scrape_url(url)
+        stats["listing_chars"] = len(listing_md)
+        if listing_md and "maybe not yet fully loaded" in listing_md:
+            stats["listing_loading_warning"] = True
+            logger.warning("  Jina reports listing page not fully loaded (likely JS-rendered)")
         if not listing_md:
             logger.warning(f"  Empty response for listing page, skipping source")
             return [], stats
@@ -378,14 +433,15 @@ def main() -> None:
             logger.info(f"Source '{source['name']}': {len(results)} CfPs in output")
         except Exception as exc:
             logger.error(f"Failed to process '{source['name']}': {exc}", exc_info=True)
-            error_stats = _new_source_stats(source)
-            error_stats["error"] = str(exc)
-            by_source.append(error_stats)
+            stats = getattr(exc, "source_stats", None) or _new_source_stats(source)
+            stats["error"] = f"{type(exc).__name__}: {exc}"
+            by_source.append(stats)
 
     eligible_count = sum(1 for r in all_results if r.get("eligible"))
     total_reused = sum(s.get("cfps_reused", 0) for s in by_source)
     total_dropped_expired = sum(s.get("cfps_dropped_expired", 0) for s in by_source)
     total_reclassified = sum(s.get("cfps_processed", 0) for s in by_source)
+    source_issues = _diagnose_source_issues(by_source)
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "total": len(all_results),
@@ -398,9 +454,15 @@ def main() -> None:
             "reclassified": total_reclassified,
             "max_age_days": diff_max_age_days,
         },
+        "source_issues": source_issues,
         "by_source": by_source,
         "results": all_results,
     }
+
+    if source_issues:
+        logger.warning(f"Source issues detected ({len(source_issues)}):")
+        for issue in source_issues:
+            logger.warning(f"  [{issue['kind']}] {issue['source_name']}: {issue['detail']}")
 
     if args.dry_run:
         print(json.dumps(output, indent=2, ensure_ascii=False, default=str))
