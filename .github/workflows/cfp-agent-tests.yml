@@ -1,0 +1,33 @@
+name: CfP Agent Tests
+
+on:
+  push:
+    paths:
+      - "cfp-agent/**"
+      - ".github/workflows/cfp-agent-tests.yml"
+  pull_request:
+    paths:
+      - "cfp-agent/**"
+      - ".github/workflows/cfp-agent-tests.yml"
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python with uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies (including dev)
+        working-directory: cfp-agent
+        run: uv sync --frozen
+
+      - name: Run pytest
+        working-directory: cfp-agent
+        run: uv run pytest --tb=short

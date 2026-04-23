@@ -202,7 +202,9 @@ Objectif: ramener le cout par run hebdomadaire de ~$32 a moins de $10, et corrig
 | Q1 + Q2 - qualite classification | fait | Q1: `classification_summary` definie explicitement dans le prompt (verdict declaratif, pas de CoT/arithmetic). Q2: Python enforcement etendu a `Grant size above threshold` (conversion FX 15 devises, seuil 50k USD) + warning sur loan-keywords quand `Funding instrument is grant` = true. Evidence reecrite lors des overrides pour rester coherente avec le status. Bonus D4: deadline check utilise maintenant UTC |
 | C4 - prompt caching | todo | |
 | C2 + C5 - Haiku pre-screen + extraction | todo | |
-| R4 - tests | todo | |
+| R4 - tests | fait | 110 tests dans `tests/` + CI GitHub Actions (`cfp-agent-tests.yml`). Couvre URL normalization, dedup (+ UTM stripping), diff decision, source issues, hard-criteria enforcement, FX conversion, theme normalization, CriterionResult validation, LinkList validator, match_sources fuzzy, IPv6 URL regression. |
+| Q4 / Q5 / Q7 | fait | Q4: strip UTM/fbclid/gclid/mailchimp/hubspot dans `normalize_cfp_url`. Q5: reorder keyword rules (climate avant finance, sector en dernier). Q7: validator Pydantic sur `LinkList` qui drop les URLs non-http(s), relatives, vides, et deduplique. |
+| D1 / D6 | fait | D1: suppression de `_proxies()` jamais appele. D6: `--source` accepte maintenant match fuzzy (case/whitespace insensitive + substring fallback) via `match_sources()`. |
 
 ### Leviers cout (par ordre d'impact)
 

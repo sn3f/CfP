@@ -114,6 +114,12 @@ sources:
 
   - name: "IDB - Calls for Proposals"
     url: "https://www.iadb.org/en/how-we-can-work-together/calls-proposals"
+    enabled: false
+    # Disabled: the IDB calls-proposals page displays CfPs as visual image cards
+    # without per-CfP detail URLs in the markdown. Our LLM extractor returns 0
+    # links because there genuinely are no hyperlinks to follow. Individual CfPs
+    # (e.g. Improving Lives Grant) have detail pages but no parent index links
+    # to them. Not tractable with the listing -> detail-URL scraping model.
 
   - name: "EIB - Procurement"
     url: "https://www.eib.org/en/about/procurement/all/index.htm"
@@ -146,6 +152,12 @@ sources:
 
   - name: "Adaptation Fund"
     url: "https://www.adaptation-fund.org/"
+    enabled: false
+    # Disabled: Adaptation Fund does not run open competitive calls for proposals
+    # for external applicants. Funding flows through accredited National/Regional/
+    # Multilateral Implementing Entities (NIEs/RIEs/MIEs) under Direct Access, not
+    # via public CfPs. Previous "13 CfPs" extractions were LLM hallucinations on
+    # navigation links (all classified ineligible, avg match=0.135).
 
   - name: "MCC - Cooperative Agreements"
     url: "https://www.mcc.gov/work-with-us/partnerships/cooperative-agreements/"

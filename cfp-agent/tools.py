@@ -64,14 +64,6 @@ _HTTP_CLIENTS: dict[str | None, httpx.Client] = {}
 _RESPONSE_CACHE: dict[str, str | bytes | dict | list] = {}
 
 
-def _proxies() -> dict | None:
-    """Return proxy dict from environment if set."""
-    proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
-    if proxy:
-        return {"http://": proxy, "https://": proxy}
-    return None
-
-
 def _proxy_url() -> str | None:
     return os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
 

@@ -89,24 +89,31 @@ def normalize_theme(value: object) -> str | None:
     if normalized in _THEME_ALIASES:
         return _THEME_ALIASES[normalized]
 
+    # Ordered most-specific first. Compound phrases and clearly-themed domains come
+    # before generic economic terms so "climate finance" maps to climate, not finance.
     keyword_rules = (
-        (("finance", "fintech", "enterprise", "entrepreneur"), "Sustainable Enterprises"),
-        (("employment", "jobs", "livelihood"), "Employment Policy & Job Creation"),
-        (("skills", "training", "tvet", "apprenticeship"), "Skills Development & Vocational Training"),
-        (("migration", "migrant"), "Labour Migration"),
-        (("social protection", "social security", "cash transfer"), "Social Protection"),
-        (("gender", "equality", "women"), "Working Conditions & Equality"),
+        # Compound phrases first (unambiguous)
+        (("supply chain", "supply chains"), "Decent Work in Supply Chains"),
+        (("rights at work", "forced labour", "forced labor", "child labour", "child labor"), "Fundamental Principles and Rights at Work"),
+        (("legal framework", "labour standards", "labor standards"), "International Labour Standards & Legal Frameworks"),
         (("osh", "occupational safety", "labour inspection", "labor inspection"), "OSH & Labour Inspection"),
         (("social dialogue", "tripartite", "tripartism", "collective bargaining"), "Social Dialogue & Tripartism"),
+        (("social protection", "social security", "cash transfer"), "Social Protection"),
+
+        # Domain-themed single words
+        (("skills", "training", "tvet", "apprenticeship"), "Skills Development & Vocational Training"),
+        (("migration", "migrant"), "Labour Migration"),
         (
             ("climate", "green", "transition", "resilience", "adaptation"),
             "Just Transitions towards Environmentally Sustainable Economies and Societies",
         ),
-        (("supply chain", "supply chains"), "Decent Work in Supply Chains"),
-        (("crisis", "humanitarian", "post-crisis", "emergency"), "Decent Work in Crisis and Post-Crisis Situations"),
         (("informal",), "Informal Economy"),
-        (("rights at work", "forced labour", "forced labor", "child labour", "child labor"), "Fundamental Principles and Rights at Work"),
-        (("legal framework", "labour standards", "labor standards"), "International Labour Standards & Legal Frameworks"),
+        (("crisis", "humanitarian", "post-crisis", "emergency"), "Decent Work in Crisis and Post-Crisis Situations"),
+        (("gender", "equality", "women"), "Working Conditions & Equality"),
+
+        # Generic economic terms last (fall-through when no specific theme detected)
+        (("employment", "jobs", "livelihood"), "Employment Policy & Job Creation"),
+        (("finance", "fintech", "enterprise", "entrepreneur"), "Sustainable Enterprises"),
         (("sector", "agriculture", "tourism", "manufacturing"), "Sectoral Policies (Industry-Specific Work)"),
     )
 
@@ -147,6 +154,35 @@ class ApplicationStage(BaseModel):
 class LinkList(BaseModel):
     """Used by the agent to extract CfP URLs from a listing page."""
     urls: list[str] = Field(default_factory=list)
+
+    @field_validator("urls", mode="before")
+    @classmethod
+    def filter_invalid_urls(cls, value: object) -> list[str]:
+        if value is None:
+            return []
+        if isinstance(value, str):
+            value = [value]
+        if not isinstance(value, list):
+            return []
+
+        valid: list[str] = []
+        seen: set[str] = set()
+        for item in value:
+            if not isinstance(item, str):
+                continue
+            cleaned = item.strip()
+            if not cleaned:
+                continue
+            # Keep only absolute http(s) URLs - relatives and mailto/tel/javascript etc.
+            # would produce bad scrape targets downstream.
+            if not (cleaned.startswith("http://") or cleaned.startswith("https://")):
+                logger.debug("LinkList dropping non-http(s) URL: %r", cleaned)
+                continue
+            if cleaned in seen:
+                continue
+            seen.add(cleaned)
+            valid.append(cleaned)
+        return valid
 
 
 class CfpClassification(BaseModel):

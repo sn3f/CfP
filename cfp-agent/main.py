@@ -14,7 +14,7 @@ import os
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import yaml
 from dotenv import load_dotenv
@@ -41,6 +41,51 @@ def load_sources() -> list[dict]:
         return yaml.safe_load(f)["sources"]
 
 
+def _norm_source_key(name: str) -> str:
+    return " ".join(name.lower().split())
+
+
+def match_sources(sources: list[dict], query: str) -> list[dict]:
+    """Match sources by name, case- and whitespace-insensitive, with substring fallback.
+
+    Prefers exact normalized match; falls back to substring match across normalized
+    names if no exact hit. Returns all matches (caller decides how to handle multiples).
+    """
+    q = _norm_source_key(query)
+    if not q:
+        return []
+
+    exact = [s for s in sources if _norm_source_key(s["name"]) == q]
+    if exact:
+        return exact
+
+    return [s for s in sources if q in _norm_source_key(s["name"])]
+
+
+TRACKING_PARAM_PREFIXES = ("utm_", "_hs")
+TRACKING_PARAM_NAMES = frozenset({
+    "fbclid", "gclid", "msclkid", "yclid", "dclid", "ttclid",
+    "mc_cid", "mc_eid",
+    "igshid", "trk", "vero_id", "vero_conv",
+    "_ga", "_gl",
+    "ref_src", "ref_url",
+})
+
+
+def _strip_tracking_params(query: str) -> str:
+    if not query:
+        return query
+    kept = [
+        (k, v)
+        for k, v in parse_qsl(query, keep_blank_values=True)
+        if not (
+            k in TRACKING_PARAM_NAMES
+            or any(k.startswith(prefix) for prefix in TRACKING_PARAM_PREFIXES)
+        )
+    ]
+    return urlencode(kept, doseq=True)
+
+
 def normalize_cfp_url(url: str) -> str:
     cleaned = (url or "").strip()
     if not cleaned:
@@ -56,7 +101,7 @@ def normalize_cfp_url(url: str) -> str:
             parts.scheme.lower(),
             parts.netloc.lower(),
             parts.path.rstrip("/"),
-            parts.query,
+            _strip_tracking_params(parts.query),
             "",
         )
     )
@@ -388,10 +433,13 @@ def main() -> None:
         logger.info("Diff scanning disabled for --dry-run (full pipeline test)")
 
     if args.source:
-        sources = [s for s in sources if s["name"] == args.source]
+        sources = match_sources(sources, args.source)
         if not sources:
             logger.error(f"Source '{args.source}' not found in sources.yaml")
             sys.exit(1)
+        if len(sources) > 1:
+            matched_names = ", ".join(s["name"] for s in sources)
+            logger.info(f"Matched {len(sources)} sources: {matched_names}")
     else:
         disabled_count = sum(1 for s in sources if not s.get("enabled", True))
         sources = [s for s in sources if s.get("enabled", True)]

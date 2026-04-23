@@ -13,4 +13,11 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = []
+dev = [
+    "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --strict-markers"
