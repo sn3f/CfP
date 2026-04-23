@@ -13,7 +13,15 @@
       "Bash(grep -oE '\"role\":\"user\"[^}]*\"content\":\\\\[.{0,500}')",
       "Bash(awk 'NR>=1 && NR<=5' \"C:/Users/nef/.claude/projects/c--Users-nef-Documents-GitHub-CfP/0779a50b-604c-4b37-b224-212082a1a025.jsonl\")",
       "Bash(grep -oE '\"role\":\"user\",\"content\":\\\\[{\"type\":\"text\",\"text\":\"[^\"]{0,400}')",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "WebSearch",
+      "WebFetch(domain:www.iadb.org)",
+      "WebFetch(domain:www.ukpact.co.uk)",
+      "WebFetch(domain:www.seco-cooperation.admin.ch)",
+      "WebFetch(domain:um.dk)",
+      "WebFetch(domain:dfcentre.com)",
+      "WebFetch(domain:www.thegef.org)",
+      "WebFetch(domain:www.mcc.gov)"
     ]
   }
 }

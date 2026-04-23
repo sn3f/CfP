@@ -23,7 +23,7 @@ sources:
     url: "https://www.gov.uk/international-development-funding"
 
   - name: "UK PACT"
-    url: "https://www.ukpact.co.uk/apply-now"
+    url: "https://www.ukpact.co.uk/news"
 
   - name: "Canada - CFLI"
     url: "https://www.international.gc.ca/world-monde/funding-financement/cfli-fcil/index.aspx?lang=eng"
@@ -39,6 +39,10 @@ sources:
 
   - name: "Norway MFA - Open Calls"
     url: "https://grants.mfa.no/"
+    enabled: false
+    # Disabled: redundant with 'Norad - Calls for Proposals' which already covers
+    # Norway MFA funding (Norad administers on behalf of MFA). grants.mfa.no is
+    # only the submission portal, not a listing page.
 
   - name: "Norad - Calls for Proposals"
     url: "https://www.norad.no/en/for-partners/guides-and-tools/calls-for-proposals2/?tab=active&page=1"
@@ -54,8 +58,8 @@ sources:
   - name: "Sweden Sida - Calls"
     url: "https://www.sida.se/en/for-partners/calls-and-announcements"
 
-  - name: "Denmark Danida - NGO Rounds"
-    url: "https://um.dk/danida/samarbejspartnere/civ-org/stoetteform/tematiske-ngo-runder"
+  - name: "Denmark Danida - Research Calls"
+    url: "https://dfcentre.com/research/calls/"
 
   - name: "IFAD - Call for Proposals"
     url: "https://www.ifad.org/en/call-for-proposals"
@@ -108,8 +112,8 @@ sources:
     url: "https://www.afdb.org/en/projects-and-operations/procurement"
     source_type: "procurement"
 
-  - name: "IDB - Regional Public Goods"
-    url: "https://www.iadb.org/en/who-we-are/how-we-are-organized/departments-offices-and-sectors/vice-presidency-countries/regional-public-goods-initiative"
+  - name: "IDB - Calls for Proposals"
+    url: "https://www.iadb.org/en/how-we-can-work-together/calls-proposals"
 
   - name: "EIB - Procurement"
     url: "https://www.eib.org/en/about/procurement/all/index.htm"
@@ -130,16 +134,24 @@ sources:
     url: "https://www.afd.fr/en/calls-projects"
 
   - name: "Switzerland SECO"
-    url: "https://www.seco.admin.ch/"
+    url: "https://www.seco-cooperation.admin.ch/en"
 
   - name: "Global Environment Facility"
     url: "https://www.thegef.org/"
+    enabled: false
+    # Disabled: GEF has no unified calls-for-proposals listing. The GEF Small Grants
+    # Programme (SGP) dispatches country-specific calls through UNDP country offices,
+    # not via a central GEF page. Large-grant GEF Council allocations go to recipient
+    # governments, not competitive applicants like the ILO.
 
   - name: "Adaptation Fund"
     url: "https://www.adaptation-fund.org/"
 
   - name: "MCC - Cooperative Agreements"
     url: "https://www.mcc.gov/work-with-us/partnerships/cooperative-agreements/"
+    enabled: false
+    # Disabled: MCC's partnership funding is published via Grants.gov under APS
+    # No. 95332419N0001, which is already covered by the 'US Grants.gov' source.
 
   - name: "UN Migration Network MPTF"
     url: "https://migrationnetwork.un.org/mptf"
