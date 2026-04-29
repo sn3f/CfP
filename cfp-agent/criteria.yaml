@@ -3,10 +3,33 @@ criteria:
     fieldName: "ILO Eligibility"
     hard: true
     evaluationLogic: >
-      Check for a section defining eligible applicants. If such a section exists, treat the list
-      of eligible entities as STRICT and EXHAUSTIVE. If the ILO (an International Organization)
-      does not clearly fit into one of the listed categories, EXCLUDE it. Do not require an
-      explicit ban. Only assume eligibility if the text is completely silent on applicant types.
+      The ILO is a UN intergovernmental organization (IGO / UN specialized agency). It is NOT
+      a company, private firm, NGO, CSO, civil-society organisation, university, research
+      institute, government agency, ministry, sub-national authority, or local entity.
+
+      Determine eligibility as follows:
+
+      (1) If the text names eligible applicant CATEGORIES (e.g. "companies", "private sector",
+      "for-profit entities", "NGOs", "CSOs", "civil society organisations", "non-profit
+      organisations", "research institutes", "universities", "national/local authorities",
+      "domestic NGOs", "local organisations"), treat that list as EXHAUSTIVE. Set status="true"
+      ONLY if the list explicitly includes one of: "UN agencies", "United Nations entities",
+      "UN specialized agencies", "international organisations", "intergovernmental organisations",
+      "IGOs", "multilateral organisations", "multilateral agencies", "international institutions",
+      or an equivalent. Otherwise set status="false". A list of "companies" or "civil society"
+      that does not explicitly name UN/IGOs means status="false", even without explicit ban.
+
+      (2) Geographic language ("open to all countries", "applicants from any country", "global
+      call", "worldwide") refers to the COUNTRY of the applicant, NOT to the entity type. NEVER
+      use geographic openness to infer that ILO is eligible.
+
+      (3) Set status="true" only when the text is GENUINELY silent on applicant entity types
+      AND nothing in the funding nature constrains applicants to a non-IGO category (e.g. a
+      domestic subsidy scheme, a retail grant, a for-profit investment vehicle).
+
+      (4) When the text is silent on entity types but the call's framing is clearly aimed at
+      private-sector / civil-society / local-entity beneficiaries (e.g. "private sector
+      development", "support to local NGOs", "subsidies to road owners") set status="false".
 
   - id: 2
     fieldName: "Funding instrument is grant"
@@ -66,3 +89,27 @@ criteria:
     evaluationLogic: >
       Flag if eligibility is restricted to applicants legally registered or based in the
       donor domestic territory only.
+
+  - id: 10
+    fieldName: "Is open call with active application window"
+    hard: true
+    evaluationLogic: >
+      Confirm that the page describes a real, currently-open Call for Proposals — NOT an
+      aggregator/index page, a news announcement of a future programme, a perpetual
+      administrative scheme aimed at retail beneficiaries, or a finished call with results
+      published.
+
+      Set status="true" ONLY when BOTH conditions hold:
+      (a) The page describes a SINGLE specific call (one funding window, one set of eligibility
+      rules, one deadline or rolling window) — not a list of multiple opportunities.
+      (b) There is an explicit application mechanism (online application form, grants portal,
+      EOI/concept-note submission, dedicated email with template) AND either a future deadline
+      or an explicit "currently accepting applications" statement.
+
+      Set status="false" if the page is:
+      - An aggregator/landing/index page listing many opportunities;
+      - A news/press release announcing a future call without an open application;
+      - A perpetual or open-ended scheme aimed at retail beneficiaries (e.g. domestic
+        subsidies, grants for individuals, infrastructure-owner reimbursements);
+      - A finished call with awards already announced;
+      - A general programme description without a concrete current application round.
