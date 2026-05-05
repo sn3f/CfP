@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, timezone
 import pytest
 import yaml
 
-from agent import CfpClassifier, FX_TO_USD, GRANT_SIZE_THRESHOLD_USD
-from models import CfpClassification, CriterionResult
+from agent import ACTIVE_CALL_CRITERION, CfpClassifier, FX_TO_USD, GRANT_SIZE_THRESHOLD_USD
+from models import ApplicationStage, CfpClassification, CriterionResult
 
 
 # ---------------------------------------------------------------------------
@@ -83,8 +83,9 @@ class TestGrantSizeEnforcement:
         assert "50000 USD threshold" in (cr.evidence or "")
 
     def test_usd_above_threshold_kept(self, classifier):
+        future = (datetime.now(timezone.utc).date() + timedelta(days=30)).isoformat()
         result = classifier._enforce_hard_criteria(
-            _classification(funding_max=100_000, funding_currency="USD")
+            _classification(deadline=future, funding_max=100_000, funding_currency="USD")
         )
         assert result.criteria["Grant size above threshold"].status == "true"
         assert result.eligible
@@ -211,3 +212,99 @@ def test_fx_table_includes_common_currencies():
 
 def test_threshold_is_50k_usd():
     assert GRANT_SIZE_THRESHOLD_USD == 50_000.0
+
+
+# ---------------------------------------------------------------------------
+# Hard-criterion backfill (LLM silently drops criteria from output)
+# ---------------------------------------------------------------------------
+
+class TestHardCriterionBackfill:
+    def test_missing_c10_backfilled_as_unknown(self, classifier):
+        """When the LLM omits C10 entirely, post-processing must add it back."""
+        future = (datetime.now(timezone.utc).date() + timedelta(days=30)).isoformat()
+        c = _classification(deadline=future)
+        assert ACTIVE_CALL_CRITERION not in c.criteria
+        result = classifier._enforce_hard_criteria(c)
+        assert ACTIVE_CALL_CRITERION in result.criteria
+        # With a future deadline, C10 stays unknown (guard doesn't fire)
+        assert result.criteria[ACTIVE_CALL_CRITERION].status == "unknown"
+
+    def test_all_hard_criteria_present_after_enforcement(self, classifier, criteria):
+        future = (datetime.now(timezone.utc).date() + timedelta(days=30)).isoformat()
+        result = classifier._enforce_hard_criteria(_classification(deadline=future))
+        for c in criteria:
+            if c["hard"]:
+                assert c["fieldName"] in result.criteria
+
+    def test_existing_criterion_not_overwritten_by_backfill(self, classifier):
+        future = (datetime.now(timezone.utc).date() + timedelta(days=30)).isoformat()
+        c = _classification(deadline=future)
+        c.criteria[ACTIVE_CALL_CRITERION] = CriterionResult(
+            status="true", evidence="LLM evaluated this explicitly."
+        )
+        result = classifier._enforce_hard_criteria(c)
+        assert result.criteria[ACTIVE_CALL_CRITERION].evidence == "LLM evaluated this explicitly."
+
+
+# ---------------------------------------------------------------------------
+# Active-call window guard (catches instruction / process / annual-programming pages)
+# ---------------------------------------------------------------------------
+
+class TestActiveCallWindow:
+    def test_no_deadline_no_milestone_downgrades_unknown_to_false(self, classifier):
+        """The DRL/TIP State Dept regression: page describes process, no deadline."""
+        c = _classification()
+        # Simulate LLM omitting C10 (the actual State Dept failure mode)
+        result = classifier._enforce_hard_criteria(c)
+        assert result.criteria[ACTIVE_CALL_CRITERION].status == "false"
+        assert not result.eligible
+        assert ACTIVE_CALL_CRITERION in (result.exclusion_reason or "")
+
+    def test_no_deadline_no_milestone_downgrades_true_to_false(self, classifier):
+        """LLM optimistically marked C10 true on a process page — override."""
+        c = _classification()
+        c.criteria[ACTIVE_CALL_CRITERION] = CriterionResult(status="true")
+        result = classifier._enforce_hard_criteria(c)
+        assert result.criteria[ACTIVE_CALL_CRITERION].status == "false"
+
+    def test_future_deadline_protects_c10(self, classifier):
+        future = (datetime.now(timezone.utc).date() + timedelta(days=10)).isoformat()
+        c = _classification(deadline=future)
+        c.criteria[ACTIVE_CALL_CRITERION] = CriterionResult(status="true")
+        result = classifier._enforce_hard_criteria(c)
+        assert result.criteria[ACTIVE_CALL_CRITERION].status == "true"
+        assert result.eligible
+
+    def test_dated_application_stage_protects_c10(self, classifier):
+        """Even without a top-level deadline, a dated milestone counts as concrete."""
+        future = (datetime.now(timezone.utc).date() + timedelta(days=20)).isoformat()
+        c = _classification(
+            funding_max=100_000,
+            funding_currency="USD",
+            application_process=[
+                ApplicationStage(date=future, description="Concept note submission"),
+            ],
+        )
+        c.criteria[ACTIVE_CALL_CRITERION] = CriterionResult(status="true")
+        result = classifier._enforce_hard_criteria(c)
+        assert result.criteria[ACTIVE_CALL_CRITERION].status == "true"
+
+    def test_undated_application_stage_does_not_protect_c10(self, classifier):
+        """A milestone with no date provides no anchor."""
+        c = _classification(
+            application_process=[
+                ApplicationStage(date=None, description="Submit concept note"),
+            ],
+        )
+        c.criteria[ACTIVE_CALL_CRITERION] = CriterionResult(status="true")
+        result = classifier._enforce_hard_criteria(c)
+        assert result.criteria[ACTIVE_CALL_CRITERION].status == "false"
+
+    def test_existing_false_status_left_alone(self, classifier):
+        c = _classification()
+        c.criteria[ACTIVE_CALL_CRITERION] = CriterionResult(
+            status="false", evidence="LLM explicitly identified this as an aggregator page."
+        )
+        result = classifier._enforce_hard_criteria(c)
+        # Existing evidence preserved
+        assert "aggregator" in (result.criteria[ACTIVE_CALL_CRITERION].evidence or "")

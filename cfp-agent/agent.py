@@ -17,7 +17,7 @@ import instructor
 import yaml
 from openai import OpenAI
 
-from models import CfpClassification, ILO_THEMES, LinkList
+from models import CfpClassification, CriterionResult, ILO_THEMES, LinkList
 from region_map import COUNTRY_REGION_MAP
 from tools import fetch_supporting_documents
 
@@ -61,6 +61,8 @@ LOAN_KEYWORDS = (
     "credit line",
     "credit facility",
 )
+
+ACTIVE_CALL_CRITERION = "Is open call with active application window"
 
 
 def _build_system_prompt(criteria: list[dict]) -> str:
@@ -199,6 +201,22 @@ class CfpClassifier:
         today = datetime.now(timezone.utc).date()
         hard_names = {c["fieldName"] for c in self.criteria if c["hard"]}
 
+        # 0. Backfill missing hard criteria as "unknown" — the LLM silently drops
+        # criteria from its output ~50% of the time, which made hard checks
+        # unenforceable downstream.
+        if result.criteria is None:
+            result.criteria = {}
+        for name in hard_names:
+            if name not in result.criteria:
+                logger.info(
+                    f"Hard criterion {name!r} missing from LLM output; "
+                    f"backfilling as 'unknown'"
+                )
+                result.criteria[name] = CriterionResult(
+                    status="unknown",
+                    evidence="Not evaluated by classifier; treated as unknown.",
+                )
+
         # 1. Override "Deadline is future" using Python date comparison
         if result.deadline and "Deadline is future" in (result.criteria or {}):
             try:
@@ -221,7 +239,10 @@ class CfpClassifier:
         # 3. Warn (don't override) on loan-like phrasing inconsistent with grant=true
         self._check_funding_instrument(result)
 
-        # 4. If any hard criterion is false, set eligible=false
+        # 4. Override active-call criterion when nothing concrete anchors the call
+        self._check_active_call_window(result)
+
+        # 5. If any hard criterion is false, set eligible=false
         failed = [
             name
             for name in hard_names
@@ -280,6 +301,32 @@ class CfpClassifier:
                 f"({', '.join(hits)}); review manually: "
                 f"url={getattr(result, 'url', None)} title={result.title!r}"
             )
+
+    def _check_active_call_window(self, result: "CfpClassification") -> None:
+        """Downgrade C10 to false when nothing concrete anchors the call.
+
+        Process / instructions / annual-programming pages typically pass C10 because
+        the LLM treats them as "currently accepting applications" in the abstract,
+        but they have no submission deadline and no dated milestone — so they are
+        not actionable as a real call.
+        """
+        cr = (result.criteria or {}).get(ACTIVE_CALL_CRITERION)
+        if cr is None or cr.status == "false":
+            return
+        if result.deadline:
+            return
+        if any(stage.date for stage in (result.application_process or [])):
+            return
+        logger.info(
+            f"Overriding {ACTIVE_CALL_CRITERION!r} from {cr.status!r} to 'false' "
+            f"(no concrete deadline or dated application milestone)"
+        )
+        cr.status = "false"
+        cr.evidence = (
+            "No concrete submission deadline or dated application milestone is "
+            "present; page appears to describe a process or programme rather "
+            "than an active call."
+        )
 
     def classify(self, content: str, url: str) -> Optional["CfpClassification"]:
         """Classify a single CfP page. Returns None on error."""
