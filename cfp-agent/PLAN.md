@@ -280,6 +280,52 @@ Note: Batch API Anthropic (-50%) non disponible via OpenRouter. A evaluer seulem
 - `reporting.by_source` dans `latest.json` permettant d'arbitrer les sources a desactiver
 - Socle de tests sur les fonctions pures
 
+## Phase 3 - qualite ciblee post-baseline
+
+Objectif: corriger les faux positifs recurrents observes a la lecture des scans hebdomadaires (2026-04-23 -> 2026-05-11) et combler les trous de couverture signales par le chef.
+
+### Constats du scan 2026-05-11
+
+- 132 CfPs analyses, 5 eligibles. Cout ~$3.60 (vs $32 baseline) grace au diff-scan steady-state.
+- 4 sources `silent_zero` (JS-rendered): EU F&T Portal, US Grants.gov, CAF, Funds for NGOs.
+- Faux positifs recurrents:
+  - Norad Ukraine "private sector development 100M NOK" → rejete par le chef (mobilisation d'investissement prive) mais classe `eligible: true` (memoire `cfp_quality_private_sector.md`).
+  - DRL Submission Instructions (Jan 2020) → doc procedural de 2020 referencant des NOFOs futurs, pas un appel actif. C10 le laisse passer.
+- BMZ (donateur priorite chef) absent de `sources.yaml` (memoire `cfp_aligned_donors.md`).
+
+### Chantiers
+
+| # | Chantier | Probleme | Action | Validation | Effort |
+|---|---|---|---|---|---|
+| P3-B | Durcir C10 doc procedural | DRL Submission Instructions (2020) classe eligible bien que ce soit un PDF de procedure | C10 (b): exiger soit (i) deadline parseable, (ii) fenetre dates explicite, (iii) NOFO/cycle nomme. Sinon `false` avec raison "procedural doc referencing future NOFOs" | Ajouter DRL doc comme 6e case validation → doit basculer `false` | ~30 min |
+| P3-A | C11 private-sector/investment window | Norad Ukraine remonte chaque semaine bien que rejete par le chef sur le motif "investment mobilisation" | Nouveau C11 hard: `true` quand l'objet principal du call est private capital mobilisation / investment-ready projects / private sector development (comme theme central, pas beneficiaire secondaire). Exclusion automatique si `true` | Cas Norad Ukraine de la 5-case set doit rester `eligible: false` avec raison C11 | ~30 min |
+| P3-D | Ajouter BMZ aux sources | Donateur priorite chef absent | Identifier l'URL de listing CfP BMZ, valider scrapable, ajouter a `sources.yaml` | Premier scan inclut au moins 1 CfP BMZ classifie | ~30 min |
+| P3-C | Debug API silent_zero | EU F&T + Grants.gov renvoient 0 items via API + fallback scraping vide (JS) | (1) Reproduire local les deux calls API dans `tools.py`, log payload brut. (2) Fix params/filters si query cassee. (3) Sinon, fallback Playwright/Browserless | EU F&T et Grants.gov retournent > 0 links dans `by_source` | ~2-3h |
+
+### Ordre d'execution
+
+1. **P3-B** - quick win, supprime un faux positif visible chaque semaine.
+2. **P3-A** - resout l'irritant recurrent #1 du chef.
+3. **P3-D** - quick win couverture.
+4. **P3-C** - plus gros gain potentiel (EU F&T + Grants.gov sont enormes) mais risque/effort plus eleve.
+
+### Resultat attendu de la Phase 3
+
+- DRL et Norad Ukraine disparaissent du `eligible_count`.
+- Au moins 1 source BMZ active.
+- EU F&T et Grants.gov produisent des CfPs scrapes (objectif: > 10 links extraits chacun).
+- 5-case validation set passe a 6 cases (ajout DRL doc).
+
+### Implementation 2026-05-11
+
+| Chantier | Resultat | Notes |
+|---|---|---|
+| P3-B | fait | C10 prompt resserre (rejette docs procedurals qui referent a "individual NOFOs"). `_reapply_post_checks` re-applique l'enforcement Python sur les entrees reutilisees via diff-scan, evitant que les durcissements de criteres ne soient bloques par le cache 30j. 3 tests ajoutes. |
+| P3-A | fait | Nouveau C11 hard "Funding objective is ILO-implementable" avec red flags concrets (investment mobilisation, private capital, investment-ready, blended finance). `_diff_decision` force `reclassify` quand un critere hard est absent du prior → l'ajout de C11 declenche reclassification immediate de tout le corpus au prochain scan. 2 tests ajoutes. |
+| P3-D | partiel | BMZ ajoute a sources.yaml mais `enabled: false`. BMZ n'a pas d'API et pas de listing CfP unifie scrapable; la page press-releases est JS-rendered (silent_zero garanti via Jina). A reactiver quand P3-C est en place. |
+| P3-C | partiel | Grants.gov: endpoint corrige (`grantsapi.grants.gov/v1/api/search` -> `api.grants.gov/v1/api/search2`) + parsing du nouveau wrapper `data.oppHits` + check `errorcode`. EU F&T: pas d'acces aux docs API officielles + reseau corporate ne permet pas de tester localement; logging diagnostique ajoute (totalResults, top-keys, errorCode, message) pour comprendre au prochain run. Fallback Playwright pour les sources JS-rendered reste TODO. |
+| P3-E | fait | JS-rendered fallback via Jina `X-Engine: browser` header (pas besoin d'installer Playwright en local ni dans GHA — Jina heberge le headless Chromium cote serveur). Flag `js_rendered: true` ajoute aux sources concernees (EU F&T, CAF, Funds for NGOs, BMZ). `scrape_url(url, force_js=True)` injecte `X-Engine: browser` + `X-Timeout: 60` + timeout client a 75s + namespace de cache distinct pour ne pas reutiliser une reponse vide en mode auto. Fallback opportuniste aussi: si Jina (mode auto) signale "not yet fully loaded" sur un listing, retry automatique en mode browser. BMZ re-active. 4 tests ajoutes. |
+
 ## Scope exclu
 
 - Auth Keycloak

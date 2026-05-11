@@ -2,10 +2,14 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+import yaml
+
+from agent import CfpClassifier
 from main import (
     _diagnose_source_issues,
     _diff_decision,
     _new_source_stats,
+    _reapply_post_checks,
     dedupe_urls,
     match_sources,
     normalize_cfp_url,
@@ -170,6 +174,45 @@ class TestDiffDecision:
         }
         assert _diff_decision(prior, self.now, max_age_days=30) == "reuse"
 
+    def test_missing_required_criterion_triggers_reclassify(self):
+        """When a new hard criterion is added, all priors lacking it must reclassify."""
+        prior = {
+            "deadline": "2026-06-01",
+            "scraped_at": "2026-04-20T00:00:00+00:00",
+            "criteria": {
+                "ILO Eligibility": {"status": "true"},
+                "Deadline is future": {"status": "true"},
+            },
+        }
+        decision = _diff_decision(
+            prior,
+            self.now,
+            max_age_days=30,
+            required_hard_criteria={
+                "ILO Eligibility",
+                "Deadline is future",
+                "Funding objective is ILO-implementable",  # newly added
+            },
+        )
+        assert decision == "reclassify"
+
+    def test_all_required_criteria_present_keeps_reuse(self):
+        prior = {
+            "deadline": "2026-06-01",
+            "scraped_at": "2026-04-20T00:00:00+00:00",
+            "criteria": {
+                "ILO Eligibility": {"status": "true"},
+                "Deadline is future": {"status": "true"},
+            },
+        }
+        decision = _diff_decision(
+            prior,
+            self.now,
+            max_age_days=30,
+            required_hard_criteria={"ILO Eligibility", "Deadline is future"},
+        )
+        assert decision == "reuse"
+
 
 # ---------------------------------------------------------------------------
 # _diagnose_source_issues
@@ -241,6 +284,87 @@ class TestDiagnoseSourceIssues:
             classification_failures=1,  # 10% failure, below threshold
         )
         assert _diagnose_source_issues([s]) == []
+
+
+# ---------------------------------------------------------------------------
+# _reapply_post_checks (P3-B)
+# ---------------------------------------------------------------------------
+
+@pytest.fixture(scope="module")
+def _classifier():
+    with open("criteria.yaml", encoding="utf-8") as f:
+        criteria = yaml.safe_load(f)["criteria"]
+    inst = CfpClassifier.__new__(CfpClassifier)
+    inst.criteria = criteria
+    inst.model = "test"
+    inst.request_delay = 0
+    inst.system_prompt = ""
+    return inst
+
+
+class TestReapplyPostChecks:
+    def test_drl_style_doc_demoted_on_reuse(self, _classifier):
+        """A stale eligible classification with no deadline and no dated milestone
+        should be flipped to ineligible when re-checked, mirroring the DRL
+        Submission Instructions case that was reused across diff-scans.
+        """
+        prior = {
+            "url": "https://www.state.gov/drl-proposal-submission-instructions",
+            "source_name": "US State Dept - Grants",
+            "scraped_at": "2026-04-23T10:49:55.211548+00:00",
+            "eligible": True,
+            "exclusion_reason": None,
+            "classification_summary": "DRL submission instructions.",
+            "criteria": {
+                "ILO Eligibility": {"status": "true", "evidence": "PIO listed"},
+                "Funding instrument is grant": {"status": "true", "evidence": "grants"},
+                "Grant size above threshold": {"status": "unknown", "evidence": "no amount"},
+                "Deadline is future": {"status": "unknown", "evidence": "no deadline"},
+                # C10 absent — the original classification predated C10 enforcement
+            },
+            "title": "DRL Submission Instructions",
+            "deadline": None,
+            "application_process": [
+                {"date": None, "description": "Submit via SAMS Domestic"},
+            ],
+        }
+        refreshed = _reapply_post_checks(prior, _classifier)
+        assert refreshed["eligible"] is False
+        active = refreshed["criteria"]["Is open call with active application window"]
+        assert active["status"] == "false"
+        assert "Failed hard criteria" in (refreshed["exclusion_reason"] or "")
+
+    def test_genuine_call_kept_eligible_on_reuse(self, _classifier):
+        """A reused entry with a real future deadline must NOT be demoted."""
+        prior = {
+            "url": "https://example.org/cfp/123",
+            "source_name": "Example",
+            "scraped_at": "2026-04-23T10:00:00+00:00",
+            "eligible": True,
+            "exclusion_reason": None,
+            "classification_summary": "Real call.",
+            "criteria": {
+                "ILO Eligibility": {"status": "true", "evidence": "IGOs listed"},
+                "Funding instrument is grant": {"status": "true", "evidence": "grant"},
+                "Grant size above threshold": {"status": "true", "evidence": "500k USD"},
+                "Deadline is future": {"status": "true", "evidence": "2027-01"},
+                "Is open call with active application window": {
+                    "status": "true",
+                    "evidence": "Active call with portal and deadline",
+                },
+            },
+            "title": "Real CfP",
+            "deadline": "2027-01-15",
+        }
+        refreshed = _reapply_post_checks(prior, _classifier)
+        assert refreshed["eligible"] is True
+        assert refreshed["exclusion_reason"] is None
+
+    def test_malformed_prior_returned_as_is(self, _classifier):
+        """If the prior dict cannot be validated, return it unchanged."""
+        prior = {"url": "https://x", "garbage": True}  # missing required fields
+        refreshed = _reapply_post_checks(prior, _classifier)
+        assert refreshed is prior or refreshed == prior
 
 
 # ---------------------------------------------------------------------------

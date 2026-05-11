@@ -96,15 +96,21 @@ criteria:
     evaluationLogic: >
       Confirm that the page describes a real, currently-open Call for Proposals — NOT an
       aggregator/index page, a news announcement of a future programme, a perpetual
-      administrative scheme aimed at retail beneficiaries, or a finished call with results
+      administrative scheme aimed at retail beneficiaries, a procedural/instructions
+      document referencing future opportunities, or a finished call with results
       published.
 
       Set status="true" ONLY when BOTH conditions hold:
       (a) The page describes a SINGLE specific call (one funding window, one set of eligibility
-      rules, one deadline or rolling window) — not a list of multiple opportunities.
-      (b) There is an explicit application mechanism (online application form, grants portal,
-      EOI/concept-note submission, dedicated email with template) AND either a future deadline
-      or an explicit "currently accepting applications" statement.
+      rules, one deadline or rolling window) — not a list of multiple opportunities, and not
+      a procedural document that defers the actual call details to "individual NOFOs" or
+      "future calls".
+      (b) The page provides AT LEAST ONE concrete anchor: (i) a parseable submission deadline,
+      OR (ii) an explicit application window with named start/end dates, OR (iii) a named
+      funding cycle/round with an identifier (e.g. "FY2026 NOFO #SFOP0001234", "8th funding
+      round 2026") that is currently open. Generic mentions of "annual NOFOs", "individual
+      NOFOs will be posted", "applications accepted on a rolling basis" without a specific
+      cycle currently open are NOT sufficient.
 
       Set status="false" if the page is:
       - An aggregator/landing/index page listing many opportunities;
@@ -112,4 +118,40 @@ criteria:
       - A perpetual or open-ended scheme aimed at retail beneficiaries (e.g. domestic
         subsidies, grants for individuals, infrastructure-owner reimbursements);
       - A finished call with awards already announced;
-      - A general programme description without a concrete current application round.
+      - A general programme description without a concrete current application round;
+      - A procedural/submission-instructions document referencing future or unspecified
+        NOFOs without itself being a specific open call.
+
+  - id: 11
+    fieldName: "Funding objective is ILO-implementable"
+    hard: true
+    evaluationLogic: >
+      Set status="false" when the call's PRIMARY purpose is to mobilise private capital,
+      fund investment-ready commercial projects, channel blended finance, scale up
+      SMEs / private enterprises with equity or quasi-equity, or "match funding" for
+      private operators — even when multilateral / UN organisations are formally listed
+      among eligible recipients. The ILO is an implementing partner for technical
+      assistance and policy work, NOT a financial intermediary for private-sector
+      investment.
+
+      Concrete red flags (any one of these usually means "false"):
+      - Title or summary names "private sector development", "investment mobilisation",
+        "private capital", "investment-ready projects", "blended finance",
+        "match-funding for private operators" as the central objective;
+      - Eligible activities list emphasises "mobilisation of private capital",
+        "investment-ready projects", "commercial scale-up", "equity injection";
+      - Funding can be received by commercial / for-profit applicants as a primary
+        category alongside any multilateral mention;
+      - Donor framing positions the call as a Nansen-style private-sector window,
+        IFI co-financing facility, or development finance institution vehicle.
+
+      Set status="true" when the funding's primary purpose is direct programmatic
+      activity that an ILO implementation team could deliver: technical assistance,
+      capacity building, policy / regulatory work, awareness raising, research,
+      service delivery, social-protection system support, decent work / labour
+      standards interventions. Job creation framing alone does NOT make a private-
+      capital window ILO-implementable — check what the grant BUYS, not just what
+      outcomes it claims.
+
+      When in doubt — particularly when the title or top-line summary leads with
+      "private sector" or "investment" wording — set status="false".

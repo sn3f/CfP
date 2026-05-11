@@ -6,6 +6,7 @@ sources:
     url: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/calls-for-proposals?isExactMatch=true&status=31094501,31094502,31094503&order=DESC&pageNumber=1&pageSize=50&sortBy=startDate"
     api_url: "https://api.tech.ec.europa.eu/search-api/prod/rest/search"
     api_type: "eu_tenders"
+    js_rendered: true  # SPA - HTML fallback needs Jina browser engine
 
   - name: "EU External Action Service - Grants"
     url: "https://www.eeas.europa.eu/eeas/grants_en"
@@ -49,7 +50,7 @@ sources:
 
   - name: "US Grants.gov"
     url: "https://www.grants.gov/"
-    api_url: "https://grantsapi.grants.gov/v1/api/search"
+    api_url: "https://api.grants.gov/v1/api/search2"
     api_type: "grants_gov"
 
   - name: "Canada - Open Calls"
@@ -77,6 +78,7 @@ sources:
 
   - name: "CAF Development Bank - Calls"
     url: "https://www.caf.com/es/trabaja-con-nosotros/convocatorias/"
+    js_rendered: true  # SPA - confirmed silent_zero with Jina auto mode
 
   - name: "Italy AICS - Tenders"
     url: "https://aics.portaleamministrazionetrasparente.it/pagina952_bandi.html"
@@ -92,6 +94,7 @@ sources:
 
   - name: "Funds for NGOs"
     url: "https://www2.fundsforngos.org/"
+    js_rendered: true  # SPA - confirmed silent_zero with Jina auto mode
 
   - name: "US State Dept - Grants"
     url: "https://www.state.gov/policy-issues/grants-and-funding-opportunities"
@@ -170,3 +173,11 @@ sources:
 
   - name: "Expertise France - POPS"
     url: "https://pops.expertisefrance.fr/sdm/ent2/gen/accueil.action?tp=1761184818439"
+
+  - name: "BMZ - Press Releases"
+    url: "https://www.bmz.de/en/news/press-releases"
+    js_rendered: true
+    # BMZ has no API and no unified open-calls listing. Most BMZ funding to ILO is
+    # negotiated bilaterally; rare open calls are scattered across topic pages (e.g.
+    # /en/new-beginning-syria/open-call-takamul-iii). Press releases is the closest
+    # thing to a single feed. Page is JS-rendered, scraped via Jina browser engine.

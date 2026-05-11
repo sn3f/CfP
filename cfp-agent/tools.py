@@ -206,19 +206,35 @@ def _request_with_retries(
     raise RuntimeError(f"HTTP request failed after {attempts} attempts: {method.upper()} {url}") from last_error
 
 
-def scrape_url(url: str, timeout: int = 30) -> str:
-    """Fetch a URL as clean Markdown via Jina Reader (no API key required)."""
+def scrape_url(url: str, timeout: int = 30, *, force_js: bool = False) -> str:
+    """Fetch a URL as clean Markdown via Jina Reader (no API key required).
+
+    When ``force_js`` is true, switch Jina to its headless-Chrome engine via the
+    ``X-Engine: browser`` header. Default mode (``auto``) prefers a curl path
+    and silently returns near-empty markdown on heavily client-rendered pages
+    such as the EU Funding & Tenders portal or the BMZ press-releases listing.
+    """
+    headers = dict(JINA_HEADERS)
+    effective_timeout = timeout
+    namespace = "jina_markdown"
+    if force_js:
+        headers["X-Engine"] = "browser"
+        # Browser mode is slow; bump both the client-side timeout and Jina's own
+        # server-side wait so SPAs have time to hydrate before content is read.
+        headers["X-Timeout"] = "60"
+        effective_timeout = max(timeout, 75)
+        namespace = "jina_markdown_browser"
     try:
         return _request_with_retries(
             "GET",
             JINA_BASE + url,
-            namespace="jina_markdown",
-            headers=JINA_HEADERS,
-            timeout=timeout,
+            namespace=namespace,
+            headers=headers,
+            timeout=effective_timeout,
             response_kind="text",
         )
     except Exception as e:
-        logger.error(f"Jina scrape failed for {url}: {e}")
+        logger.error(f"Jina scrape failed for {url} (force_js={force_js}): {e}")
         return ""
 
 
@@ -467,9 +483,14 @@ def fetch_supporting_documents(
 # ---------------------------------------------------------------------------
 
 def fetch_grants_gov(api_url: str, max_results: int = 50) -> list[dict]:
-    """Grants.gov REST API - no key required."""
+    """Grants.gov REST API (search2) - no key required.
+
+    Response envelope is ``{errorcode, msg, token, data: {oppHits, hitCount, ...}}``;
+    the legacy ``search`` endpoint returned ``oppHits`` at the top level so the
+    parsing logic looks at both shapes defensively.
+    """
     try:
-        data = _request_with_retries(
+        envelope = _request_with_retries(
             "POST",
             api_url,
             namespace="api_grants_gov",
@@ -477,16 +498,26 @@ def fetch_grants_gov(api_url: str, max_results: int = 50) -> list[dict]:
             timeout=30,
             response_kind="json",
         )
-        if not isinstance(data, dict):
+        if not isinstance(envelope, dict):
             logger.error("Grants.gov API returned unexpected payload type")
             return []
-        items = data.get("oppHits", [])
+        if envelope.get("errorcode"):
+            logger.error(
+                f"Grants.gov API returned errorcode={envelope.get('errorcode')} "
+                f"msg={envelope.get('msg')!r}"
+            )
+            return []
+        payload = envelope.get("data") if isinstance(envelope.get("data"), dict) else envelope
+        items = payload.get("oppHits") or []
+        hit_count = payload.get("hitCount")
+        if hit_count is not None:
+            logger.info(f"Grants.gov hitCount={hit_count} returning={len(items)}")
         return [
             {
                 "title": it.get("title", ""),
                 "url": f"https://www.grants.gov/search-results-detail/{it.get('id', '')}",
                 "deadline": it.get("closeDate", ""),
-                "description": it.get("synopsis", ""),
+                "description": it.get("synopsis") or it.get("agencyName", ""),
             }
             for it in items
         ]
@@ -496,7 +527,12 @@ def fetch_grants_gov(api_url: str, max_results: int = 50) -> list[dict]:
 
 
 def fetch_eu_tenders(api_url: str, max_results: int = 50) -> list[dict]:
-    """EU Funding & Tenders search API - no key required."""
+    """EU Funding & Tenders search API - no key required.
+
+    Surfaces enough payload context in logs to diagnose the recurring
+    silent_zero: the portal updates its scope/status taxonomies without notice
+    and the only signal we get otherwise is api_items_returned=0.
+    """
     try:
         params = {
             "query": "",
@@ -518,7 +554,18 @@ def fetch_eu_tenders(api_url: str, max_results: int = 50) -> list[dict]:
         if not isinstance(data, dict):
             logger.error("EU Tenders API returned unexpected payload type")
             return []
+        total = data.get("totalResults")
         results = data.get("results", [])
+        logger.info(
+            f"EU Tenders totalResults={total} returning={len(results)} "
+            f"top-keys={list(data.keys())}"
+        )
+        if not results and total in (0, None):
+            logger.warning(
+                f"EU Tenders API returned 0 items. Likely scope/status taxonomy "
+                f"changed. Response keys present: {list(data.keys())}. "
+                f"errorCode={data.get('errorCode')!r} message={data.get('message')!r}"
+            )
         return [
             {
                 "title": r.get("metadata", {}).get("title", [""])[0],

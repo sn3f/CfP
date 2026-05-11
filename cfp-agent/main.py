@@ -20,6 +20,7 @@ import yaml
 from dotenv import load_dotenv
 
 from agent import CfpClassifier, get_regions_for_countries, load_criteria_from_yaml
+from models import CfpClassification
 from tools import fetch_via_api, scrape_url
 
 load_dotenv()
@@ -232,12 +233,47 @@ def _parse_scraped_at(value: object) -> datetime | None:
     return dt
 
 
+def _reapply_post_checks(prior: dict, classifier: CfpClassifier) -> dict:
+    """Re-run hard-criteria post-checks on a reused prior classification.
+
+    Post-checks (deadline math, grant-size FX conversion, active-call window
+    guard, backfill of missing hard criteria) evolve over time. Without this,
+    entries kept via diff-scan would freeze with whatever logic was in place at
+    original classification time, and tightening would only apply to newly-
+    classified URLs — leaving stale faux-positives in `latest.json` for up to
+    30 days.
+    """
+    model_fields = set(CfpClassification.model_fields.keys())
+    cls_data = {k: v for k, v in prior.items() if k in model_fields}
+    try:
+        classification = CfpClassification.model_validate(cls_data)
+    except Exception as exc:
+        logger.warning(
+            f"Cannot reapply post-checks on {prior.get('url')!r}: {exc}"
+        )
+        return prior
+
+    classifier._enforce_hard_criteria(classification)
+    refreshed = dict(prior)
+    refreshed["eligible"] = classification.eligible
+    refreshed["exclusion_reason"] = classification.exclusion_reason
+    refreshed["criteria"] = classification.model_dump()["criteria"]
+    return refreshed
+
+
 def _diff_decision(
     prior: dict,
     now_utc: datetime,
     max_age_days: int,
+    required_hard_criteria: set[str] | None = None,
 ) -> str:
-    """Return 'reuse', 'drop', or 'reclassify' for a URL already in latest.json."""
+    """Return 'reuse', 'drop', or 'reclassify' for a URL already in latest.json.
+
+    If ``required_hard_criteria`` is provided, any prior whose ``criteria`` dict is
+    missing one of those names is reclassified — newly added hard criteria
+    therefore propagate to the whole corpus on the next scan instead of waiting
+    for each entry to age past ``max_age_days``.
+    """
     deadline = prior.get("deadline")
     if isinstance(deadline, str):
         try:
@@ -253,6 +289,12 @@ def _diff_decision(
 
     if now_utc - scraped_at > timedelta(days=max_age_days):
         return "reclassify"
+
+    if required_hard_criteria:
+        prior_criteria = prior.get("criteria") or {}
+        missing = required_hard_criteria - set(prior_criteria.keys())
+        if missing:
+            return "reclassify"
 
     return "reuse"
 
@@ -271,7 +313,11 @@ def process_source(
     stats = _new_source_stats(source)
     prior_results_by_url = prior_results_by_url or {}
     now_utc = datetime.now(timezone.utc)
-    logger.info(f"=== Source: {name} ===")
+    required_hard_criteria = {
+        c["fieldName"] for c in classifier.criteria if c["hard"]
+    }
+    force_js = bool(source.get("js_rendered", False))
+    logger.info(f"=== Source: {name}{' [JS]' if force_js else ''} ===")
 
     # Step 1 - get CfP items list
     cfp_urls: list[str] = []
@@ -290,11 +336,22 @@ def process_source(
 
     if not cfp_urls:
         logger.info(f"  Scraping listing page via Jina: {url}")
-        listing_md = scrape_url(url)
+        listing_md = scrape_url(url, force_js=force_js)
         stats["listing_chars"] = len(listing_md)
         if listing_md and "maybe not yet fully loaded" in listing_md:
             stats["listing_loading_warning"] = True
-            logger.warning("  Jina reports listing page not fully loaded (likely JS-rendered)")
+            if force_js:
+                # Already in browser mode and still seeing the warning - either Jina
+                # gave up or the page needs a longer wait. Surface but proceed.
+                logger.warning(
+                    "  Jina browser engine still flags listing as not fully loaded"
+                )
+            else:
+                logger.warning(
+                    "  Jina (auto) flags listing as JS-rendered; retrying with browser engine"
+                )
+                listing_md = scrape_url(url, force_js=True)
+                stats["listing_chars"] = len(listing_md)
         if not listing_md:
             logger.warning(f"  Empty response for listing page, skipping source")
             return [], stats
@@ -327,14 +384,19 @@ def process_source(
 
         prior = prior_results_by_url.get(normalized_url)
         if prior is not None:
-            decision = _diff_decision(prior, now_utc, diff_max_age_days)
+            decision = _diff_decision(
+                prior,
+                now_utc,
+                diff_max_age_days,
+                required_hard_criteria=required_hard_criteria,
+            )
             if decision == "drop":
                 stats["cfps_dropped_expired"] += 1
                 seen_urls.add(normalized_url)
                 logger.info(f"  Dropping expired (deadline passed): {normalized_url}")
                 continue
             if decision == "reuse":
-                reused = dict(prior)
+                reused = _reapply_post_checks(prior, classifier)
                 results.append(reused)
                 seen_urls.add(normalized_url)
                 stats["cfps_reused"] += 1
@@ -347,7 +409,7 @@ def process_source(
 
         stats["cfps_processed"] += 1
         logger.info(f"  Classifying: {normalized_url}")
-        content = scrape_url(normalized_url)
+        content = scrape_url(normalized_url, force_js=force_js)
         if not content:
             stats["empty_content"] += 1
             logger.warning(f"  Empty content, skipping {normalized_url}")

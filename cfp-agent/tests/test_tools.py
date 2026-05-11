@@ -1,8 +1,11 @@
+from unittest.mock import patch
+
 from tools import (
     _is_docx_url,
     _is_pdf_url,
     _normalize_url,
     extract_candidate_document_links,
+    scrape_url,
 )
 
 
@@ -108,3 +111,40 @@ class TestExtractCandidateDocumentLinks:
         md = "[Annex](https://example.org/attachments/annex.pdf)"
         links = extract_candidate_document_links(md, "https://example.org/cfp")
         assert any(l["url"].startswith("https://example.org/attachments/") for l in links)
+
+
+# ---------------------------------------------------------------------------
+# scrape_url - X-Engine: browser fallback (P3-C2)
+# ---------------------------------------------------------------------------
+
+class TestScrapeUrlForceJs:
+    def test_auto_mode_omits_engine_header(self):
+        with patch("tools._request_with_retries", return_value="ok") as mock_req:
+            scrape_url("https://example.org")
+        kwargs = mock_req.call_args.kwargs
+        headers = kwargs["headers"]
+        assert "X-Engine" not in headers
+        assert kwargs["namespace"] == "jina_markdown"
+
+    def test_force_js_sets_browser_engine(self):
+        with patch("tools._request_with_retries", return_value="ok") as mock_req:
+            scrape_url("https://example.org", force_js=True)
+        kwargs = mock_req.call_args.kwargs
+        headers = kwargs["headers"]
+        assert headers["X-Engine"] == "browser"
+        assert headers["X-Timeout"] == "60"
+        # Browser mode uses a distinct cache namespace so an earlier auto-mode
+        # empty result doesn't poison the browser-mode retry.
+        assert kwargs["namespace"] == "jina_markdown_browser"
+        # Effective timeout bumped from default 30s to >= 75s.
+        assert kwargs["timeout"] >= 75
+
+    def test_force_js_respects_custom_timeout_floor(self):
+        with patch("tools._request_with_retries", return_value="ok") as mock_req:
+            scrape_url("https://example.org", timeout=120, force_js=True)
+        # Should not shrink a caller-provided larger timeout.
+        assert mock_req.call_args.kwargs["timeout"] == 120
+
+    def test_empty_string_on_exception(self):
+        with patch("tools._request_with_retries", side_effect=RuntimeError("boom")):
+            assert scrape_url("https://example.org", force_js=True) == ""
