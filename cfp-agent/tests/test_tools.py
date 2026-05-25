@@ -3,6 +3,7 @@ from unittest.mock import patch
 from tools import (
     _is_docx_url,
     _is_pdf_url,
+    _map_eu_tenders_item,
     _normalize_url,
     extract_candidate_document_links,
     scrape_url,
@@ -148,3 +149,97 @@ class TestScrapeUrlForceJs:
     def test_empty_string_on_exception(self):
         with patch("tools._request_with_retries", side_effect=RuntimeError("boom")):
             assert scrape_url("https://example.org", force_js=True) == ""
+
+
+# ---------------------------------------------------------------------------
+# _map_eu_tenders_item (P4-C: SEDIA item -> CfP candidate)
+# ---------------------------------------------------------------------------
+
+class TestMapEuTendersItem:
+    """URL mapping per result type mirrors legacy SearchResultItemViewMapper.
+    See `git show ce72154:.../eufundingapi/SearchResultItemViewMapper.java`.
+    """
+
+    def test_type_8_builds_competitive_calls_url_from_callccm2Id(self):
+        item = {
+            "reference": "ignored-for-type-8",
+            "url": "https://fallback.example/orig",
+            "title": "Item-level title (ignored)",
+            "summary": "Short description here",
+            "metadata": {
+                "type": ["8"],
+                "callccm2Id": ["42123"],
+                "callTitle": ["The Real Title"],
+                "deadlineDate": ["2026-12-31T23:59:00.000+0000"],
+            },
+        }
+        result = _map_eu_tenders_item(item)
+        assert result["url"] == (
+            "https://ec.europa.eu/info/funding-tenders/opportunities/portal/"
+            "screen/opportunities/competitive-calls-cs/42123"
+        )
+        assert result["title"] == "The Real Title"
+        assert result["deadline"] == "2026-12-31T23:59:00.000+0000"
+        assert result["description"] == "Short description here"
+
+    def test_type_8_falls_back_to_item_url_when_callccm2Id_missing(self):
+        item = {
+            "url": "https://fallback.example/orig",
+            "metadata": {"type": ["8"]},
+        }
+        assert _map_eu_tenders_item(item)["url"] == "https://fallback.example/orig"
+
+    def test_type_2_builds_prospect_details_url_from_reference(self):
+        item = {
+            "reference": "ESF-2026-XYZ",
+            "url": "https://fallback.example/orig",
+            "metadata": {"type": ["2"], "title": ["Some Title"]},
+        }
+        assert _map_eu_tenders_item(item)["url"] == (
+            "https://ec.europa.eu/info/funding-tenders/opportunities/portal/"
+            "screen/opportunities/prospect-details/ESF-2026-XYZ"
+        )
+
+    def test_type_2_falls_back_to_item_url_when_reference_empty(self):
+        item = {
+            "reference": "",
+            "url": "https://fallback.example/orig",
+            "metadata": {"type": ["2"]},
+        }
+        assert _map_eu_tenders_item(item)["url"] == "https://fallback.example/orig"
+
+    def test_type_1_uses_item_native_url(self):
+        item = {
+            "url": "https://ec.europa.eu/.../topic-details/HORIZON-CL5-2027-01-D1",
+            "metadata": {"type": ["1"], "title": ["CLIMATE"]},
+        }
+        assert _map_eu_tenders_item(item)["url"] == (
+            "https://ec.europa.eu/.../topic-details/HORIZON-CL5-2027-01-D1"
+        )
+
+    def test_title_fallback_callTitle_then_metadata_title_then_item_title(self):
+        item_with_callTitle = {
+            "title": "item.title",
+            "metadata": {"type": ["1"], "callTitle": ["call-title"], "title": ["metadata.title"]},
+        }
+        assert _map_eu_tenders_item(item_with_callTitle)["title"] == "call-title"
+
+        item_with_metadata_title = {
+            "title": "item.title",
+            "metadata": {"type": ["1"], "title": ["metadata.title"]},
+        }
+        assert _map_eu_tenders_item(item_with_metadata_title)["title"] == "metadata.title"
+
+        item_with_item_title = {
+            "title": "item.title",
+            "metadata": {"type": ["1"]},
+        }
+        assert _map_eu_tenders_item(item_with_item_title)["title"] == "item.title"
+
+    def test_handles_missing_metadata_gracefully(self):
+        item = {}
+        result = _map_eu_tenders_item(item)
+        assert result["url"] == ""
+        assert result["title"] == ""
+        assert result["deadline"] is None
+        assert result["description"] == ""

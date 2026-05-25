@@ -31,6 +31,7 @@ sources:
 
   - name: "RISE Challenge - Gender & Environment"
     url: "https://genderandenvironment.org/rise-challenge/call/"
+    js_rendered: true  # silent_zero with 587 chars on 2026-05-25 - likely JS-rendered
 
   - name: "Women Entrepreneurs Finance Initiative"
     url: "https://we-fi.org/sixth-funding-call/"
@@ -75,6 +76,7 @@ sources:
 
   - name: "UN Road Safety Fund"
     url: "https://roadsafetyfund.un.org/call-proposals"
+    js_rendered: true  # Jina flagged "page not fully loaded" on 2026-05-25 (listing_chars=419)
 
   - name: "CAF Development Bank - Calls"
     url: "https://www.caf.com/es/trabaja-con-nosotros/convocatorias/"
@@ -85,6 +87,7 @@ sources:
 
   - name: "Global Disability Fund"
     url: "https://globaldisabilityfund.org/funding-calls/"
+    js_rendered: true  # silent_zero with 581 chars on 2026-05-25 - likely JS-rendered
 
   - name: "Joint SDG Fund"
     url: "https://invest.jointsdgfund.org/"
@@ -94,7 +97,12 @@ sources:
 
   - name: "Funds for NGOs"
     url: "https://www2.fundsforngos.org/"
-    js_rendered: true  # SPA - confirmed silent_zero with Jina auto mode
+    enabled: false
+    # Disabled 2026-05-25: 4+ consecutive weeks silent_zero (~168-255 chars).
+    # Site is behind Cloudflare bot-challenge / loading screen even with Jina
+    # browser engine. Full catalog requires Premium subscription ($59/yr).
+    # Aggregator value-add is low — most listed donors (FCDO, SIDA, Norad, IFAD,
+    # AFD, EU, AICS, AfDB, etc.) are already covered directly upstream.
 
   - name: "US State Dept - Grants"
     url: "https://www.state.gov/policy-issues/grants-and-funding-opportunities"
@@ -172,7 +180,8 @@ sources:
     url: "https://migrationnetwork.un.org/mptf"
 
   - name: "Expertise France - POPS"
-    url: "https://pops.expertisefrance.fr/sdm/ent2/gen/accueil.action?tp=1761184818439"
+    url: "https://pops.expertisefrance.fr/sdm/ent2/gen/accueil.action"
+    js_rendered: true  # Java Struts/SDM platform - listing only renders client-side. Stripped stale ?tp= cache buster on 2026-05-25.
 
   - name: "BMZ - Press Releases"
     url: "https://www.bmz.de/en/news/press-releases"

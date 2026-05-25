@@ -192,6 +192,8 @@ def _new_source_stats(source: dict) -> dict:
         "empty_content": 0,
         "classification_failures": 0,
         "eligible_count": 0,
+        "eligible_new_count": 0,
+        "eligible_reused_count": 0,
         "avg_ilo_match_score": None,
         "error": None,
     }
@@ -400,6 +402,8 @@ def process_source(
                 results.append(reused)
                 seen_urls.add(normalized_url)
                 stats["cfps_reused"] += 1
+                if reused.get("eligible"):
+                    stats["eligible_reused_count"] += 1
                 prior_score = prior.get("ilo_match_score")
                 if isinstance(prior_score, (int, float)):
                     match_scores.append(float(prior_score))
@@ -430,6 +434,8 @@ def process_source(
         }
         results.append(result)
         seen_urls.add(normalized_url)
+        if classification.eligible:
+            stats["eligible_new_count"] += 1
         if classification.ilo_match_score is not None:
             match_scores.append(classification.ilo_match_score)
         logger.info(
@@ -439,7 +445,7 @@ def process_source(
         )
 
     stats["duplicates_across_sources"] = skipped_existing
-    stats["eligible_count"] = sum(1 for r in results if r.get("eligible"))
+    stats["eligible_count"] = stats["eligible_new_count"] + stats["eligible_reused_count"]
     if match_scores:
         stats["avg_ilo_match_score"] = round(sum(match_scores) / len(match_scores), 3)
 
@@ -548,6 +554,8 @@ def main() -> None:
             by_source.append(stats)
 
     eligible_count = sum(1 for r in all_results if r.get("eligible"))
+    eligible_new_count = sum(s.get("eligible_new_count", 0) for s in by_source)
+    eligible_reused_count = sum(s.get("eligible_reused_count", 0) for s in by_source)
     total_reused = sum(s.get("cfps_reused", 0) for s in by_source)
     total_dropped_expired = sum(s.get("cfps_dropped_expired", 0) for s in by_source)
     total_reclassified = sum(s.get("cfps_processed", 0) for s in by_source)
@@ -556,6 +564,8 @@ def main() -> None:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "total": len(all_results),
         "eligible_count": eligible_count,
+        "eligible_new_count": eligible_new_count,
+        "eligible_reused_count": eligible_reused_count,
         "diff_scan": {
             "enabled": use_diff,
             "prior_urls_known": len(prior_results_by_url),
@@ -586,6 +596,7 @@ def main() -> None:
         logger.info(
             f"Done. {len(all_results)} CfPs total, "
             f"{eligible_count} eligible "
+            f"({eligible_new_count} new, {eligible_reused_count} reused) "
             f"(reclassified={total_reclassified}, reused={total_reused}, "
             f"dropped_expired={total_dropped_expired}). "
             f"Saved to {out_path}"

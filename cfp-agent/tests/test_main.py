@@ -224,6 +224,16 @@ def _stats(**overrides):
     return base
 
 
+class TestSourceStatsShape:
+    """P4-E: stats must distinguish new vs reused eligible counts."""
+
+    def test_new_source_stats_includes_eligible_new_and_reused(self):
+        s = _new_source_stats({"name": "X", "url": "https://x"})
+        assert s["eligible_new_count"] == 0
+        assert s["eligible_reused_count"] == 0
+        assert s["eligible_count"] == 0
+
+
 class TestDiagnoseSourceIssues:
     def test_healthy_source_no_issue(self):
         s = _stats(

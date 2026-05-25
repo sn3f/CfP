@@ -50,6 +50,8 @@ jobs:
           data = json.loads(Path("results/latest.json").read_text(encoding="utf-8"))
           total = data.get("total", 0)
           eligible = data.get("eligible_count", 0)
+          eligible_new = data.get("eligible_new_count", 0)
+          eligible_reused = data.get("eligible_reused_count", 0)
           sources = sorted(
               {
                   item.get("source_name")
@@ -76,7 +78,7 @@ jobs:
               "",
               f"- Generated at: `{data.get('generated_at', 'unknown')}`",
               f"- Total opportunities: `{total}`",
-              f"- Eligible opportunities: `{eligible}`",
+              f"- Eligible opportunities: `{eligible}` (new: `{eligible_new}`, still-active: `{eligible_reused}`)",
               f"- Sources with results: `{len(sources)}`",
               f"- Source issues: `{len(issues)}`",
           ]
@@ -101,8 +103,12 @@ jobs:
               encoding="utf-8",
           )
 
-          if eligible == 0:
+          if eligible_new == 0 and eligible_reused == 0:
               print("::warning::CfP scan completed with zero eligible opportunities.")
+          elif eligible_new == 0:
+              print(f"::notice::CfP scan: 0 new eligible, {eligible_reused} still-active from prior weeks.")
+          else:
+              print(f"::notice::CfP scan: {eligible_new} NEW eligible opportunity(ies) this week.")
           if issues:
               print(f"::warning::CfP scan detected {len(issues)} source issue(s); see summary.")
           PY

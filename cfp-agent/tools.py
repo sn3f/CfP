@@ -527,60 +527,95 @@ def fetch_grants_gov(api_url: str, max_results: int = 50) -> list[dict]:
 
 
 def fetch_eu_tenders(api_url: str, max_results: int = 50) -> list[dict]:
-    """EU Funding & Tenders search API - no key required.
+    """EU Funding & Tenders search API (SEDIA) - no key required.
 
-    Surfaces enough payload context in logs to diagnose the recurring
-    silent_zero: the portal updates its scope/status taxonomies without notice
-    and the only signal we get otherwise is api_items_returned=0.
+    The endpoint silently ignores GET requests and form-encoded bodies; it
+    requires POST multipart with per-part Content-Type: application/json.
+    This was reverse-engineered from the pre-PoC ILO scraper
+    (`EUFundingApiHandler.java`, commit ce72154). Filtering to
+    type=[1,2,8] and status=[forthcoming,open] narrows the SEDIA index from
+    ~650k docs to ~750 active calls.
     """
+    sedia_url = f"{api_url}?apiKey=SEDIA&text=***&pageSize={max_results}&pageNumber=1"
+    query_json = (
+        '{"bool":{"must":['
+        '{"terms":{"type":["1","2","8"]}},'
+        '{"terms":{"status":["31094501","31094502"]}}'
+        "]}}"
+    )
+    files = {
+        "query": (None, query_json, "application/json"),
+        "languages": (None, '["en"]', "application/json"),
+    }
     try:
-        params = {
-            "query": "",
-            "scope": "singleMarket",
-            "page": "0",
-            "pageSize": str(max_results),
-            "sortBy": "startDate",
-            "sortOrder": "DESC",
-            "status": "31094501,31094502,31094503",
-        }
-        data = _request_with_retries(
-            "GET",
-            api_url,
-            namespace="api_eu_tenders",
-            params=params,
-            timeout=30,
-            response_kind="json",
-        )
-        if not isinstance(data, dict):
-            logger.error("EU Tenders API returned unexpected payload type")
-            return []
-        total = data.get("totalResults")
-        results = data.get("results", [])
-        logger.info(
-            f"EU Tenders totalResults={total} returning={len(results)} "
-            f"top-keys={list(data.keys())}"
-        )
-        if not results and total in (0, None):
-            logger.warning(
-                f"EU Tenders API returned 0 items. Likely scope/status taxonomy "
-                f"changed. Response keys present: {list(data.keys())}. "
-                f"errorCode={data.get('errorCode')!r} message={data.get('message')!r}"
-            )
-        return [
-            {
-                "title": r.get("metadata", {}).get("title", [""])[0],
-                "url": (
-                    "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen"
-                    f"/opportunities/calls-for-proposals/{r.get('identifier', '')}"
-                ),
-                "deadline": r.get("metadata", {}).get("deadlineDate", [None])[0],
-                "description": r.get("metadata", {}).get("description", [""])[0],
-            }
-            for r in results
-        ]
+        client = _http_client()
+        response = client.post(sedia_url, files=files, timeout=30)
+        response.raise_for_status()
+        data = response.json()
     except Exception as e:
         logger.error(f"EU Tenders API error: {e}")
         return []
+
+    if not isinstance(data, dict):
+        logger.error("EU Tenders API returned unexpected payload type")
+        return []
+    total = data.get("totalResults")
+    results = data.get("results", [])
+    logger.info(
+        f"EU Tenders totalResults={total} returning={len(results)} "
+        f"top-keys={list(data.keys())[:8]}"
+    )
+    if not results and total in (0, None):
+        logger.warning(
+            f"EU Tenders API returned 0 items. Likely SEDIA taxonomy changed. "
+            f"errorCode={data.get('errorCode')!r} message={data.get('message')!r}"
+        )
+    return [_map_eu_tenders_item(item) for item in results if item]
+
+
+def _map_eu_tenders_item(item: dict) -> dict:
+    """Build a CfP candidate dict from one SEDIA result item.
+
+    URL pattern depends on result type (mirrors legacy `SearchResultItemViewMapper`):
+        type=2  -> /opportunities/portal/screen/opportunities/prospect-details/{reference}
+        type=8  -> /opportunities/portal/screen/opportunities/competitive-calls-cs/{callccm2Id}
+        else    -> the item's own `url` field
+    """
+    metadata = item.get("metadata") or {}
+    types = metadata.get("type") or []
+    first_type = types[0] if types else None
+    reference = item.get("reference", "")
+    if first_type == "8":
+        callccm2_id = (metadata.get("callccm2Id") or [None])[0]
+        url = (
+            f"https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/competitive-calls-cs/{callccm2_id}"
+            if callccm2_id
+            else item.get("url", "")
+        )
+    elif first_type == "2":
+        url = (
+            f"https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/prospect-details/{reference}"
+            if reference
+            else item.get("url", "")
+        )
+    else:
+        url = item.get("url", "")
+
+    call_title = metadata.get("callTitle") or []
+    title_alt = metadata.get("title") or []
+    title = (
+        (call_title[0] if call_title else None)
+        or (title_alt[0] if title_alt else None)
+        or item.get("title", "")
+    )
+    deadline_date = metadata.get("deadlineDate") or []
+    deadline = deadline_date[0] if deadline_date else None
+    return {
+        "title": title or "",
+        "url": url,
+        "deadline": deadline,
+        "description": item.get("summary", ""),
+    }
 
 
 def fetch_world_bank(api_url: str, max_results: int = 50) -> list[dict]:

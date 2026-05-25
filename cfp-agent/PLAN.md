@@ -326,6 +326,42 @@ Objectif: corriger les faux positifs recurrents observes a la lecture des scans 
 | P3-C | partiel | Grants.gov: endpoint corrige (`grantsapi.grants.gov/v1/api/search` -> `api.grants.gov/v1/api/search2`) + parsing du nouveau wrapper `data.oppHits` + check `errorcode`. EU F&T: pas d'acces aux docs API officielles + reseau corporate ne permet pas de tester localement; logging diagnostique ajoute (totalResults, top-keys, errorCode, message) pour comprendre au prochain run. Fallback Playwright pour les sources JS-rendered reste TODO. |
 | P3-E | fait | JS-rendered fallback via Jina `X-Engine: browser` header (pas besoin d'installer Playwright en local ni dans GHA — Jina heberge le headless Chromium cote serveur). Flag `js_rendered: true` ajoute aux sources concernees (EU F&T, CAF, Funds for NGOs, BMZ). `scrape_url(url, force_js=True)` injecte `X-Engine: browser` + `X-Timeout: 60` + timeout client a 75s + namespace de cache distinct pour ne pas reutiliser une reponse vide en mode auto. Fallback opportuniste aussi: si Jina (mode auto) signale "not yet fully loaded" sur un listing, retry automatique en mode browser. BMZ re-active. 4 tests ajoutes. |
 
+## Phase 4 - couverture sources + signal new vs reused
+
+Objectif: combler les 6 `silent_zero` du scan 2026-05-25 et permettre au PO de distinguer d'un coup d'oeil les vraies nouveautes des entrees recyclees via diff-scan.
+
+### Constats du scan 2026-05-25
+
+- 137 CfPs traites, 1 eligible — mais c'est le FCDO HELP-S Sudan **reutilise** depuis le scan du 18/05 (deadline 2026-05-27). Aucune nouvelle decouverte cette semaine, ce que le reporting ne montrait pas.
+- 6 sources `silent_zero`: EU F&T Portal, RISE Challenge, UN Road Safety Fund, Global Disability Fund, Funds for NGOs, Expertise France POPS.
+- Funds for NGOs casse depuis 4+ semaines consecutives.
+- EU F&T Portal jamais sorti de `silent_zero` depuis le debut du projet (commit c58cd7d, avril 2026) — bug dans `fetch_eu_tenders` jamais detecte parce que le silent_zero ressemblait a "pas de calls".
+
+### Chantiers
+
+| # | Chantier | Resultat | Notes |
+|---|---|---|---|
+| P4-A | js_rendered manquant | fait | Flag `js_rendered: true` ajoute a 3 sources (RISE Challenge, UN Road Safety Fund, Global Disability Fund). Au prochain scan elles passent par Jina browser. Si toujours silent_zero → sources mortes a desactiver. |
+| P4-B | Expertise France POPS | fait | URL contenait `?tp=1761184818439` (cache-buster timestamp d'Oct 2025, devenu invalide). Strip + `js_rendered: true` parce que la plateforme Java Struts/SDM ne rend qu'en client-side. |
+| P4-D | Funds for NGOs | fait | Desactive. 4+ semaines consecutives `silent_zero` (~168-255 chars). Site protege par Cloudflare bot-challenge + paywall Premium ($59/yr). Donneurs listes deja couverts en amont (FCDO, SIDA, Norad, IFAD, AFD, EU, AICS, AfDB). |
+| P4-E | signal new vs reused | fait | Nouveaux compteurs `eligible_new_count` et `eligible_reused_count` propages depuis `_new_source_stats` jusqu'au top-level de `latest.json`. Workflow GHA summary affiche `Eligible: X (new: Y, still-active: Z)` + notice/warning differencies. Au prochain scan le PO verra `0 new, 1 still-active` au lieu du trompeur `1 eligible`. |
+| P4-C | EU F&T Portal | fait | **Reverse-engineered depuis le legacy [[legacy-cfp-architecture-first-commit]] (commit ce72154, `scraper/.../EUFundingApiHandler.java`).** L'API SEDIA exige POST multipart avec Content-Type `application/json` par part, `text=***` (3 etoiles), bool query `type=[1,2,8] + status=[31094501,31094502]`. Filtre l'index SEDIA de ~646k docs a ~750 appels actuellement ouverts ou a venir. Mapping URL par type (8→competitive-calls-cs, 2→prospect-details, else→item.url native) fidele a `SearchResultItemViewMapper`. Validation live: 5 appels actifs deadlines 2026-2027. 7 tests ajoutes sur `_map_eu_tenders_item`. |
+
+### Resultat attendu de la Phase 4
+
+- 0-2 sources `silent_zero` au prochain scan (au lieu de 6).
+- EU F&T Portal passe de 0 a ~50 appels classifies — coup de run 2026-06-01 plus eleve (~$5-15 supplementaires), puis retour steady-state via diff-scan.
+- Reporting montre explicitement les vraies nouveautes vs les entrees encore actives.
+
+### Chantiers Phase 4 non-traites (a planifier)
+
+| # | Chantier | Pourquoi | Effort |
+|---|---|---|---|
+| P4-F | source health tracking | desactivation automatique des sources `silent_zero` >= 3 semaines consecutives (script sur `results/history/*.json`) | ~1h |
+| P4-G | C4 prompt caching | seul levier cout restant du PLAN, gain ~$2-3/run + latence | ~1-2h |
+| BMZ | URL agregee reelle | la page `press-releases` ne peut pas yield des CfPs; les vrais appels sont sur les pages topic-specifiques (`/en/new-beginning-syria/open-call-takamul-iii` style). Identifier une page de listing si elle existe, sinon documenter comme veille manuelle. | ~30 min |
+| EU SPI-DW | source ciblee | priorite PO #4 dans [[cfp_aligned_donors]]. Maintenant que l'API EU marche, on peut ajouter une 2e source EU filtree sur `programmePeriod` SPI-DW specifique, en parallele du portail generique. | ~1h |
+
 ## Scope exclu
 
 - Auth Keycloak
