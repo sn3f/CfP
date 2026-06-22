@@ -532,14 +532,22 @@ def fetch_eu_tenders(api_url: str, max_results: int = 50) -> list[dict]:
     The endpoint silently ignores GET requests and form-encoded bodies; it
     requires POST multipart with per-part Content-Type: application/json.
     This was reverse-engineered from the pre-PoC ILO scraper
-    (`EUFundingApiHandler.java`, commit ce72154). Filtering to
-    type=[1,2,8] and status=[forthcoming,open] narrows the SEDIA index from
-    ~650k docs to ~750 active calls.
+    (`EUFundingApiHandler.java`, commit ce72154).
+
+    Filter choices:
+    - type=[2,8] only (excludes type=1 "topics"). type=1 is mostly Horizon
+      Europe research topics that get classifier-rejected anyway; including
+      them fills the source's max_results quota with non-mandate items and
+      hides NDICI/dev-coop calls (type=2/8) further down the relevance sort.
+      Legacy used [1,2,8] but legacy paginated through all results — we cap.
+    - status=[forthcoming, open] only.
+    - One retry on empty response: SEDIA occasionally returns
+      totalResults=0/empty results transiently (~1 in 4 scans observed).
     """
     sedia_url = f"{api_url}?apiKey=SEDIA&text=***&pageSize={max_results}&pageNumber=1"
     query_json = (
         '{"bool":{"must":['
-        '{"terms":{"type":["1","2","8"]}},'
+        '{"terms":{"type":["2","8"]}},'
         '{"terms":{"status":["31094501","31094502"]}}'
         "]}}"
     )
@@ -547,30 +555,45 @@ def fetch_eu_tenders(api_url: str, max_results: int = 50) -> list[dict]:
         "query": (None, query_json, "application/json"),
         "languages": (None, '["en"]', "application/json"),
     }
-    try:
-        client = _http_client()
-        response = client.post(sedia_url, files=files, timeout=30)
-        response.raise_for_status()
-        data = response.json()
-    except Exception as e:
-        logger.error(f"EU Tenders API error: {e}")
-        return []
+    client = _http_client()
 
-    if not isinstance(data, dict):
-        logger.error("EU Tenders API returned unexpected payload type")
-        return []
-    total = data.get("totalResults")
-    results = data.get("results", [])
-    logger.info(
-        f"EU Tenders totalResults={total} returning={len(results)} "
-        f"top-keys={list(data.keys())[:8]}"
-    )
-    if not results and total in (0, None):
+    for attempt in (1, 2):
+        try:
+            response = client.post(sedia_url, files=files, timeout=30)
+            response.raise_for_status()
+            data = response.json()
+        except Exception as e:
+            logger.error(f"EU Tenders API error (attempt {attempt}/2): {e}")
+            if attempt == 1:
+                time.sleep(_retry_base_delay())
+                continue
+            return []
+
+        if not isinstance(data, dict):
+            logger.error("EU Tenders API returned unexpected payload type")
+            return []
+        total = data.get("totalResults")
+        results = data.get("results", [])
+        logger.info(
+            f"EU Tenders attempt={attempt} totalResults={total} "
+            f"returning={len(results)} top-keys={list(data.keys())[:8]}"
+        )
+        if results:
+            return [_map_eu_tenders_item(item) for item in results if item]
+        # Empty: retry once. SEDIA returned 0 silently on 2026-06-22 despite
+        # returning 50 on each of the prior 3 weekly scans.
+        if attempt == 1:
+            logger.warning(
+                f"EU Tenders attempt 1 returned 0 items "
+                f"(errorCode={data.get('errorCode')!r} message={data.get('message')!r}); retrying"
+            )
+            time.sleep(_retry_base_delay())
+            continue
         logger.warning(
-            f"EU Tenders API returned 0 items. Likely SEDIA taxonomy changed. "
+            f"EU Tenders both attempts returned 0 items. "
             f"errorCode={data.get('errorCode')!r} message={data.get('message')!r}"
         )
-    return [_map_eu_tenders_item(item) for item in results if item]
+    return []
 
 
 def _map_eu_tenders_item(item: dict) -> dict:

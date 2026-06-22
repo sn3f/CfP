@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from tools import (
     _is_docx_url,
@@ -6,6 +6,7 @@ from tools import (
     _map_eu_tenders_item,
     _normalize_url,
     extract_candidate_document_links,
+    fetch_eu_tenders,
     scrape_url,
 )
 
@@ -243,3 +244,92 @@ class TestMapEuTendersItem:
         assert result["title"] == ""
         assert result["deadline"] is None
         assert result["description"] == ""
+
+
+# ---------------------------------------------------------------------------
+# fetch_eu_tenders retry behaviour
+# SEDIA returned empty in 1 of 4 weekly scans (2026-06-22) despite working
+# fine on either side — we now retry once on empty response.
+# ---------------------------------------------------------------------------
+
+def _make_post_response(payload):
+    """Build a fake httpx Response object usable by fetch_eu_tenders."""
+    resp = MagicMock()
+    resp.json.return_value = payload
+    resp.raise_for_status.return_value = None
+    return resp
+
+
+class TestFetchEuTendersRetry:
+    def test_returns_results_on_first_success(self):
+        items = [{"reference": "REF1", "url": "https://x", "title": "T",
+                  "summary": "s", "metadata": {"type": ["2"]}}]
+        client = MagicMock()
+        client.post.return_value = _make_post_response({"totalResults": 1, "results": items})
+        with patch("tools._http_client", return_value=client), \
+                patch("tools.time.sleep") as sleep_mock:
+            r = fetch_eu_tenders("https://api.example/search")
+        assert len(r) == 1
+        assert client.post.call_count == 1
+        sleep_mock.assert_not_called()
+
+    def test_retries_once_on_empty_then_returns_results(self):
+        items = [{"reference": "REF1", "url": "https://x", "title": "T",
+                  "summary": "s", "metadata": {"type": ["2"]}}]
+        client = MagicMock()
+        client.post.side_effect = [
+            _make_post_response({"totalResults": 0, "results": []}),
+            _make_post_response({"totalResults": 1, "results": items}),
+        ]
+        with patch("tools._http_client", return_value=client), \
+                patch("tools.time.sleep") as sleep_mock:
+            r = fetch_eu_tenders("https://api.example/search")
+        assert len(r) == 1
+        assert client.post.call_count == 2
+        sleep_mock.assert_called_once()
+
+    def test_returns_empty_when_both_attempts_empty(self):
+        client = MagicMock()
+        client.post.return_value = _make_post_response({"totalResults": 0, "results": []})
+        with patch("tools._http_client", return_value=client), \
+                patch("tools.time.sleep"):
+            r = fetch_eu_tenders("https://api.example/search")
+        assert r == []
+        assert client.post.call_count == 2
+
+    def test_retries_on_exception_then_succeeds(self):
+        items = [{"reference": "REF1", "url": "https://x", "title": "T",
+                  "summary": "s", "metadata": {"type": ["2"]}}]
+        client = MagicMock()
+        client.post.side_effect = [
+            RuntimeError("transient network failure"),
+            _make_post_response({"totalResults": 1, "results": items}),
+        ]
+        with patch("tools._http_client", return_value=client), \
+                patch("tools.time.sleep"):
+            r = fetch_eu_tenders("https://api.example/search")
+        assert len(r) == 1
+        assert client.post.call_count == 2
+
+    def test_sends_apikey_text_and_pagesize_in_url(self):
+        client = MagicMock()
+        client.post.return_value = _make_post_response({"totalResults": 0, "results": []})
+        with patch("tools._http_client", return_value=client), patch("tools.time.sleep"):
+            fetch_eu_tenders("https://api.example/search", max_results=42)
+        url_called = client.post.call_args.args[0]
+        assert "apiKey=SEDIA" in url_called
+        assert "text=***" in url_called
+        assert "pageSize=42" in url_called
+
+    def test_query_excludes_horizon_topic_type_1(self):
+        """Regression guard — type=1 is Horizon Europe research, classifier rejects
+        all of them but they dominate relevance sort and starve the 20-cap. Filter
+        at SEDIA query level instead. See phase4_lost_and_recovery memory."""
+        client = MagicMock()
+        client.post.return_value = _make_post_response({"totalResults": 0, "results": []})
+        with patch("tools._http_client", return_value=client), patch("tools.time.sleep"):
+            fetch_eu_tenders("https://api.example/search")
+        files = client.post.call_args.kwargs["files"]
+        query_field = files["query"][1]
+        assert '"type":["2","8"]' in query_field
+        assert '"type":["1","2","8"]' not in query_field

@@ -179,6 +179,12 @@ sources:
   - name: "UN Migration Network MPTF"
     url: "https://migrationnetwork.un.org/mptf"
 
+  - name: "Common Fund for Commodities"
+    url: "https://www.common-fund.org/call-for-proposals"
+    # Multilateral fund for commodities-dependent developing countries (101 member states).
+    # Annual call (29th open 2026 with deadline 1 Oct 2026, up to USD 1.5M per project).
+    # ILO is eligible to apply as a UN agency partnering with national entities in member countries.
+
   - name: "Expertise France - POPS"
     url: "https://pops.expertisefrance.fr/sdm/ent2/gen/accueil.action"
     js_rendered: true  # Java Struts/SDM platform - listing only renders client-side. Stripped stale ?tp= cache buster on 2026-05-25.
