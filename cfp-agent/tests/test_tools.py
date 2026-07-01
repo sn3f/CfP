@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 from tools import (
+    _html_to_text,
     _is_docx_url,
     _is_pdf_url,
     _map_eu_tenders_item,
@@ -244,6 +245,109 @@ class TestMapEuTendersItem:
         assert result["title"] == ""
         assert result["deadline"] is None
         assert result["description"] == ""
+        assert result["api_content"] == ""
+
+
+# ---------------------------------------------------------------------------
+# _html_to_text — naive stripper for SEDIA HTML-in-metadata fields
+# ---------------------------------------------------------------------------
+
+class TestHtmlToText:
+    def test_strips_tags_and_collapses_whitespace(self):
+        html = "<p>Hello <strong>world</strong></p>\n\n<p>Line two</p>"
+        assert _html_to_text(html) == "Hello world Line two"
+
+    def test_decodes_common_entities(self):
+        assert _html_to_text("A &amp; B &lt; C &nbsp;end") == "A & B < C end"
+
+    def test_empty_input_returns_empty(self):
+        assert _html_to_text("") == ""
+        assert _html_to_text(None) == ""
+
+
+# ---------------------------------------------------------------------------
+# api_content injection for EU SEDIA items (P0.1)
+# The classifier needs richer context than the SPA detail page (which Jina
+# cannot render). Build content from the API metadata itself.
+# ---------------------------------------------------------------------------
+
+class TestEuTendersApiContent:
+    def test_type_8_call_includes_beneficiary_administration(self):
+        item = {
+            "reference": "12345COMPETITIVE_CALLen",
+            "summary": "Summary of the call",
+            "title": None,
+            "metadata": {
+                "type": ["8"],
+                "callTitle": ["Skills Scholarships Programme"],
+                "callccm2Id": ["12345"],
+                "identifier": ["DIGITAL-2027-SKILLS"],
+                "deadlineDate": ["2027-01-15T17:00:00.000+0000"],
+                "deadlineModel": ["multiple cut-off"],
+                "startDate": ["2026-07-01T00:00:00.000+0000"],
+                "budget": [100000],
+                "currency": ["EUR"],
+                "programmePeriod": ["2021 - 2027"],
+                "beneficiaryAdministration": [
+                    "<p>OVERVIEW</p><p>Eligible applicants include universities and research institutions.</p>"
+                ],
+                "furtherInformation": [
+                    "<p>Legal disclaimer: The financing agreement is subject to EU rules.</p>"
+                ],
+                "topicConditions": [
+                    "<p>Applicants must be established in an EU or associated country.</p>"
+                ],
+            },
+        }
+        result = _map_eu_tenders_item(item)
+        content = result["api_content"]
+        assert "Skills Scholarships Programme" in content
+        assert "DIGITAL-2027-SKILLS" in content
+        assert "2027-01-15" in content
+        assert "100000 EUR" in content or "100000  EUR" in content
+        assert "Eligible applicants include universities" in content
+        assert "Legal disclaimer" in content
+        assert "Applicants must be established" in content
+        # HTML tags stripped
+        assert "<p>" not in content
+        assert "</p>" not in content
+
+    def test_type_2_call_falls_back_to_thin_content_when_html_fields_empty(self):
+        """NDICI prospect calls (type=2) have empty beneficiaryAdministration
+        etc. — we still emit title + identifier + deadline + summary."""
+        item = {
+            "reference": "186571PROSPECTSEN",
+            "summary": "Civil Society, Human Rights and ESG Accountability for South Africa",
+            "title": None,
+            "metadata": {
+                "type": ["2"],
+                "title": ["Civil Society, Human Rights and ESG Accountability for South Africa"],
+                "identifier": ["EuropeAid/186571/DD/ACT/ZA"],
+                "deadlineDate": ["2026-07-23T10:00:44.000+0000"],
+                "startDate": ["2026-04-24T10:00:34.000+0000"],
+                "budget": [5164000],
+                "currency": ["EUR"],
+                "programmePeriod": ["2014 - 2020"],
+                "beneficiaryAdministration": [],  # empty, as observed on real API
+                "descriptionByte": [],
+            },
+        }
+        result = _map_eu_tenders_item(item)
+        content = result["api_content"]
+        assert "EuropeAid/186571/DD/ACT/ZA" in content
+        assert "2026-07-23" in content
+        assert "5164000 EUR" in content
+        assert "Civil Society, Human Rights and ESG Accountability" in content
+
+    def test_budget_extracted_from_list_wrapping(self):
+        """Regression guard: metadata.budget arrives as a list — must not print
+        as literal `['100000']` string."""
+        item = {
+            "metadata": {"type": ["8"], "budget": ["100000"], "currency": ["EUR"]},
+        }
+        content = _map_eu_tenders_item(item)["api_content"]
+        assert "['100000']" not in content
+        assert "100000 EUR" in content or "100000  EUR" in content
 
 
 # ---------------------------------------------------------------------------

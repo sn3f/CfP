@@ -596,6 +596,29 @@ def fetch_eu_tenders(api_url: str, max_results: int = 50) -> list[dict]:
     return []
 
 
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
+_HTML_ENTITY_MAP = {
+    "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"',
+    "&apos;": "'", "&#39;": "'", "&nbsp;": " ",
+}
+_WS_COLLAPSE_RE = re.compile(r"\s+")
+
+
+def _html_to_text(html: str) -> str:
+    """Naive but safe HTML -> plain text for SEDIA metadata blobs.
+
+    Sonnet parses either format fine; stripping tags reduces token usage
+    and avoids classifier confusion on raw HTML markup. No external deps.
+    """
+    if not html:
+        return ""
+    text = _HTML_TAG_RE.sub(" ", html)
+    for entity, char in _HTML_ENTITY_MAP.items():
+        text = text.replace(entity, char)
+    text = _WS_COLLAPSE_RE.sub(" ", text).strip()
+    return text
+
+
 def _map_eu_tenders_item(item: dict) -> dict:
     """Build a CfP candidate dict from one SEDIA result item.
 
@@ -603,6 +626,14 @@ def _map_eu_tenders_item(item: dict) -> dict:
         type=2  -> /opportunities/portal/screen/opportunities/prospect-details/{reference}
         type=8  -> /opportunities/portal/screen/opportunities/competitive-calls-cs/{callccm2Id}
         else    -> the item's own `url` field
+
+    The API response contains rich metadata (beneficiaryAdministration,
+    furtherInformation, destinationDetails, etc.) that is sufficient to
+    classify without visiting the detail page. The detail URLs are
+    JS-rendered SPAs and Jina cannot extract them — the legacy Java scraper
+    (commit ce72154 `EUFundingApiHandler`) never scraped them either, it
+    built content from the API payload. We return an `api_content` field
+    so `process_source` in main.py can bypass the broken scrape.
     """
     metadata = item.get("metadata") or {}
     types = metadata.get("type") or []
@@ -638,7 +669,65 @@ def _map_eu_tenders_item(item: dict) -> dict:
         "url": url,
         "deadline": deadline,
         "description": item.get("summary", ""),
+        "api_content": _build_eu_tenders_content(item, metadata, title, deadline, url),
     }
+
+
+def _build_eu_tenders_content(
+    item: dict, metadata: dict, title: str, deadline: str | None, url: str
+) -> str:
+    """Concatenate SEDIA API metadata into a text blob for the classifier.
+
+    Includes the six HTML-rich fields the legacy handler used
+    (beneficiaryAdministration, description, descriptionByte,
+    destinationDetails, furtherInformation, supportInfo, topicConditions),
+    plus structured header (identifier, budget, deadline model, programme).
+    """
+    def _first(key: str) -> str:
+        vals = metadata.get(key) or []
+        if isinstance(vals, list) and vals:
+            return str(vals[0])
+        if not isinstance(vals, list):
+            return str(vals)
+        return ""
+
+    budget_raw = metadata.get("budget")
+    budget_display = (
+        str(budget_raw[0]) if isinstance(budget_raw, list) and budget_raw else str(budget_raw)
+    ) if budget_raw else ""
+    currency = _first("currency")
+    header_lines = [
+        f"# {title}" if title else "",
+        f"Identifier: {_first('identifier')}" if _first("identifier") else "",
+        f"Reference: {item.get('reference', '')}" if item.get("reference") else "",
+        f"Deadline: {deadline}" if deadline else "",
+        f"Deadline model: {_first('deadlineModel')}" if _first("deadlineModel") else "",
+        f"Start date: {_first('startDate')}" if _first("startDate") else "",
+        f"Budget: {budget_display} {currency}".strip() if budget_display else "",
+        f"Programme period: {_first('programmePeriod')}" if _first("programmePeriod") else "",
+        f"URL: {url}" if url else "",
+    ]
+    header = "\n".join(line for line in header_lines if line)
+
+    summary = item.get("summary", "")
+    rich_html_fields = [
+        "beneficiaryAdministration",
+        "descriptionByte",
+        "description",
+        "topicConditions",
+        "supportInfo",
+        "furtherInformation",
+        "destinationDetails",
+    ]
+    sections = []
+    for field in rich_html_fields:
+        raw = _first(field)
+        cleaned = _html_to_text(raw)
+        if cleaned:
+            sections.append(f"## {field}\n{cleaned}")
+
+    parts = [p for p in (header, f"## Summary\n{summary}" if summary else "", *sections) if p]
+    return "\n\n".join(parts)
 
 
 def fetch_world_bank(api_url: str, max_results: int = 50) -> list[dict]:

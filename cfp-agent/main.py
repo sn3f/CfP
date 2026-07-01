@@ -323,6 +323,12 @@ def process_source(
 
     # Step 1 - get CfP items list
     cfp_urls: list[str] = []
+    # Some API fetchers (SEDIA/EU F&T) return sufficient content in the API
+    # response itself. When present, use it instead of re-scraping the detail
+    # URL. EU F&T detail pages are JS-only SPAs that Jina cannot render even
+    # with force_js=True — scraping them yields empty shells. See
+    # tools._map_eu_tenders_item and legacy EUFundingApiHandler (ce72154).
+    api_content_by_url: dict[str, str] = {}
 
     if source.get("api_url"):
         logger.info(f"  Fetching via API ({source['api_type']})")
@@ -331,7 +337,15 @@ def process_source(
         stats["api_items_returned"] = len(items) if items else 0
         if items:
             cfp_urls = [it["url"] for it in items if it.get("url")]
-            logger.info(f"  API returned {len(cfp_urls)} items")
+            api_content_by_url = {
+                it["url"]: it["api_content"]
+                for it in items
+                if it.get("url") and it.get("api_content")
+            }
+            logger.info(
+                f"  API returned {len(cfp_urls)} items"
+                f"{f' ({len(api_content_by_url)} with pre-fetched content)' if api_content_by_url else ''}"
+            )
         else:
             stats["api_fallback_to_scraping"] = True
             logger.warning("  API returned 0 items, falling back to Jina scraping")
@@ -413,7 +427,11 @@ def process_source(
 
         stats["cfps_processed"] += 1
         logger.info(f"  Classifying: {normalized_url}")
-        content = scrape_url(normalized_url, force_js=force_js)
+        content = api_content_by_url.get(cfp_url) or api_content_by_url.get(normalized_url)
+        if content:
+            logger.info(f"  Using API-provided content ({len(content)} chars), skipping detail scrape")
+        else:
+            content = scrape_url(normalized_url, force_js=force_js)
         if not content:
             stats["empty_content"] += 1
             logger.warning(f"  Empty content, skipping {normalized_url}")
