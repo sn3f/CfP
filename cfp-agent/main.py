@@ -12,6 +12,7 @@ import json
 import logging
 import os
 import sys
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -173,6 +174,29 @@ def _diagnose_source_issues(by_source: list[dict]) -> list[dict]:
     return issues
 
 
+def _status_breakdown(results: list[dict]) -> dict:
+    """Counts per (window_status, eligibility_verdict) for the run summary.
+
+    ``closed_but_eligible`` is the "missed opportunities" figure the admin view
+    needs: calls the ILO could have applied for, seen only once the window shut.
+    """
+    windows: Counter[str] = Counter()
+    verdicts: Counter[str] = Counter()
+    closed_but_eligible = 0
+    for entry in results:
+        window = entry.get("window_status") or "unknown"
+        verdict = entry.get("eligibility_verdict") or "unknown"
+        windows[window] += 1
+        verdicts[verdict] += 1
+        if window == "closed" and verdict == "eligible":
+            closed_but_eligible += 1
+    return {
+        "by_window_status": dict(windows),
+        "by_eligibility_verdict": dict(verdicts),
+        "closed_but_eligible": closed_but_eligible,
+    }
+
+
 def _new_source_stats(source: dict) -> dict:
     return {
         "source_name": source["name"],
@@ -258,6 +282,8 @@ def _reapply_post_checks(prior: dict, classifier: CfpClassifier) -> dict:
     classifier._enforce_hard_criteria(classification)
     refreshed = dict(prior)
     refreshed["eligible"] = classification.eligible
+    refreshed["window_status"] = classification.window_status
+    refreshed["eligibility_verdict"] = classification.eligibility_verdict
     refreshed["exclusion_reason"] = classification.exclusion_reason
     refreshed["criteria"] = classification.model_dump()["criteria"]
     return refreshed
@@ -578,6 +604,7 @@ def main() -> None:
     total_dropped_expired = sum(s.get("cfps_dropped_expired", 0) for s in by_source)
     total_reclassified = sum(s.get("cfps_processed", 0) for s in by_source)
     source_issues = _diagnose_source_issues(by_source)
+    status_breakdown = _status_breakdown(all_results)
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "total": len(all_results),
@@ -592,6 +619,7 @@ def main() -> None:
             "reclassified": total_reclassified,
             "max_age_days": diff_max_age_days,
         },
+        "status_breakdown": status_breakdown,
         "source_issues": source_issues,
         "by_source": by_source,
         "results": all_results,

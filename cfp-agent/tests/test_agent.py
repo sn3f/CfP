@@ -3,7 +3,14 @@ from datetime import datetime, timedelta, timezone
 import pytest
 import yaml
 
-from agent import ACTIVE_CALL_CRITERION, CfpClassifier, FX_TO_USD, GRANT_SIZE_THRESHOLD_USD
+from agent import (
+    ACTIVE_CALL_CRITERION,
+    CfpClassifier,
+    DEADLINE_CRITERION,
+    FX_TO_USD,
+    GRANT_SIZE_THRESHOLD_USD,
+    derive_display_status,
+)
 from models import ApplicationStage, CfpClassification, CriterionResult
 
 
@@ -308,3 +315,111 @@ class TestActiveCallWindow:
         result = classifier._enforce_hard_criteria(c)
         # Existing evidence preserved
         assert "aggregator" in (result.criteria[ACTIVE_CALL_CRITERION].evidence or "")
+
+
+# ---------------------------------------------------------------------------
+# Display status (window_status / eligibility_verdict)
+# ---------------------------------------------------------------------------
+
+def _full_criteria(**overrides):
+    """All 6 hard criteria passing, overridable by field name."""
+    criteria = {
+        "ILO Eligibility": "true",
+        "Funding instrument is grant": "true",
+        "Grant size above threshold": "true",
+        "Funding objective is ILO-implementable": "true",
+        DEADLINE_CRITERION: "true",
+        ACTIVE_CALL_CRITERION: "true",
+    }
+    criteria.update(overrides)
+    return {name: CriterionResult(status=status) for name, status in criteria.items()}
+
+
+class TestDisplayStatus:
+    HARD = {
+        "ILO Eligibility",
+        "Funding instrument is grant",
+        "Grant size above threshold",
+        "Funding objective is ILO-implementable",
+        DEADLINE_CRITERION,
+        ACTIVE_CALL_CRITERION,
+    }
+
+    def test_open_and_eligible(self):
+        window, verdict = derive_display_status(_full_criteria(), self.HARD)
+        assert (window, verdict) == ("open", "eligible")
+
+    def test_past_deadline_is_closed_not_ineligible(self):
+        """The PO's question: a closed window must not read as 'ILO not eligible'."""
+        window, verdict = derive_display_status(
+            _full_criteria(**{DEADLINE_CRITERION: "false", ACTIVE_CALL_CRITERION: "false"}),
+            self.HARD,
+        )
+        assert window == "closed"
+        assert verdict == "eligible"
+
+    def test_ineligible_while_window_open(self):
+        window, verdict = derive_display_status(
+            _full_criteria(**{"ILO Eligibility": "false"}), self.HARD
+        )
+        assert (window, verdict) == ("open", "not_eligible")
+
+    def test_closed_and_ineligible_reported_on_both_axes(self):
+        window, verdict = derive_display_status(
+            _full_criteria(**{DEADLINE_CRITERION: "false", "ILO Eligibility": "false"}),
+            self.HARD,
+        )
+        assert (window, verdict) == ("closed", "not_eligible")
+
+    def test_aggregator_page_is_not_a_call(self):
+        """C10 false on its own means the page is not a live call at all."""
+        window, verdict = derive_display_status(
+            _full_criteria(**{ACTIVE_CALL_CRITERION: "false"}), self.HARD
+        )
+        assert window == "not_a_call"
+
+    def test_deadline_takes_precedence_over_not_a_call(self):
+        window, _ = derive_display_status(
+            _full_criteria(**{DEADLINE_CRITERION: "false", ACTIVE_CALL_CRITERION: "false"}),
+            self.HARD,
+        )
+        assert window == "closed"
+
+    def test_unknown_substantive_criterion_yields_unknown_verdict(self):
+        _, verdict = derive_display_status(
+            _full_criteria(**{"Grant size above threshold": "unknown"}), self.HARD
+        )
+        assert verdict == "unknown"
+
+    def test_unknown_time_criterion_yields_unknown_window(self):
+        window, _ = derive_display_status(
+            _full_criteria(**{DEADLINE_CRITERION: "unknown"}), self.HARD
+        )
+        assert window == "unknown"
+
+    def test_missing_criteria_do_not_raise(self):
+        window, verdict = derive_display_status({}, self.HARD)
+        assert (window, verdict) == ("unknown", "unknown")
+
+    def test_enforcement_sets_fields_on_classification(self, classifier):
+        past = (datetime.now(timezone.utc).date() - timedelta(days=5)).isoformat()
+        c = _classification(deadline=past, funding_max=100_000, funding_currency="USD")
+        c.criteria = _full_criteria()
+        result = classifier._enforce_hard_criteria(c)
+        assert not result.eligible
+        assert result.window_status == "closed"
+        assert result.eligibility_verdict == "eligible"
+
+    def test_llm_supplied_values_are_overwritten(self, classifier):
+        future = (datetime.now(timezone.utc).date() + timedelta(days=30)).isoformat()
+        c = _classification(
+            deadline=future,
+            funding_max=100_000,
+            funding_currency="USD",
+            window_status="closed",
+            eligibility_verdict="not_eligible",
+        )
+        c.criteria = _full_criteria()
+        result = classifier._enforce_hard_criteria(c)
+        assert result.window_status == "open"
+        assert result.eligibility_verdict == "eligible"

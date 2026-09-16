@@ -10,6 +10,7 @@ from main import (
     _diff_decision,
     _new_source_stats,
     _reapply_post_checks,
+    _status_breakdown,
     dedupe_urls,
     match_sources,
     normalize_cfp_url,
@@ -425,3 +426,64 @@ class TestMatchSources:
     def test_empty_query_returns_empty(self):
         assert match_sources(SAMPLE_SOURCES, "") == []
         assert match_sources(SAMPLE_SOURCES, "   ") == []
+
+
+# ---------------------------------------------------------------------------
+# Display status on reuse + run summary
+# ---------------------------------------------------------------------------
+
+class TestDisplayStatusOnReuse:
+    def test_reused_entry_gets_display_labels(self, _classifier):
+        """Entries kept via diff-scan predate the two new fields; the post-check
+        pass must backfill them instead of leaving them 'unknown' in latest.json."""
+        prior = {
+            "url": "https://example.org/cfp/closed",
+            "source_name": "Example",
+            "scraped_at": "2026-09-01T10:00:00+00:00",
+            "eligible": False,
+            "exclusion_reason": "Failed hard criteria: Deadline is future",
+            "classification_summary": "Window closed.",
+            "criteria": {
+                "ILO Eligibility": {"status": "true", "evidence": "IGOs listed"},
+                "Funding instrument is grant": {"status": "true", "evidence": "grant"},
+                "Grant size above threshold": {"status": "true", "evidence": "500k USD"},
+                "Funding objective is ILO-implementable": {
+                    "status": "true",
+                    "evidence": "technical assistance",
+                },
+                "Deadline is future": {"status": "false", "evidence": "closed 2026-08-01"},
+                "Is open call with active application window": {
+                    "status": "false",
+                    "evidence": "applications closed",
+                },
+            },
+            "title": "A call we missed",
+            "deadline": "2026-08-01",
+        }
+        refreshed = _reapply_post_checks(prior, _classifier)
+        assert refreshed["window_status"] == "closed"
+        assert refreshed["eligibility_verdict"] == "eligible"
+        assert refreshed["eligible"] is False
+
+
+class TestStatusBreakdown:
+    def test_counts_and_missed_opportunities(self):
+        results = [
+            {"window_status": "open", "eligibility_verdict": "eligible"},
+            {"window_status": "closed", "eligibility_verdict": "eligible"},
+            {"window_status": "closed", "eligibility_verdict": "not_eligible"},
+            {"window_status": "not_a_call", "eligibility_verdict": "unknown"},
+        ]
+        breakdown = _status_breakdown(results)
+        assert breakdown["by_window_status"] == {"open": 1, "closed": 2, "not_a_call": 1}
+        assert breakdown["by_eligibility_verdict"] == {
+            "eligible": 2,
+            "not_eligible": 1,
+            "unknown": 1,
+        }
+        assert breakdown["closed_but_eligible"] == 1
+
+    def test_entries_without_labels_count_as_unknown(self):
+        breakdown = _status_breakdown([{"url": "https://example.org"}])
+        assert breakdown["by_window_status"] == {"unknown": 1}
+        assert breakdown["closed_but_eligible"] == 0

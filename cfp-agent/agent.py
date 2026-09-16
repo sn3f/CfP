@@ -63,6 +63,51 @@ LOAN_KEYWORDS = (
 )
 
 ACTIVE_CALL_CRITERION = "Is open call with active application window"
+DEADLINE_CRITERION = "Deadline is future"
+
+# Hard criteria that describe WHEN the call can be applied to, as opposed to WHETHER
+# the ILO could apply at all. Split out so the two can be reported separately.
+TIME_CRITERIA = (DEADLINE_CRITERION, ACTIVE_CALL_CRITERION)
+
+
+def derive_display_status(
+    criteria: dict[str, "CriterionResult"], hard_names: set[str]
+) -> tuple[str, str]:
+    """Split the single `eligible` boolean into the two labels gimi renders.
+
+    Returns ``(window_status, eligibility_verdict)``:
+
+    - ``window_status``: ``closed`` when the deadline has passed, ``not_a_call``
+      when the page is an aggregator / press release / finished call rather than a
+      live call, ``open`` when both time criteria pass, ``unknown`` otherwise.
+    - ``eligibility_verdict``: verdict on the substantive criteria ONLY (ILO
+      eligibility, grant instrument, grant size, ILO-implementable objective), so a
+      call that closed before we saw it can still be reported as one the ILO would
+      have been eligible for — the "missed opportunities" view.
+    """
+    def status_of(name: str) -> str:
+        cr = criteria.get(name)
+        return cr.status if cr is not None else "unknown"
+
+    if status_of(DEADLINE_CRITERION) == "false":
+        window_status = "closed"
+    elif status_of(ACTIVE_CALL_CRITERION) == "false":
+        window_status = "not_a_call"
+    elif status_of(DEADLINE_CRITERION) == "true" and status_of(ACTIVE_CALL_CRITERION) == "true":
+        window_status = "open"
+    else:
+        window_status = "unknown"
+
+    substantive = sorted(hard_names - set(TIME_CRITERIA))
+    statuses = [status_of(name) for name in substantive]
+    if any(status == "false" for status in statuses):
+        verdict = "not_eligible"
+    elif statuses and all(status == "true" for status in statuses):
+        verdict = "eligible"
+    else:
+        verdict = "unknown"
+
+    return window_status, verdict
 
 
 def _build_system_prompt(criteria: list[dict]) -> str:
@@ -140,6 +185,8 @@ ilo_match_evidence: one sentence justification
 
 Return ONLY valid JSON matching the CfpClassification schema.
 No markdown, no explanation, no wrapping text. Start with {{ and end with }}.
+Do NOT populate window_status or eligibility_verdict - they are derived downstream
+from the criteria you return, and anything you put there is discarded.
 """
 
 
@@ -253,6 +300,12 @@ class CfpClassifier:
             result.eligible = False
             if not result.exclusion_reason:
                 result.exclusion_reason = f"Failed hard criteria: {', '.join(failed)}"
+
+        # 6. Derive the two display labels. `eligible` stays the AND of every hard
+        # criterion; these say WHY it is false.
+        result.window_status, result.eligibility_verdict = derive_display_status(
+            result.criteria or {}, hard_names
+        )
 
         return result
 

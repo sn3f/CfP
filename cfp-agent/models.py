@@ -8,6 +8,12 @@ logger = logging.getLogger(__name__)
 
 CriterionStatus = Literal["true", "false", "unknown"]
 
+# Display labels consumed by the gimi CfP module. Two independent axes, so a user
+# can tell "the window closed" apart from "the ILO cannot apply here" — `eligible`
+# alone conflated the two.
+WindowStatus = Literal["open", "closed", "not_a_call", "unknown"]
+EligibilityVerdict = Literal["eligible", "not_eligible", "unknown"]
+
 ILO_THEMES = (
     "International Labour Standards & Legal Frameworks",
     "Fundamental Principles and Rights at Work",
@@ -190,6 +196,10 @@ class CfpClassification(BaseModel):
 
     # Eligibility
     eligible: bool
+    # Derived in Python from `criteria` (see agent.derive_display_status); any value
+    # the LLM puts here is overwritten.
+    window_status: WindowStatus = "unknown"
+    eligibility_verdict: EligibilityVerdict = "unknown"
     exclusion_reason: Optional[str] = None
     classification_summary: str
     criteria: dict[str, CriterionResult] = Field(default_factory=dict)
