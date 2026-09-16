@@ -457,6 +457,9 @@ def fetch_supporting_documents(
                     "score": candidate["score"],
                     "hop": hop,
                     "content": truncated_content,
+                    # Pre-truncation size, so the classification prompt can state
+                    # whether anything was actually cut instead of always claiming it.
+                    "full_chars": len(content),
                 }
             )
             logger.info(f"  Supporting document fetched (hop={hop}): {url}")

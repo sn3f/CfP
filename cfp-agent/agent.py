@@ -212,25 +212,49 @@ class CfpClassifier:
         self.client = instructor.from_openai(raw_client, mode=instructor.Mode.JSON)
         logger.info(f"CfpClassifier ready (model={self.model})")
 
+    @staticmethod
+    def _content_header(label: str, shown: int, full: int, limit: int) -> str:
+        """Say whether the text was cut - and say so only when it actually was.
+
+        The header used to read "truncated to 40000 chars" unconditionally, even
+        for a 7k page passed through whole. The model echoed it back, reporting
+        deadlines and grant sizes as absent "in the truncated page content" while
+        they sat in plain sight - 33 of 36 CFLI entries carried that phrasing.
+        Stating COMPLETE explicitly is the point: saying nothing would still leave
+        the model free to assume something had been withheld.
+        """
+        if full > limit:
+            return f"{label} (TRUNCATED to {shown} of {full} chars - the rest was not retrieved):"
+        return f"{label} (COMPLETE, {full} chars - nothing was cut):"
+
     def _build_classification_payload(self, content: str, url: str) -> str:
         supporting_documents = fetch_supporting_documents(content, url)
         sections = [
             f"Source URL: {url}",
             "",
-            f"Primary CfP page content (truncated to {MAX_PRIMARY_CONTENT_CHARS} chars):",
+            self._content_header(
+                "Primary CfP page content",
+                len(content[:MAX_PRIMARY_CONTENT_CHARS]),
+                len(content),
+                MAX_PRIMARY_CONTENT_CHARS,
+            ),
             content[:MAX_PRIMARY_CONTENT_CHARS],
         ]
 
         if supporting_documents:
             sections.extend(["", "Supporting documents and attachments:"])
             for index, document in enumerate(supporting_documents, start=1):
+                shown = len(document["content"])
+                # full_chars is the pre-truncation size recorded by
+                # fetch_supporting_documents; older callers may not set it.
+                full = document.get("full_chars", shown)
                 sections.extend(
                     [
                         "",
                         f"[Document {index}] {document['label']}",
                         f"URL: {document['url']}",
                         f"Discovery hop: {document['hop']}",
-                        f"Content (truncated to {len(document['content'])} chars):",
+                        self._content_header("Content", shown, full, shown),
                         document["content"],
                     ]
                 )

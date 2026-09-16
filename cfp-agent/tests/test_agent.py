@@ -423,3 +423,29 @@ class TestDisplayStatus:
         result = classifier._enforce_hard_criteria(c)
         assert result.window_status == "open"
         assert result.eligibility_verdict == "eligible"
+
+
+class TestContentHeader:
+    """The prompt must not claim a truncation that did not happen.
+
+    Regression guard for the CFLI South Africa case: the page was passed whole
+    (7k chars, well under the 40k limit) yet the header announced "truncated to
+    40000 chars", and the model duly reported the deadline and the grant ceiling
+    as absent "in the truncated page content" - both were present.
+    """
+
+    def test_untruncated_content_is_announced_as_complete(self):
+        header = CfpClassifier._content_header("Primary CfP page content", 7020, 7020, 40000)
+        assert "COMPLETE" in header
+        assert "TRUNCATED" not in header
+        assert "7020" in header
+
+    def test_truncated_content_says_so_with_both_sizes(self):
+        header = CfpClassifier._content_header("Primary CfP page content", 40000, 52000, 40000)
+        assert "TRUNCATED" in header
+        assert "40000" in header and "52000" in header
+
+    def test_exactly_at_the_limit_is_complete(self):
+        """A page the same size as the cap lost nothing."""
+        header = CfpClassifier._content_header("Content", 40000, 40000, 40000)
+        assert "COMPLETE" in header
